@@ -17,11 +17,14 @@ class CreateReportsTable extends Migration
             $table->id();
             $table->uuid('link');
             $table->unsignedBigInteger('attacker_id');
-            $table->unsignedBigInteger('defender_id');
-            $table->json('attacker_fleet');
+            $table->unsignedBigInteger('defender_id')->nullable()->default(0);
+            $table->json('attacker_fleet')->nullable();
             $table->json('defender_fleet')->nullable();
             $table->json('defender_defense')->nullable();
-            $table->json('resources');
+            $table->json('resources')->nullable();
+            $table->json('planet_info')->nullable()->default(null);
+            $table->json('planet_infrastructure')->nullable()->default(null);
+            $table->json('defender_knowledge')->nullable()->default(null);
 
             $table->timestamps();
         });
