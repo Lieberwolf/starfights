@@ -1,0 +1,189 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
+
+class Research extends Model
+{
+    use HasFactory;
+
+    protected $guarded = [];
+
+    public static function getOneById($id)
+    {
+        return Research::find($id);
+    }
+
+    public static function getOneByName($name)
+    {
+        return Research::where('research_name', $name)->first();
+    }
+
+    public static function getAllAvailableResearches($user_id, $planet_id)
+    {
+        // get all researches
+        $researches = DB::table('research')
+                       ->get();
+        // get all buildings
+        $buildings = DB::table('buildings')
+                       ->get();
+        $knowledge = [];
+        $techtree = [];
+
+        foreach($buildings as $key => $building)
+        {
+            $building->infrastructure = DB::table('infrastructures')
+                                          ->where('building_id', $building->id)
+                                          ->where('planet_id', $planet_id)
+                                          ->first();
+
+            $buildings[$key] = $building;
+        }
+
+        // get knowledge
+        foreach($researches as $key => $research)
+        {
+            $temp = DB::table('knowledge AS i')
+                      ->where('i.research_id', '=', $research->id)
+                      ->where('i.user_id', '=', $user_id)
+                      ->first();
+
+            $researches[$key]->buildable = true;
+            $researches[$key]->knowledge = $temp;
+            $knowledge[$research->research_name] = $temp;
+
+            foreach(json_decode($research->research_requirements) as $keyB => $req)
+            {
+                $techtree[$research->research_name][$keyB]['reqLevel'] = $req;
+            }
+        }
+
+        foreach($researches as $key => $research)
+        {
+            foreach(json_decode($research->research_requirements) as $keyB => $req)
+            {
+                if($req > 0)
+                {
+                    foreach($researches as $keyC => $compareItem)
+                    {
+                        if($compareItem->research_name == $keyB)
+                        {
+                            if($compareItem->knowledge)
+                            {
+                                if($compareItem->knowledge->level >= $req)
+                                {
+                                    if($researches[$key]->buildable != false)
+                                    {
+                                        $researches[$key]->buildable = true;
+                                    }
+                                } else {
+                                    $researches[$key]->buildable = false;
+                                }
+                            } else {
+                                $researches[$key]->buildable = false;
+                            }
+                        }
+                    }
+                } else {
+                    if($researches[$key]->buildable != false)
+                    {
+                        $researches[$key]->buildable = true;
+                    }
+                }
+            }
+
+            foreach(json_decode($research->building_requirements) as $keyB => $req)
+            {
+                if($req > 0)
+                {
+                    foreach($buildings as $keyC => $compareItem)
+                    {
+                        if($compareItem->building_name == $keyB)
+                        {
+                            if($compareItem->infrastructure)
+                            {
+                                if($compareItem->infrastructure->level >= $req)
+                                {
+                                    if($researches[$key]->buildable != false)
+                                    {
+                                        $researches[$key]->buildable = true;
+                                    }
+                                } else {
+                                    $researches[$key]->buildable = false;
+                                }
+                            } else {
+                                $researches[$key]->buildable = false;
+                            }
+                        }
+                    }
+                } else {
+                    if($researches[$key]->buildable != false)
+                    {
+                        $researches[$key]->buildable = true;
+                    }
+                }
+            }
+        }
+        // return list
+        return $researches;
+    }
+
+    public static function startResearch($research, $planet)
+    {
+        $proof = DB::table('research_process')->where('planet_id', $planet)->get();
+
+        if(count($proof) == 0)
+        {
+            $researchtime = $research->initial_researchtime;
+
+            $insert_queue = DB::table('research_process')->insert([
+                'planet_id' => $planet,
+                'research_id' => $research->id,
+                'started_at' => date('Y-m-d H:i:s',time()),
+                'finished_at' => date('Y-m-d H:i:s',time()+$researchtime)
+            ]);
+
+            return $insert_queue;
+        } else {
+            dd('building in process');
+        }
+    }
+
+    public static function cancelResearch($planet_id)
+    {
+        return DB::table('research_process')->where('planet_id', $planet_id)->delete();
+    }
+
+    public static function getAllUserResearchPointsByUserId($user_id)
+    {
+        $points = 0;
+        $researches = DB::table('knowledge AS k')
+                       ->where('k.user_id','=', $user_id)
+                       ->leftJoin('research AS r', 'k.research_id', '=', 'r.id')
+                       ->get();
+
+        if($researches)
+        {
+            foreach($researches as $key => $research)
+            {
+                $points += ($research->level * $research->points);
+            }
+        }
+        return $points;
+    }
+
+    public static function getAllResearchesWithEffect()
+    {
+        return DB::table('research')->where(function ($query) {
+            $query->where('increase_ship_attack', '>', 0)->orWhere('increase_ship_defense', '>', 0)->orWhere('increase_shield_defense', '>', 0);
+        })->get();
+    }
+
+    public static function getUsersKnowledge($user_id)
+    {
+        return DB::table('knowledge')->where('user_id', $user_id)->get();
+    }
+}

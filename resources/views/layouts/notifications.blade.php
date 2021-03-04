@@ -1,0 +1,7 @@
+<div class="container">
+    <div class="row">
+        <div class="col-12 notification message">
+            <a href="/messages/new">Es gibt ungelesene Nachrichten</a>
+        </div>
+    </div>
+</div>
