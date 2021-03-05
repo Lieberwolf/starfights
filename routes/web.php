@@ -173,3 +173,10 @@ Route::post('/shipdashboard/saveR', [App\Http\Controllers\ShipDashboardControlle
 Route::get('/shipdashboard/create', [App\Http\Controllers\ShipDashboardController::class, 'create']);
 Route::get('/shipdashboard/{id}', [App\Http\Controllers\ShipDashboardController::class, 'show']);
 Route::post('/shipdashboard/{id}/edit', [App\Http\Controllers\ShipDashboardController::class, 'edit']);
+
+/***
+ * API
+ */
+Route::get('/api/v1/{method}', [App\Http\Controllers\ApiController::class, 'index']);
+Route::get('/api/v1/{method}/{param1}', [App\Http\Controllers\ApiController::class, 'index']);
+Route::get('/api/v1/{method}/{param1}/{param2}', [App\Http\Controllers\ApiController::class, 'index']);
