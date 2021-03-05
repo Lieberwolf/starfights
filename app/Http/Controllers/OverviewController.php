@@ -62,6 +62,17 @@ class OverviewController extends Controller
         $shipsAtPlanet = Fleet::getShipsAtPlanet($planet_id);
         $fleetsOnMission = Fleet::getFleetsOnMission($allUserPlanets);
 
+        $knowledge = Research::getAllAvailableResearches($user_id, $planet_id);
+        $maxPlanets = 10;
+
+        foreach($knowledge as $research)
+        {
+            if($research->increase_max_planets != 0 && $research->knowledge != null)
+            {
+                $maxPlanets += $research->increase_max_planets * $research->knowledge->level;
+            }
+        }
+
         $planetaryProcesses = [];
         foreach($planetaryBuildingProcesses as $process)
         {
@@ -124,6 +135,7 @@ class OverviewController extends Controller
                 'allResearchPoints' => $allResearchPoints,
                 'shipsAtPlanet' => $shipsAtPlanet,
                 'attackAlert' => $attackAlert,
+                'maxPlanets' => $maxPlanets,
             ]);
         } else {
             return view('error.index');

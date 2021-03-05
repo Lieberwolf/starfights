@@ -76,6 +76,16 @@ class MissionController extends Controller
         $source = Planet::getOneById($planet_id);
         $target = Planet::getPlanetByCoordinates($data["galaxy"], $data["system"], $data["planet"]);
         $knowledge = Research::getAllAvailableResearches($user_id, $planet_id);
+        $maxPlanets = 10;
+        $planetCount = count($allUserPlanets);
+
+        foreach($knowledge as $research)
+        {
+            if($research->increase_max_planets != 0 && $research->knowledge != null)
+            {
+                $maxPlanets += $research->increase_max_planets * $research->knowledge->level;
+            }
+        }
 
         // get ships data (cargo, consumption, atts, deffs, stealth, invasion, colo)
         // missions:
@@ -96,9 +106,14 @@ class MissionController extends Controller
             $allowed_missions = [2,3,4,6,7];
         }
 
-        if($target->user_id == null)
+        if($target->user_id == null && $planetCount < $maxPlanets)
         {
             $allowed_missions = [4,5];
+        }
+
+        if($target->user_id == null && $planetCount >= $maxPlanets)
+        {
+            $allowed_missions = [4];
         }
 
         // check if target is source

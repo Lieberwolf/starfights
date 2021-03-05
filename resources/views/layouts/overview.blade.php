@@ -106,7 +106,7 @@
         @endforeach
         <div class="col-12 title-line mt-3">Account "{{ Auth::user()->username }}"</div>
         <div class="col-6 sub-line">Planeten</div>
-        <div class="col-6 sub-line">{{count($allUserPlanets)}} (max. 10)</div>
+        <div class="col-6 sub-line">{{count($allUserPlanets)}} (max. {{$maxPlanets}})</div>
         <div class="col-6 sub-line">Planetenpunkte</div>
         <div class="col-6 sub-line">{{number_format($allPlanetPoints, 0, ',', '.')}}</div>
         <div class="col-6 sub-line">Forschungspunkte</div>
