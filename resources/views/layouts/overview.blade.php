@@ -5,6 +5,25 @@
             <a href="/universe/{{$defaultPlanet}}/{{$planetInformation->galaxy}}/{{$planetInformation->system}}">({{$planetInformation->galaxy}}:{{$planetInformation->system}}:{{$planetInformation->planet}})</a>
             <a href="/details/{{$planetInformation->id}}">[Details]</a>
         </div>
+        <div class="col-12 sub-line">
+            <div class="row">
+                <div class="col-6 col-md-2 offset-md-1">
+                    <a href="">Planetenübersicht</a>
+                </div>
+                <div class="col-6 col-md-2">
+                    <a href="">Schiffsübersicht</a>
+                </div>
+                <div class="col-12 col-md-2">
+                    <a href="">Notizblock</a>
+                </div>
+                <div class="col-6 col-md-2">
+                    <a href="">Kampfstatistik</a>
+                </div>
+                <div class="col-6 col-md-2">
+                    <a href="">Handel</a>
+                </div>
+            </div>
+        </div>
         <div class="col-6 sub-line">Serverzeit</div>
         <div class="col-6 sub-line">{{now()}}</div>
         <div class="col-6 sub-line">Automatischer Logout</div>
