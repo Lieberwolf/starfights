@@ -117,6 +117,12 @@ Route::get('/profile/{user_id}', [App\Http\Controllers\ProfileController::class,
 Route::get('/report', [App\Http\Controllers\ReportController::class, 'index']);
 Route::get('/report/{report_uuid}', [App\Http\Controllers\ReportController::class, 'show']);
 
+// details
+Route::get('/details', [App\Http\Controllers\DetailsController::class, 'index']);
+Route::get('/details/{planet_id}', [App\Http\Controllers\DetailsController::class, 'show']);
+Route::post('/details/{planet_id}/name', [App\Http\Controllers\DetailsController::class, 'name']);
+Route::post('/details/{planet_id}/image', [App\Http\Controllers\DetailsController::class, 'image']);
+
 /**
  * Admin
  */
