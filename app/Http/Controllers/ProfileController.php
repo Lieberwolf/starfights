@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Research;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Profile as Profile;
@@ -49,6 +50,12 @@ class ProfileController extends Controller
             $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, Auth::id());
         }
 
+        $planets = Planet::getAllUserPlanets($user_id);
+        $allPlanetPoints = Planet::getAllPlanetaryPointsByIds($planets);
+        $allResearchPoints = Research::getAllUserResearchPointsByUserId($user_id);
+
+        $totalPoints = $allPlanetPoints + $allResearchPoints;
+
         if(count($planetaryResources)>0)
         {
             return view('profile.show', [
@@ -59,6 +66,7 @@ class ProfileController extends Controller
                 'activePlanet' => $planet_id,
                 'ownProfile' => $proof,
                 'profileData' => $userInformation,
+                'totalPoints' => $totalPoints,
             ]);
         } else {
             return view('error.index');
