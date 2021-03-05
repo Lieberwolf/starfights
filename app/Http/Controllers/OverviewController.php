@@ -111,7 +111,22 @@ class OverviewController extends Controller
                 // 3,4,6,7
                 if($arriving_fleet->mission == 3 || $arriving_fleet->mission == 4 || $arriving_fleet->mission == 6 || $arriving_fleet->mission == 7)
                 {
-                    $attackAlert = true;
+                    if(strtotime($arriving_fleet->arrival) < now()->timestamp)
+                    {
+                        $attackAlert = false;
+                    } else {
+                        $attackAlert = true;
+                    }
+                }
+
+                // foreign fleet has arrived
+                if(strtotime($arriving_fleet->arrival) < now()->timestamp)
+                {
+                    $fakeList = [];
+                    $temp = new \stdClass();
+                    $temp->id = $arriving_fleet->planet_id;
+                    $fakeList[] = $temp;
+                    Controller::checkFleetProcesses($fakeList);
                 }
             }
         }
