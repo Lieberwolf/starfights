@@ -1,58 +1,66 @@
-<div class="">
-    <a href="/messages/new">Neue Nachrichten</a>
-    <a href="/messages/inbox">Posteingang</a>
-    <a href="/messages/outbox">Postausgang</a>
-    <form action="/messages/edit/outbox" method="post">
-        @csrf
-        @foreach($messages as $message)
-            <div class="single-message">
-                @if($message->user_id != 0)
-                    <table>
-                        <thead>
-                        <tr>
-                            <th><input type="checkbox" name="toBeDeleted[{{$message->id}}]"/></th>
-                            <th colspan="2"><a href="/profile/{{$message->receiver_id}}">{{$message->receiver->username}}</a></th>
-                            <th>{{date('Y-m-d H:i:s', $message->created_at->timestamp)}}</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td colspan="3">
-                                {{$message->subject}}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="3">
-                                {{$message->message}}
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                @else
-                    <table>
-                        <thead>
-                        <tr>
-                            <th><input type="checkbox" name="toBeDeleted[{{$message->id}}]"/></th>
-                            <th>System</th>
-                            <th>{{date('Y-m-d H:i:s', $message->created_at->timestamp)}}</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td colspan="3">
-                                {{$message->subject}}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="3">
-                                {{$message->message}}
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                @endif
+<div class="container">
+    <div class="row">
+        <div class="col-12 title-line">
+            <div class="row">
+                <div class="col-12 col-md-4">
+                    <a href="/messages/new">Neue Nachrichten</a>
+                </div>
+                <div class="col-12 col-md-4">
+                    <a href="/messages/inbox">Posteingang</a>
+                </div>
+                <div class="col-12 col-md-4">
+                    <a href="/messages/outbox">Postausgang</a>
+                </div>
             </div>
-        @endforeach
-        <button type="submit">Löschen</button>
-    </form>
+        </div>
+        <form action="/messages/edit/inbox" method="post" style="width: 100%;">
+            @csrf
+            @foreach($messages as $message)
+                <div class="single-message">
+                    @if($message->user_id != 0)
+                        <div class="col-12">
+                            <div class="row">
+                                <div class="col-1">
+                                    <input type="checkbox" name="toBeDeleted[{{$message->id}}]"/>
+                                </div>
+                                <div class="col-6">
+                                    <a href="/profile/{{$message->receiver_id}}">{{$message->receiver->username}}</a>&nbsp;<a href="/messages/send/{{$message->receiver_id}}">[Antworten]</a>
+                                </div>
+                                <div class="col-5">
+                                    {{date('Y-m-d H:i:s', $message->created_at->timestamp)}}
+                                </div>
+                                <div class="col-12">
+                                    Betreff: {{$message->subject}}
+                                </div>
+                                <div class="col-12">
+                                    {{$message->message}}
+                                </div>
+                            </div>
+                        </div>
+                    @else
+                        <div class="col-12">
+                            <div class="row">
+                                <div class="col-1">
+                                    <input type="checkbox" name="toBeDeleted[{{$message->id}}]"/>
+                                </div>
+                                <div class="col-6">
+                                    System
+                                </div>
+                                <div class="col-5">
+                                    {{date('Y-m-d H:i:s', $message->created_at->timestamp)}}
+                                </div>
+                                <div class="col-12">
+                                    Betreff: {{$message->subject}}
+                                </div>
+                                <div class="col-12">
+                                    {!! $message->message !!}
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+                </div>
+            @endforeach
+            <button class="btn btn-default" type="submit">Löschen</button>
+        </form>
+    </div>
 </div>
