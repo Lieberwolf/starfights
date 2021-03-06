@@ -186,4 +186,19 @@ class Research extends Model
     {
         return DB::table('knowledge')->where('user_id', $user_id)->get();
     }
+
+    public static function getResearchProcesses($planet_ids)
+    {
+        $list = [];
+        foreach($planet_ids as $planet_id)
+        {
+            $temp = DB::table('research_process')->where('planet_id', $planet_id->id)->first();
+            if($temp)
+            {
+                $list[] = $temp;
+            }
+        }
+
+        return $list;
+    }
 }

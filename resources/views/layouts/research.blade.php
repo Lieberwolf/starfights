@@ -25,7 +25,11 @@
                 </div>
                 <div class="col-2 process-action">
                     @if(!$currentResearch && $planetaryResources->fe >= $research->fe && $planetaryResources->lut >= $research->lut && $planetaryResources->cry >= $research->cry && $planetaryResources->h2o >= $research->h2o && $planetaryResources->h2 >= $research->h2)
-                        <a class="process-start" href="/research/{{$activePlanet}}/{{$research->id}}">Forschung<br/>Stufe {{$research->knowledge != null ? $research->knowledge->level + 1 : 1}}</a>
+                        @if($research->inProgress)
+                            <span class="process-denied">Wird bereits geforscht</span>
+                        @else
+                            <a class="process-start" href="/research/{{$activePlanet}}/{{$research->id}}">Forschung<br/>Stufe {{$research->knowledge != null ? $research->knowledge->level + 1 : 1}}</a>
+                        @endif
                     @else
                         <span class="process-denied">Forschung starten</span>
                     @endif

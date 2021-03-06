@@ -43,6 +43,22 @@ class ResearchController extends Controller
 
         $currentResearch = Planet::getPlanetaryResearchProcess($planet_id, $user_id);
 
+        $researchProcesses = Research::getResearchProcesses($allUserPlanets);
+
+        foreach($researchList as $key => $entry)
+        {
+            $researchList[$key]->inProgress = false;
+            foreach($researchProcesses as $process)
+            {
+                if($process->research_id == $entry->id)
+                {
+                    $researchList[$key]->inProgress = true;
+                } else {
+                    $researchList[$key]->inProgress = false;
+                }
+            }
+        }
+
         // check is a build process started
         if($research_id)
         {
@@ -89,7 +105,7 @@ class ResearchController extends Controller
                 'activePlanet' => $planet_id,
                 'planetInformation' => $planetInformation,
                 'availableResearches' => $researchList,
-                'currentResearch' => $currentResearch
+                'currentResearch' => $currentResearch,
             ]);
         } else {
             return view('error.index');
