@@ -14,7 +14,7 @@ class CreateTurretsTable extends Migration
     public function up()
     {
         Schema::create('turrets', function (Blueprint $table) {
-            $table->integer('order');
+            $table->id('id');
             $table->string('turret_name')->unique();
             $table->text('description')->nullable();
             $table->integer('attack')->nullable();

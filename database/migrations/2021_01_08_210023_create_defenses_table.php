@@ -14,13 +14,9 @@ class CreateDefensesTable extends Migration
     public function up()
     {
         Schema::create('defenses', function (Blueprint $table) {
-            $table->id();
+            $table->id('id');
             $table->unsignedBigInteger('planet_id');
-            $table->text('description');
-            $table->integer('laser')->nullable();
-            $table->integer('plasma')->nullable();
-            $table->integer('emp')->nullable();
-            $table->integer('flak')->nullable();
+            $table->json('turret_types')->nullable();
 
             $table->index('planet_id');
             $table->timestamps();
