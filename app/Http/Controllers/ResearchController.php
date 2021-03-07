@@ -53,8 +53,6 @@ class ResearchController extends Controller
                 if($process->research_id == $entry->id)
                 {
                     $researchList[$key]->inProgress = true;
-                } else {
-                    $researchList[$key]->inProgress = false;
                 }
             }
         }
