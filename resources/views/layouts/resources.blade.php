@@ -13,73 +13,119 @@
         <tbody>
             <tr>
                 <td>Basisförderung</td>
-                <td>10</td>
-                <td>10</td>
-                <td>0</td>
-                <td>10</td>
-                <td>0</td>
+                <td class="alert-success">10</td>
+                <td class="alert-success">10</td>
+                <td class="alert-info">0</td>
+                <td class="alert-success">10</td>
+                <td class="alert-info">0</td>
             </tr>
             @foreach($resourceBuildings as $building)
                 <tr>
                     <td>{{$building->building_name}} (Stufe: {{$building->infrastructure->level}})</td>
-                    @if($building->rate_fe > 0)
-                        <td class="alert-success">{{number_format(floor($building->rate_fe), 0, ',', '.')}}</td>
-                    @endif
-                    @if($building->cost_fe > 0)
-                        <td class="alert-danger">{{number_format(floor($building->cost_fe), 0, ',', '.')}}</td>
-                    @endif
-                    @if($building->rate_fe == 0 && $building->cost_fe == 0)
+                    @if(($building->prod_fe - $building->cost_fe) > 0)
+                        <td class="alert-success">{{number_format($building->prod_fe - $building->cost_fe, 2, ',', '.')}}</td>
+                    @elseif($building->prod_fe - $building->cost_fe < 0)
+                        <td class="alert-danger">{{number_format($building->prod_fe - $building->cost_fe, 2, ',', '.')}}</td>
+                    @else
                         <td class="alert-info">0</td>
                     @endif
 
-                    @if($building->rate_lut > 0)
-                        <td class="alert-success">{{number_format(floor($building->rate_lut), 0, ',', '.')}}</td>
-                    @endif
-                    @if($building->cost_lut > 0)
-                        <td class="alert-danger">{{number_format(floor($building->cost_lut), 0, ',', '.')}}</td>
-                    @endif
-                    @if($building->rate_lut == 0 && $building->cost_lut == 0)
+                    @if(($building->prod_lut - $building->cost_lut) > 0)
+                        <td class="alert-success">{{number_format($building->prod_lut - $building->cost_lut, 2, ',', '.')}}</td>
+                    @elseif($building->prod_lut - $building->cost_lut < 0)
+                    <td class="alert-danger">{{number_format($building->prod_lut - $building->cost_lut, 2, ',', '.')}}</td>
+                    @else
                         <td class="alert-info">0</td>
                     @endif
 
-                    @if($building->rate_cry > 0)
-                        <td class="alert-success">{{number_format(floor($building->rate_cry), 0, ',', '.')}}</td>
-                    @endif
-                    @if($building->cost_cry > 0)
-                        <td class="alert-danger">{{number_format(floor($building->cost_cry), 0, ',', '.')}}</td>
-                    @endif
-                    @if($building->rate_cry == 0 && $building->cost_cry == 0)
+                    @if(($building->prod_cry - $building->cost_cry) > 0)
+                        <td class="alert-success">{{number_format($building->prod_cry - $building->cost_cry, 2, ',', '.')}}</td>
+                    @elseif($building->prod_cry - $building->cost_cry < 0)
+                    <td class="alert-danger">{{number_format($building->prod_cry - $building->cost_cry, 2, ',', '.')}}</td>
+                    @else
                         <td class="alert-info">0</td>
                     @endif
 
-                    @if($building->rate_h2o > 0)
-                        <td class="alert-success">{{number_format(floor($building->rate_h2o), 0, ',', '.')}}</td>
-                    @endif
-                    @if($building->cost_h2o > 0)
-                        <td class="alert-danger">{{number_format(floor($building->cost_h2o), 0, ',', '.')}}</td>
-                    @endif
-                    @if($building->rate_h2o == 0 && $building->cost_h2o == 0)
+                    @if(($building->prod_h2o - $building->cost_h2o) > 0)
+                        <td class="alert-success">{{number_format($building->prod_h2o - $building->cost_h2o, 2, ',', '.')}}</td>
+                    @elseif($building->prod_h2o - $building->cost_h2o < 0)
+                    <td class="alert-danger">{{number_format($building->prod_h2o - $building->cost_h2o, 2, ',', '.')}}</td>
+                    @else
                         <td class="alert-info">0</td>
                     @endif
 
-                    @if($building->rate_h2 > 0)
-                        <td class="alert-success">{{number_format(floor($building->rate_h2), 0, ',', '.')}}</td>
-                    @endif
-                    @if($building->cost_h2 > 0)
-                        <td class="alert-danger">{{number_format(floor($building->cost_h2), 0, ',', '.')}}</td>
-                    @endif
-                    @if($building->rate_h2 == 0 && $building->cost_h2 == 0)
+                    @if(($building->prod_h2 - $building->cost_h2) > 0)
+                        <td class="alert-success">{{number_format($building->prod_h2 - $building->cost_h2, 2, ',', '.')}}</td>
+                    @elseif($building->prod_h2 - $building->cost_h2 < 0)
+                    <td class="alert-danger">{{number_format($building->prod_h2 - $building->cost_h2, 2, ',', '.')}}</td>
+                    @else
                         <td class="alert-info">0</td>
                     @endif
                 </tr>
             @endforeach
             <tr>
+                <td>Planeten Bonus ({{$planetInfo->resource_bonus}}%)</td>
+                @if($bonusValues->fe > 0)
+                    <td class="alert-success">{{number_format($bonusValues->fe, 2, ',', '.')}}</td>
+                @elseif($bonusValues->fe < 0)
+                    <td class="alert-danger">{{number_format($bonusValues->fe, 2, ',', '.')}}</td>
+                @else
+                    <td class="alert-info">0</td>
+                @endif
+                @if($bonusValues->lut > 0)
+                    <td class="alert-success">{{number_format($bonusValues->lut, 2, ',', '.')}}</td>
+                @elseif($bonusValues->lut < 0)
+                    <td class="alert-danger">{{number_format($bonusValues->lut, 2, ',', '.')}}</td>
+                @else
+                    <td class="alert-info">0</td>
+                @endif
+                <td class="alert-info">0</td>
+                @if($bonusValues->h2o > 0)
+                    <td class="alert-success">{{number_format($bonusValues->h2o, 2, ',', '.')}}</td>
+                @elseif($bonusValues->h2o < 0)
+                    <td class="alert-danger">{{number_format($bonusValues->h2o, 2, ',', '.')}}</td>
+                @else
+                    <td class="alert-info">0</td>
+                @endif
+                <td class="alert-info">0</td>
+            </tr>
+            <tr>
                 <td>Gesamt</td>
-                <td>{{number_format(floor($rates->fe + 10), 0, ',', '.')}}</td>
-                <td>{{number_format(floor($rates->lut + 10), 0, ',', '.')}}</td>
-                <td>{{number_format(floor($rates->cry), 0, ',', '.')}}</td>
-                <td>{{number_format(floor($rates->h2o + 10), 0, ',', '.')}}</td>
-                <td>{{number_format(floor($rates->h2), 0, ',', '.')}}</td>
+                @if($rates->rate_fe > 0)
+                    <td class="alert-success">{{number_format($rates->rate_fe, 2, ',', '.')}}</td>
+                @elseif($rates->rate_fe < 0)
+                    <td class="alert-danger">{{number_format($rates->rate_fe, 2, ',', '.')}}</td>
+                @else
+                    <td class="alert-info">0</td>
+                @endif
+                @if($rates->rate_lut > 0)
+                    <td class="alert-success">{{number_format($rates->rate_lut, 2, ',', '.')}}</td>
+                @elseif($rates->rate_lut < 0)
+                    <td class="alert-danger">{{number_format($rates->rate_lut, 2, ',', '.')}}</td>
+                @else
+                    <td class="alert-info">0</td>
+                @endif
+                @if($rates->rate_cry > 0)
+                    <td class="alert-success">{{number_format($rates->rate_cry, 2, ',', '.')}}</td>
+                @elseif($rates->rate_cry < 0)
+                    <td class="alert-danger">{{number_format($rates->rate_cry, 2, ',', '.')}}</td>
+                @else
+                    <td class="alert-info">0</td>
+                @endif
+                @if($rates->rate_h2o > 0)
+                    <td class="alert-success">{{number_format($rates->rate_h2o, 2, ',', '.')}}</td>
+                @elseif($rates->rate_h2o < 0)
+                    <td class="alert-danger">{{number_format($rates->rate_h2o, 2, ',', '.')}}</td>
+                @else
+                    <td class="alert-info">0</td>
+                @endif
+                @if($rates->rate_h2 > 0)
+                    <td class="alert-success">{{number_format($rates->rate_h2, 2, ',', '.')}}</td>
+                @elseif($rates->rate_h2 < 0)
+                    <td class="alert-danger">{{number_format($rates->rate_h2, 2, ',', '.')}}</td>
+                @else
+                    <td class="alert-info">0</td>
+                @endif
             </tr>
             <tr>
                 <td>Lagerkapazität</td>

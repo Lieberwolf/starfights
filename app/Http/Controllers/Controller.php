@@ -52,10 +52,7 @@ class Controller extends BaseController
             {
                 if(strtotime($process->finished_at) < now()->timestamp)
                 {
-                    $infrastructure = DB::table('infrastructures')
-                                        ->where('planet_id', $planet_id->id)
-                                        ->where('building_id', $process->building_id)
-                                        ->first();
+                    $infrastructure = Controller::getLevelForBuildingOnPlanet($planet_id->id, $process->building_id);
 
                     if(!$infrastructure)
                     {
@@ -84,111 +81,9 @@ class Controller extends BaseController
                         {
                             // pick last needed Info
                             $buildingData = Building::find($process->building_id);
-                            $factors = DB::table('productionfactors')->where('planet_id', $planet_id->id)->first();
                             $planetData = Planet::find($planet_id->id);
 
-                            if($buildingData->prod_fe > 0){
-                                if($factors == null)
-                                {
-                                    $factors = new \stdClass();
-                                    $factors->fe_factor_1 = 1.1000;
-                                    $factors->fe_factor_2 = 1.7500;
-                                    $factors->fe_factor_3 = 0.2300;
-                                }
-                                $base = $buildingData->prod_fe;
-                                $h2o_cost = 0;
-                                $lvl = $infrastructure ? $infrastructure->level + 1 : 1;
-                                $Modifikator1 = ($lvl / $factors->fe_factor_1) + $factors->fe_factor_2;
-                                $Modifikator2 = $lvl * $factors->fe_factor_3;
-                                $rate =  $base * $Modifikator1 * $Modifikator2;
-
-                                $planetData->rate_fe = $rate;
-                                $planetData->rate_h2o = $h2o_cost;
-                                $planetData->save();
-                            }
-                            if($buildingData->prod_lut > 0){
-                                if($factors == null)
-                                {
-                                    $factors = new \stdClass();
-                                    $factors->lut_factor_1 = 1.1000;
-                                    $factors->lut_factor_2 = 1.7500;
-                                    $factors->lut_factor_3 = 0.2300;
-                                }
-                                $base = $buildingData->prod_lut;
-                                $h2o_cost = 0;
-                                $lvl = $infrastructure ? $infrastructure->level + 1 : 1;
-                                $Modifikator1 = ($lvl / $factors->lut_factor_1) + $factors->lut_factor_2;
-                                $Modifikator2 = $lvl * $factors->lut_factor_3;
-                                $rate =  $base * $Modifikator1 * $Modifikator2;
-
-                                $planetData->rate_lut = $rate;
-                                $planetData->rate_h2o = $h2o_cost;
-                                $planetData->save();
-                            }
-                            if($buildingData->prod_cry > 0){
-                                if($factors == null)
-                                {
-                                    $factors = new \stdClass();
-                                    $factors->cry_factor_1 = 1.1000;
-                                    $factors->cry_factor_2 = 1.7500;
-                                    $factors->cry_factor_3 = 0.2300;
-                                }
-                                $base = $buildingData->prod_cry;
-                                $h2o_cost = 0;
-                                $lvl = $infrastructure ? $infrastructure->level + 1 : 1;
-                                $Modifikator1 = ($lvl / $factors->cry_factor_1) + $factors->cry_factor_2;
-                                $Modifikator2 = $lvl * $factors->cry_factor_3;
-                                $rate =  $base * $Modifikator1 * $Modifikator2;
-
-                                $planetData->rate_cry = $rate;
-                                $planetData->rate_h2o = $h2o_cost;
-                                $planetData->save();
-                            }
-                            if($buildingData->prod_h2o > 0){
-                                if($factors == null)
-                                {
-                                    $factors = new \stdClass();
-                                    $factors->h2o_factor_1 = 1.1000;
-                                    $factors->h2o_factor_2 = 1.7500;
-                                    $factors->h2o_factor_3 = 0.2300;
-                                }
-                                $base = $buildingData->prod_h2o;
-                                $lvl = $infrastructure ? $infrastructure->level + 1 : 1;
-                                $Modifikator1 = ($lvl / $factors->h2o_factor_1) + $factors->h2o_factor_2;
-                                $Modifikator2 = $lvl * $factors->h2o_factor_3;
-                                $rate =  $base * $Modifikator1 * $Modifikator2;
-
-                                $planetData->rate_h2o = $rate;
-                                $planetData->save();
-                            }
-                            if($buildingData->prod_h2 > 0){
-                                if($factors == null)
-                                {
-                                    $factors = new \stdClass();
-                                    $factors->h2_factor_1 = 1.1000;
-                                    $factors->h2_factor_2 = 1.7500;
-                                    $factors->h2_factor_3 = 0.2300;
-                                }
-
-                                $base = $buildingData->prod_h2;
-                                $h2o_cost = $buildingData->cost_h2o;
-                                $lvl = $infrastructure ? $infrastructure->level : 1;
-                                $Modifikator1 = ($lvl / $factors->h2_factor_1) + $factors->h2_factor_2;
-                                $Modifikator2 = $lvl * $factors->h2_factor_3;
-                                $oldRate =  $base * $Modifikator1 * $Modifikator2;
-
-                                $lvl = $infrastructure ? $infrastructure->level + 1 : 1;
-                                $Modifikator1 = ($lvl / $factors->h2_factor_1) + $factors->h2_factor_2;
-                                $Modifikator2 = $lvl * $factors->h2_factor_3;
-                                $rate =  $base * $Modifikator1 * $Modifikator2;
-                                $h2o_cost = $h2o_cost * $Modifikator1 * $Modifikator2;
-
-                                $planetData->rate_h2 += $rate - $oldRate;
-                                $planetData->rate_h2o -= $h2o_cost;
-                                $planetData->save();
-                            }
-
-
+                            self::calcResourceRatesForPlanet($planet_id->id);
 
                             // emit system message to user
                             $message = [
@@ -203,6 +98,172 @@ class Controller extends BaseController
                 }
             }
         }
+    }
+
+    public static function calcResourceRatesForPlanet($planet_id)
+    {
+        $buildings = Building::all();
+
+        $resourceRates = new \stdClass();
+        $resourceRates->prod_fe = 0;
+        $resourceRates->cost_fe = 0;
+        $resourceRates->prod_lut = 0;
+        $resourceRates->cost_lut = 0;
+        $resourceRates->prod_cry = 0;
+        $resourceRates->cost_cry = 0;
+        $resourceRates->prod_h2o = 0;
+        $resourceRates->cost_h2o = 0;
+        $resourceRates->prod_h2 = 0;
+        $resourceRates->cost_h2 = 0;
+
+        foreach($buildings as $building)
+        {
+            $factors = DB::table('productionfactors')->where('building_id', $building->id)->first();
+            $infrastructure = self::getLevelForBuildingOnPlanet($planet_id, $building->id);
+            $building->infrastructure = $infrastructure;
+
+            if($infrastructure) {
+                if($building->prod_fe > 0){
+                    if($factors == null)
+                    {
+                        $factors = new \stdClass();
+                        $factors->fe_factor_1 = 1.1000;
+                        $factors->fe_factor_2 = 1.7500;
+                        $factors->fe_factor_3 = 0.2300;
+                    }
+                    $lvl = $infrastructure->level;
+                    $base = $building->prod_fe;
+                    $Modifikator1 = ($lvl / $factors->fe_factor_1) + $factors->fe_factor_2;
+                    $Modifikator2 = $lvl * $factors->fe_factor_3;
+                    $rate =  $base * $Modifikator1 * $Modifikator2;
+                    $building->prod_fe = $rate;
+                    $resourceRates->prod_fe += $rate;
+                }
+                if($building->prod_lut > 0){
+                    if($factors == null)
+                    {
+                        $factors = new \stdClass();
+                        $factors->lut_factor_1 = 1.1000;
+                        $factors->lut_factor_2 = 1.7500;
+                        $factors->lut_factor_3 = 0.2300;
+                    }
+                    $lvl = $infrastructure->level;
+                    $base = $building->prod_lut;
+                    $Modifikator1 = ($lvl / $factors->lut_factor_1) + $factors->lut_factor_2;
+                    $Modifikator2 = $lvl * $factors->lut_factor_3;
+                    $rate =  $base * $Modifikator1 * $Modifikator2;
+                    $building->prod_lut = $rate;
+                    $resourceRates->prod_lut += $rate;
+                }
+                if($building->prod_cry > 0){
+                    if($factors == null)
+                    {
+                        $factors = new \stdClass();
+                        $factors->cry_factor_1 = 1.1000;
+                        $factors->cry_factor_2 = 1.7500;
+                        $factors->cry_factor_3 = 0.2300;
+                    }
+                    $lvl = $infrastructure->level;
+                    $base = $building->prod_cry;
+                    $Modifikator1 = ($lvl / $factors->cry_factor_1) + $factors->cry_factor_2;
+                    $Modifikator2 = $lvl * $factors->cry_factor_3;
+                    $rate =  $base * $Modifikator1 * $Modifikator2;
+                    $building->prod_cry = $rate;
+                    $resourceRates->prod_cry += $rate;
+
+                    $base = $building->cost_lut;
+                    $Modifikator1 = ($lvl / $factors->cry_factor_1) + $factors->cry_factor_2;
+                    $Modifikator2 = $lvl * $factors->cry_factor_3;
+                    $rate =  $base * $Modifikator1 * $Modifikator2;
+                    $building->cost_lut = $rate;
+                    $resourceRates->cost_lut += $rate;
+
+                    $base = $building->cost_h2;
+                    $Modifikator1 = ($lvl / $factors->cry_factor_1) + $factors->cry_factor_2;
+                    $Modifikator2 = $lvl * $factors->cry_factor_3;
+                    $rate =  $base * $Modifikator1 * $Modifikator2;
+                    $building->cost_h2 = $rate;
+                    $resourceRates->cost_h2 += $rate;
+                }
+                if($building->prod_h2o > 0){
+                    if($factors == null)
+                    {
+                        $factors = new \stdClass();
+                        $factors->h2o_factor_1 = 1.1000;
+                        $factors->h2o_factor_2 = 1.7500;
+                        $factors->h2o_factor_3 = 0.2300;
+                    }
+                    $lvl = $infrastructure->level;
+                    $base = $building->prod_h2o;
+                    $Modifikator1 = ($lvl / $factors->h2o_factor_1) + $factors->h2o_factor_2;
+                    $Modifikator2 = $lvl * $factors->h2o_factor_3;
+                    $rate =  $base * $Modifikator1 * $Modifikator2;
+                    $building->prod_h2o = $rate;
+                    $resourceRates->prod_h2o += $rate;
+                }
+                if($building->prod_h2 > 0){
+                    if($factors == null)
+                    {
+                        $factors = new \stdClass();
+                        $factors->h2_factor_1 = 1.1000;
+                        $factors->h2_factor_2 = 1.7500;
+                        $factors->h2_factor_3 = 0.2300;
+                    }
+
+                    $lvl = $infrastructure->level;
+                    $base = $building->prod_h2;
+                    $Modifikator1 = ($lvl / $factors->h2_factor_1) + $factors->h2_factor_2;
+                    $Modifikator2 = $lvl * $factors->h2_factor_3;
+                    $rate =  $base * $Modifikator1 * $Modifikator2;
+                    $building->prod_h2 = $rate;
+                    $resourceRates->prod_h2 += $rate;
+
+                    $base = $building->cost_h2o;
+                    $Modifikator1 = ($lvl / $factors->h2_factor_1) + $factors->h2_factor_2;
+                    $Modifikator2 = $lvl * $factors->h2_factor_3;
+                    $rate =  $base * $Modifikator1 * $Modifikator2;
+                    $building->cost_h2o = $rate;
+                    $resourceRates->cost_h2o += $rate;
+                }
+            }
+
+        }
+
+        $planet = Planet::getOneById($planet_id);
+
+        $bonusValues = new \stdClass();
+        $bonusValues->fe = $resourceRates->prod_fe / 100 * $planet->resource_bonus;
+        $bonusValues->lut = $resourceRates->prod_lut / 100 * $planet->resource_bonus;
+        $bonusValues->h2o = $resourceRates->prod_h2o / 100 * $planet->resource_bonus;
+
+        $finalValueFe = ($resourceRates->prod_fe + $bonusValues->fe) - $resourceRates->cost_fe;
+        $finalValueLut = ($resourceRates->prod_lut + $bonusValues->lut) - $resourceRates->cost_lut;
+        $finalValueCry = $resourceRates->prod_cry - $resourceRates->cost_cry;
+        $finalValueH2o = ($resourceRates->prod_h2o + $bonusValues->h2o) - $resourceRates->cost_h2o;
+        $finalValueH2 = $resourceRates->prod_h2 - $resourceRates->cost_h2;
+
+        // +10 for base production
+        $planet->rate_fe = $finalValueFe + 10;
+        $planet->rate_lut = $finalValueLut + 10;
+        $planet->rate_cry = $finalValueCry;
+        $planet->rate_h2o = $finalValueH2o + 10;
+        $planet->rate_h2 = $finalValueH2;
+
+        $planet->save();
+        $return = [
+            $buildings,
+            $bonusValues
+        ];
+
+        return $return;
+    }
+
+    public static function getLevelForBuildingOnPlanet($planet_id, $building)
+    {
+        return DB::table('infrastructures')
+          ->where('planet_id', $planet_id)
+          ->where('building_id', $building)
+          ->first();
     }
 
     public function checkResearchProcesses($planet_ids)

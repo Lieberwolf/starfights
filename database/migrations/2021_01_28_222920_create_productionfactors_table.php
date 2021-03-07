@@ -15,7 +15,7 @@ class CreateProductionfactorsTable extends Migration
     {
         Schema::create('productionfactors', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('planet_id')->nullable();
+            $table->unsignedBigInteger('building_id')->nullable();
             $table->float('fe_factor_1', 8, 4)->default(0.0001);
             $table->float('fe_factor_2', 8, 4)->default(0.0001);
             $table->float('fe_factor_3', 8, 4)->default(0.0001);
@@ -32,7 +32,7 @@ class CreateProductionfactorsTable extends Migration
             $table->float('h2_factor_2', 8, 4)->default(0.0001);
             $table->float('h2_factor_3', 8, 4)->default(0.0001);
 
-            $table->index('planet_id');
+            $table->index('building_id');
             $table->timestamps();
         });
     }
