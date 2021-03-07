@@ -13,11 +13,11 @@
         <tbody>
             <tr>
                 <td>Basisförderung</td>
-                <td class="alert-success">10</td>
-                <td class="alert-success">10</td>
-                <td class="alert-info">0</td>
-                <td class="alert-success">10</td>
-                <td class="alert-info">0</td>
+                <td class="alert-success">10,00</td>
+                <td class="alert-success">10,00</td>
+                <td class="alert-info">0,00</td>
+                <td class="alert-success">10,00</td>
+                <td class="alert-info">0,00</td>
             </tr>
             @foreach($resourceBuildings as $building)
                 <tr>
