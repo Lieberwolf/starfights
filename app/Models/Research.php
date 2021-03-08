@@ -25,8 +25,31 @@ class Research extends Model
     public static function getAllAvailableResearches($user_id, $planet_id)
     {
         // get all researches
-        $researches = DB::table('research')
-                       ->get();
+        $researches = DB::table('research AS r')
+            ->orderBy('r.id')
+            ->leftJoin('researchtimefactors AS rtf','rtf.research_id','=','r.id')
+            ->leftJoin('resourcefactors AS rf', 'rf.research_id','=', 'r.id')
+            ->get([
+                'r.*',
+                'rtf.factor_1',
+                'rtf.factor_2',
+                'rtf.factor_3',
+                'rf.fe_factor_1',
+                'rf.fe_factor_2',
+                'rf.fe_factor_3',
+                'rf.lut_factor_1',
+                'rf.lut_factor_2',
+                'rf.lut_factor_3',
+                'rf.cry_factor_1',
+                'rf.cry_factor_2',
+                'rf.cry_factor_3',
+                'rf.h2o_factor_1',
+                'rf.h2o_factor_2',
+                'rf.h2o_factor_3',
+                'rf.h2_factor_1',
+                'rf.h2_factor_2',
+                'rf.h2_factor_3',
+            ]);
         // get all buildings
         $buildings = DB::table('buildings')
                        ->get();

@@ -21,7 +21,7 @@
                         Wasser: {{number_format($research->h2o, 0, ',', '.')}}
                         Wasserstoff: {{number_format($research->h2, 0, ',', '.')}}
                     </span>
-                    <span>Dauer: {{gmdate("H:i:s", $research->initial_researchtime)}}</span>
+                    <span>Dauer: {{$research->readableBuildtime}}</span>
                 </div>
                 <div class="col-2 process-action">
                     @if(!$currentResearch && $planetaryResources->fe >= $research->fe && $planetaryResources->lut >= $research->lut && $planetaryResources->cry >= $research->cry && $planetaryResources->h2o >= $research->h2o && $planetaryResources->h2 >= $research->h2)

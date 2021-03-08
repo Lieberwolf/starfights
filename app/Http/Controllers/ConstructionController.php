@@ -62,7 +62,12 @@ class ConstructionController extends Controller
                 $Modifikator2 = $Stufe * $f3;
                 $suffix = ':';
 
-                $buildingList[$key]->actual_buildtime =  floor($Grundzeit * $Modifikator1 * $Modifikator2);
+                if($Stufe == 0)
+                {
+                    $buildingList[$key]->actual_buildtime = $Grundzeit;
+                } else {
+                    $buildingList[$key]->actual_buildtime =  floor($Grundzeit * $Modifikator1 * $Modifikator2);
+                }
 
                 $days = floor(($buildingList[$key]->actual_buildtime / (24*60*60)));
                 $hours = ($buildingList[$key]->actual_buildtime / (60*60)) % 24;
