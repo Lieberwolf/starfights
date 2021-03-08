@@ -1003,7 +1003,7 @@ class Controller extends BaseController
                                     }
                                 }
 */
-$attacker["research"] = [];
+                                $attacker["research"] = [];
                                 // calc final values for attack
                                 if(count($attacker["research"]) > 0)
                                 {
@@ -1137,6 +1137,12 @@ $attacker["research"] = [];
                                 } else {
                                     $survivedAttRatio = 0;
                                 }
+
+                                if($survivedAttRatio > 100)
+                                {
+                                    $survivedAttRatio = 100;
+                                }
+
                                 $attacker["survivedAttRatio"] = $survivedAttRatio;
                                 $attacker["hasSurvived"] = false;
                                 foreach($attacker["ship"] as $key => $attackerShip)
