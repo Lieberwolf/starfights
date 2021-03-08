@@ -78,12 +78,22 @@ class MissionController extends Controller
         $knowledge = Research::getAllAvailableResearches($user_id, $planet_id);
         $maxPlanets = 10;
         $planetCount = count($allUserPlanets);
+        $cargoIncreaser = [];
 
         foreach($knowledge as $research)
         {
             if($research->increase_max_planets != 0 && $research->knowledge != null)
             {
                 $maxPlanets += $research->increase_max_planets * $research->knowledge->level;
+            }
+
+            if($research->increase_cargo != 0 && $research->knowledge != null)
+            {
+                $temp = new \stdClass();
+                $temp->level = $research->knowledge->level;
+                $temp->factor = $research->increase_cargo;
+
+                $cargoIncreaser[] = $temp;
             }
         }
 
@@ -200,6 +210,18 @@ class MissionController extends Controller
                             $fuel += ceil($singlefuel * $ship->amount) + $ship->amount;
                         }
                         $speedArray[] = $ship->speed;
+
+                        if(count($cargoIncreaser) > 0)
+                        {
+                            foreach($cargoIncreaser as $increaser)
+                            {
+                                for($i = 0; $i < $increaser->level; $i++)
+                                {
+                                    $ship->cargo += $ship->cargo * ($increaser->factor / 100);
+                                }
+                            }
+                        }
+
                         $cargo += ($ship->cargo * $ship->amount);
                         // check which missions are still allowed
                         if($ship->spy == 0) {
