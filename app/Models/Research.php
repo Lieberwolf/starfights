@@ -157,10 +157,9 @@ class Research extends Model
     public static function startResearch($research, $planet)
     {
         $proof = DB::table('research_process')->where('planet_id', $planet)->get();
-
         if(count($proof) == 0)
         {
-            $researchtime = $research->initial_researchtime;
+            $researchtime = $research->actual_buildtime;
 
             $insert_queue = DB::table('research_process')->insert([
                 'planet_id' => $planet,
