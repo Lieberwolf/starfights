@@ -68,22 +68,21 @@
                 <div class="col-12">
                     <h6>Schiffe</h6>
                 </div>
-                <div class="col-6">
-                    @foreach($allShips as $ship)
+                @foreach($allShips as $ship)
+                    <div class="col-4">
+                        <span>{{$ship->ship_name}}</span>
+                    </div>
+                    <div class="col-4">
                         <div class="form-group">
-                            <label for="ship-att-{{$ship->id}}">{{$ship->ship_name}}</label>
-                            <input value="0" class="form-control" id="ship-att-{{$ship->id}}" type="number" min="0" step="1" name="sim[att][ship][{{$ship->id}}]"/>
+                            <input value="{{$ship->attackerAmount != null ? $ship->attackerAmount : 0 }}" class="form-control" id="ship-att-{{$ship->id}}" type="number" min="0" step="1" name="sim[att][ship][{{$ship->id}}]"/>
                         </div>
-                    @endforeach
-                </div>
-                <div class="col-6">
-                    @foreach($allShips as $ship)
+                    </div>
+                    <div class="col-4">
                         <div class="form-group">
-                            <label for="ship-def-{{$ship->id}}">{{$ship->ship_name}}</label>
-                            <input value="0" class="form-control" id="ship-def-{{$ship->id}}" type="number" min="0" step="1" name="sim[def][ship][{{$ship->id}}]"/>
+                            <input value="{{$ship->defenderAmount != null ? $ship->defenderAmount : 0 }}" class="form-control" id="ship-def-{{$ship->id}}" type="number" min="0" step="1" name="sim[def][ship][{{$ship->id}}]"/>
                         </div>
-                    @endforeach
-                </div>
+                    </div>
+                @endforeach
                 <div class="col-12">
                     <h6>Verteidigung</h6>
                 </div>
@@ -98,22 +97,21 @@
                 <div class="col-12">
                     <h6>Forschung</h6>
                 </div>
-                <div class="col-6">
-                    @foreach($allResearch as $research)
+                @foreach($allResearch as $research)
+                    <div class="col-4">
+                        <span>{{$research->research_name}}</span>
+                    </div>
+                    <div class="col-4">
                         <div class="form-group">
-                            <label for="research-att-{{$research->id}}">{{$research->research_name}}</label>
                             <input value="0" class="form-control" id="research-att-{{$research->id}}" type="number" min="0" step="1" name="sim[att][research][{{$research->id}}]"/>
                         </div>
-                    @endforeach
-                </div>
-                <div class="col-6">
-                    @foreach($allResearch as $research)
+                    </div>
+                    <div class="col-4">
                         <div class="form-group">
-                            <label for="research-def-{{$research->id}}">{{$research->research_name}}</label>
                             <input value="0" class="form-control" id="research-def-{{$research->id}}" type="number" min="0" step="1" name="sim[def][research][{{$research->id}}]"/>
                         </div>
-                    @endforeach
-                </div>
+                    </div>
+                @endforeach
                 <div class="col-12">
                     <input type="submit" value="Simulieren" class="btn btn-primary">
                 </div>

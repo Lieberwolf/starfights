@@ -39,6 +39,27 @@ class SimulationController extends Controller
         $report = session('report');
         $request->session()->forget('report');
 
+        if($report)
+        {
+            foreach($allShips as $key => $ship)
+            {
+                foreach($report[0]["ship"] as $attackerShip)
+                {
+                    if($ship->id == $attackerShip->id)
+                    {
+                        $allShips[$key]->attackerAmount = $attackerShip->amount;
+                    }
+                }
+                foreach($report[1]["ship"] as $defenderShip)
+                {
+                    if($ship->id == $defenderShip->id)
+                    {
+                        $allShips[$key]->defenderAmount = $defenderShip->amount;
+                    }
+                }
+            }
+        }
+
         if(count($planetaryResources)>0)
         {
             return view('simulation.show', [

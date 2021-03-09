@@ -1294,7 +1294,7 @@ class Controller extends BaseController
                                 }
                                 break;
                             case 7:
-                                dd($fleet);
+                                $fleet->delete();
                                 break;
                         }
                     }
