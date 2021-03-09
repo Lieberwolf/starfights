@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Building;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -65,14 +66,17 @@ class ApiController extends Controller
                 }
                 break;
 
-            case 'getBuilding':
-                if($param1 != false)
+            case 'getBuildings':
+                if($param1 != false && $param2 != false)
                 {
-                    return DB::table('buildings')->where('id', $param1)->get();
+                    $buildingListRaw = Building::getAllAvailableBuildings($param1, $param2);
+                    $buildingList = Controller::factorizeBuildings($buildingListRaw);
+
+                    return $buildingList;
                 } else {
                     // required param not send
                     return [
-                        'error' => 'getBuilding requires a building_id'
+                        'error' => 'getBuildings requires a planet_id and user_id'
                     ];
                 }
                 break;
