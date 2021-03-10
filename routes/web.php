@@ -53,6 +53,7 @@ Route::get('/mission', [App\Http\Controllers\MissionController::class, 'index'])
 Route::get('/mission/{planet_id}', [App\Http\Controllers\MissionController::class, 'show']);
 Route::post('/mission/{planet_id}/start', [App\Http\Controllers\MissionController::class, 'start']);
 Route::post('/mission/{planet_id}/liftoff', [App\Http\Controllers\MissionController::class, 'liftoff']);
+Route::get('/mission/{planet_id}/withdata/{targetGalaxy}/{targetSystem}/{targetPlanet}', [App\Http\Controllers\MissionController::class, 'withdata']);
 
 // fleetlist
 Route::get('/fleetlist', [App\Http\Controllers\FleetlistController::class, 'index']);

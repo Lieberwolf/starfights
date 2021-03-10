@@ -140,6 +140,17 @@ class ApiController extends Controller
                     ];
                 }
                 break;
+
+            case 'getReport':
+                if($param1 != false)
+                {
+                    return DB::table('reports')->where('link', $param1)->get();
+                } else {
+                    return [
+                        'error' => 'getReport requires an id'
+                    ];
+                }
+                break;
         }
     }
 }

@@ -27,12 +27,13 @@
                 <table style="width: 100%;">
                     <thead>
                     <tr>
-                        <th colspan="3" class="title-line">System {{request()->galaxy . ':' . request()->system}}</th>
+                        <th colspan="4" class="title-line">System {{request()->galaxy . ':' . request()->system}}</th>
                     </tr>
                     <tr>
                         <th class="title-line">Nr.</th>
                         <th class="title-line">Planeten</th>
                         <th class="title-line">Punkte</th>
+                        <th class="title-line">Aktionen</th>
                     </tr>
                     </thead>
                     @foreach($planets as $planet)
@@ -41,10 +42,16 @@
                                 <td class="title-line">{{$planet->planet}}</td>
                                 <td class="sub-line">--</td>
                                 <td class="sub-line">0</td>
+                                <td class="sub-line"></td>
                             @else
                                 <td class="title-line">{{$planet->planet}}</td>
                                 <td class="sub-line">{{$planet->planet_name != null ? $planet->planet_name : 'Unbenannter Planet'}} <a href="/profile/{{$planet->user_id}}">{{$planet->username}}</a></td>
                                 <td class="sub-line">{{number_format($planet->points, 0, ',', '.')}}</td>
+                                <td class="sub-line">
+                                    @if($activePlanet != $planet->id)
+                                        <a href="/mission/{{$activePlanet}}/withdata/{{$planet->galaxy}}/{{$planet->system}}/{{$planet->planet}}">[M]</a>
+                                    @endif
+                                </td>
                             @endif
                         </tr>
                     @endforeach

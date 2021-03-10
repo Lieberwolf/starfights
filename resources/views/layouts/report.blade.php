@@ -14,20 +14,24 @@
             <div class="col-6 sub-line">{{date('d.m.Y H:i:s', $report->created_at->timestamp)}}</div>
             @if($report->defender_id != null && $report->defender_id != 0)
                 <div class="col-12 title-line">Schiffe am Planeten</div>
-                @if($report->defender_fleet == null)
-                    <div class="col-12 sub-line">- keine -</div>
-                @else
-                    @foreach($report->defender_fleet as $ship)
-                        @if($ship->amount > 0)
-                            <div class="col-6 sub-line">
-                                {{$ship->ship_name}}
-                            </div>
-                            <div class="col-6 sub-line">
-                                {{number_format(floor($ship->amount), 0, ',', '.')}}
-                            </div>
+                <div class="col-12 report-ship-wrapper">
+                    <div class="row">
+                        @if($report->defender_fleet == null)
+                            <div class="col-12 sub-line">- keine -</div>
+                        @else
+                            @foreach($report->defender_fleet as $ship)
+                                @if($ship->amount > 0)
+                                    <div class="col-6 sub-line">
+                                        {{$ship->ship_name}}
+                                    </div>
+                                    <div class="col-6 sub-line">
+                                        {{number_format(floor($ship->amount), 0, ',', '.')}}
+                                    </div>
+                                @endif
+                            @endforeach
                         @endif
-                    @endforeach
-                @endif
+                    </div>
+                </div>
                 <div class="col-12 title-line">Verteidigungsanlagen</div>
                 @if($report->defender_defense == null)
                     <div class="col-12 sub-line">- keine -</div>
@@ -130,20 +134,24 @@
             <div class="col-6 sub-line">{{date('d.m.Y H:i:s', $report->created_at->timestamp)}}</div>
 
             <div class="col-12 title-line">Schiffe am Planeten</div>
-            @if($report->defender_fleet == null)
-                <div class="col-12 sub-line">- keine -</div>
-            @else
-                @foreach($report->defender_fleet as $ship)
-                    @if($ship->amount > 0)
-                        <div class="col-6 sub-line">
-                            {{$ship->ship_name}}
-                        </div>
-                        <div class="col-6 sub-line">
-                            {{number_format(floor($ship->amount), 0, ',', '.')}}
-                        </div>
-                    @endif
-                @endforeach
-            @endif
+                <div class="col-12 report-ship-wrapper">
+                    <div class="row">
+                        @if($report->defender_fleet == null)
+                            <div class="col-12 sub-line">- keine -</div>
+                        @else
+                            @foreach($report->defender_fleet as $ship)
+                                @if($ship->amount > 0)
+                                    <div class="col-6 sub-line">
+                                        {{$ship->ship_name}}
+                                    </div>
+                                    <div class="col-6 sub-line">
+                                        {{number_format(floor($ship->amount), 0, ',', '.')}}
+                                    </div>
+                                @endif
+                            @endforeach
+                        @endif
+                    </div>
+                </div>
             <div class="col-12 title-line">Verteidigungsanlagen</div>
             @if($report->defender_defense == null)
                 <div class="col-12 sub-line">- keine -</div>

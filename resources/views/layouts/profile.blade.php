@@ -22,7 +22,11 @@
                     </td>
                     <td class="sub-line">{{$planet->data->planet_name != null ? $planet->data->planet_name : 'Unbenannter Planet'}}</td>
                     <td class="sub-line">{{number_format($planet->points, 0, ',', '.')}}</td>
-                    <td class="sub-line"></td>
+                    <td class="sub-line">
+                        @if($activePlanet != $planet->id)
+                            <a href="/mission/{{$activePlanet}}/withdata/{{$planet->galaxy}}/{{$planet->system}}/{{$planet->planet}}">[M]</a>
+                        @endif
+                    </td>
                 </tr>
             @endforeach
             </tbody>

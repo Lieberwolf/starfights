@@ -9,6 +9,7 @@ use App\Models\Planet as Planet;
 use App\Models\Fleet as Fleet;
 use App\Models\Ship as Ship;
 use App\Models\Research as Research;
+use mysql_xdevapi\Session;
 
 class MissionController extends Controller
 {
@@ -25,7 +26,7 @@ class MissionController extends Controller
         return redirect('mission/' . $start_planet[0]->start_planet);
     }
 
-    public function show($planet_id)
+    public function show(Request $request, $planet_id)
     {
         // update session with new planet id
         session(['default_planet' => $planet_id]);
@@ -36,6 +37,13 @@ class MissionController extends Controller
         Controller::checkShipProcesses($allUserPlanets);
         $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
         $shipsAtPlanet = Fleet::getShipsAtPlanet($planet_id);
+        $target = session('target');
+
+        if($target)
+        {
+            $request->session()->forget('target');
+        }
+
         if($shipsAtPlanet) {
             $shipsAtPlanet->ship_types = json_decode($shipsAtPlanet->ship_types);
         } else {
@@ -51,6 +59,7 @@ class MissionController extends Controller
                 'allUserPlanets' => $allUserPlanets,
                 'activePlanet' => $planet_id,
                 'shipsAtPlanet' => $shipsAtPlanet,
+                'target' => $target,
             ]);
         } else {
             return view('error.index');
@@ -516,6 +525,16 @@ class MissionController extends Controller
             ]);
 
             return redirect('/overview/' . $planet_id);
+        }
+    }
+
+    public function withdata($planet_id, $targetGalaxy = false, $targetSystem = false, $targetPlanet = false)
+    {
+        if($targetGalaxy == false || $targetSystem == false || $targetPlanet == false)
+        {
+            return redirect('/mission/' . $planet_id);
+        } else {
+            return redirect('/mission/' . $planet_id)->with('target', [$targetGalaxy, $targetSystem, $targetPlanet]);
         }
     }
 }
