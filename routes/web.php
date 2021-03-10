@@ -124,6 +124,11 @@ Route::get('/details/{planet_id}', [App\Http\Controllers\DetailsController::clas
 Route::post('/details/{planet_id}/name', [App\Http\Controllers\DetailsController::class, 'name']);
 Route::post('/details/{planet_id}/image', [App\Http\Controllers\DetailsController::class, 'image']);
 
+// notice
+Route::get('/notice', [App\Http\Controllers\NoticeController::class, 'index']);
+Route::get('/notice/{planet_id}', [App\Http\Controllers\NoticeController::class, 'show']);
+Route::post('/notice/{planet_id}/edit', [App\Http\Controllers\NoticeController::class, 'edit']);
+
 /**
  * Admin
  */

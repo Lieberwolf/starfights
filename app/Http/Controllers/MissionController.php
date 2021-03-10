@@ -9,7 +9,6 @@ use App\Models\Planet as Planet;
 use App\Models\Fleet as Fleet;
 use App\Models\Ship as Ship;
 use App\Models\Research as Research;
-use mysql_xdevapi\Session;
 
 class MissionController extends Controller
 {

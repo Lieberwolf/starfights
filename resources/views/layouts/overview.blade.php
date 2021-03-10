@@ -14,7 +14,7 @@
                     <a href="">Schiffsübersicht</a>
                 </div>
                 <div class="col-12 col-md-2">
-                    <a href="">Notizblock</a>
+                    <a href="/notice/{{$activePlanet}}">Notizblock</a>
                 </div>
                 <div class="col-6 col-md-2">
                     <a href="">Kampfstatistik</a>
