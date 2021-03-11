@@ -199,6 +199,27 @@ class Planet extends Model
             $lastStand->h2 = $storage->h2;
         }
 
+        if($lastStand->fe < 0)
+        {
+            $lastStand->fe = 0;
+        }
+        if($lastStand->lut < 0)
+        {
+            $lastStand->lut = 0;
+        }
+        if($lastStand->cry < 0)
+        {
+            $lastStand->cry = 0;
+        }
+        if($lastStand->h2o < 0)
+        {
+            $lastStand->h2o = 0;
+        }
+        if($lastStand->h2 < 0)
+        {
+            $lastStand->h2 = 0;
+        }
+
         $lastStand->save();
 
         $return[0] = DB::table('planets')->where('id', $planet_id)->where('user_id', $user_id)->get(['fe', 'lut', 'cry', 'h2o', 'h2', 'rate_fe', 'rate_lut', 'rate_cry', 'rate_h2o', 'rate_h2']);
