@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Building;
+use App\Models\Ship;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -150,6 +151,10 @@ class ApiController extends Controller
                         'error' => 'getReport requires an id'
                     ];
                 }
+                break;
+
+            case 'getAllShips':
+                return Ship::all();
                 break;
         }
     }
