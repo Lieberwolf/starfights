@@ -216,41 +216,45 @@
                 Flotten
             </div>
 
-            <div class="col-6">
-                <div class="row">
-                    @if(count($report->attacker_fleet) > 0)
-                        <div class="col-4">Schiffstyp</div>
-                        <div class="col-4">Eingesetzt</div>
-                        <div class="col-4">Verbleibend</div>
-                        @foreach($report->attacker_fleet as $ship)
-                            <div class="col-4">{{$ship->ship_name}}</div>
-                            <div class="col-4">{{$ship->amount}}</div>
-                            <div class="col-4">{{$ship->newAmount}}</div>
-                        @endforeach
-                    @endif
-                </div>
-            </div>
-
-            <div class="col-6">
-                <div class="row">
-                    @if($report->defender_fleet)
-                        @if(count($report->defender_fleet) > 0)
+                <div class="col-6">
+                    <div class="row">
+                        @if(count($report->attacker_fleet) > 0)
                             <div class="col-4">Schiffstyp</div>
                             <div class="col-4">Eingesetzt</div>
                             <div class="col-4">Verbleibend</div>
-                            @foreach($report->defender_fleet as $ship)
-                                <div class="col-4">{{$ship->ship_name}}</div>
-                                <div class="col-4">{{$ship->amount}}</div>
-                                <div class="col-4">{{$ship->newAmount}}</div>
+                            @foreach($report->attacker_fleet as $ship)
+                                @if($ship->amount > 0)
+                                    <div class="col-4">{{$ship->ship_name}}</div>
+                                    <div class="col-4">{{$ship->amount}}</div>
+                                    <div class="col-4">{{$ship->newAmount}}</div>
+                                @endif
                             @endforeach
                         @endif
-                    @else
-                        <div class="col-12">
-                            - keine -
-                        </div>
-                    @endif
+                    </div>
                 </div>
-            </div>
+
+                <div class="col-6">
+                    <div class="row">
+                        @if($report->defender_fleet)
+                            @if(count($report->defender_fleet) > 0)
+                                <div class="col-4">Schiffstyp</div>
+                                <div class="col-4">Eingesetzt</div>
+                                <div class="col-4">Verbleibend</div>
+                                @foreach($report->defender_fleet as $ship)
+                                    @if($ship->amount > 0)
+                                        <div class="col-4">{{$ship->ship_name}}</div>
+                                        <div class="col-4">{{$ship->amount}}</div>
+                                        <div class="col-4">{{$ship->newAmount}}</div>
+                                    @endif
+                                @endforeach
+                            @endif
+                        @else
+                            <div class="col-12">
+                                - keine -
+                            </div>
+                        @endif
+                    </div>
+                </div>
 
             <div class="col-12">
                 Rohstoffe
@@ -285,6 +289,69 @@
                     <span>- keine -</span>
                 </div>
             @endif
+        @endif
+        @if($report->report_type == 4)
+            <div class="col-12 title-line">Schlachtresultate</div>
+
+            <div class="col-6 sub-line">Zeitpunkt</div>
+            <div class="col-6 sub-line">{{date('d.m.Y H:i:s', $report->created_at->timestamp)}}</div>
+
+            <div class="col-6 title-line">Angreifer</div>
+            <div class="col-6 title-line">Verteidiger</div>
+
+            <div class="col-6 sub-line">{{$report->attacker_name->username}}</div>
+            <div class="col-6 sub-line">{{$report->defender_name->username}}</div>
+
+            <div class="col-6 sub-line">{{$report->attacker_planet->galaxy .':'. $report->attacker_planet->system . ':' . $report->attacker_planet->planet}}</div>
+            <div class="col-6 sub-line">{{$report->defender_planet->galaxy .':'. $report->defender_planet->system . ':' . $report->defender_planet->planet}}</div>
+
+            <div class="col-12 title-line">
+                Flotten
+            </div>
+
+            <div class="col-6">
+                <div class="row">
+                    @if(count($report->attacker_fleet) > 0)
+                        <div class="col-4 sub-line">Schiffstyp</div>
+                        <div class="col-4 sub-line">Eingesetzt</div>
+                        <div class="col-4 sub-line">Verbleibend</div>
+                        @foreach($report->attacker_fleet as $ship)
+                            @if($ship->amount > 0)
+                                <div class="col-4 sub-line">{{$ship->ship_name}}</div>
+                                <div class="col-4 sub-line">{{$ship->amount}}</div>
+                                <div class="col-4 sub-line">{{$ship->newAmount}}</div>
+                            @endif
+                        @endforeach
+                    @endif
+                </div>
+            </div>
+
+            <div class="col-6">
+                <div class="row">
+                    @if($report->defender_fleet)
+                        @if(count($report->defender_fleet) > 0)
+                            <div class="col-4 sub-line">Schiffstyp</div>
+                            <div class="col-4 sub-line">Eingesetzt</div>
+                            <div class="col-4 sub-line">Verbleibend</div>
+                            @foreach($report->defender_fleet as $ship)
+                                @if($ship->amount > 0)
+                                    <div class="col-4 sub-line">{{$ship->ship_name}}</div>
+                                    <div class="col-4 sub-line">{{$ship->amount}}</div>
+                                    <div class="col-4 sub-line">{{$ship->newAmount}}</div>
+                                @endif
+                            @endforeach
+                        @endif
+                    @else
+                        <div class="col-12 sub-line">
+                            - keine -
+                        </div>
+                    @endif
+                </div>
+            </div>
+
+            <div class="col-12 alert-danger">
+                Der Angreifer hat den Planeten eingenommen!
+            </div>
         @endif
         </div>
     </div>

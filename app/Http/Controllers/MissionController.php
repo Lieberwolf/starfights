@@ -134,6 +134,8 @@ class MissionController extends Controller
             $allowed_missions = [4];
         }
 
+        $targetProfile = Profile::where('user_id', $target->user_id)->first(['start_planet']);
+
         // check if target is source
         if($target->id == $planet_id)
         {
@@ -261,6 +263,14 @@ class MissionController extends Controller
                             }
                         }
 
+                    }
+                    // it is not allowed to conquer main planets
+                    if($targetProfile->start_planet == $target->id)
+                    {
+                        $pos = array_search(7, $allowed_missions);
+                        if($pos != false) {
+                            unset($allowed_missions[$pos]);
+                        }
                     }
 
                     if(count($allowed_missions) == 0) {
