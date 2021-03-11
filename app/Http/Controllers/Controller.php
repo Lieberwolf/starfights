@@ -437,6 +437,10 @@ class Controller extends BaseController
                 {
                     if(strtotime($fleet->arrival) <= now()->timestamp && $fleet->arrived == false)
                     {
+                        // get defenders ship process
+                        $targetPlanet = Planet::getOneById($fleet->target);
+                        $planet_ids = Planet::getAllUserPlanets($targetPlanet->user_id);
+                        self::checkShipProcesses($planet_ids);
                         // ships are at target
                         switch ($fleet->mission)
                         {
@@ -948,11 +952,6 @@ class Controller extends BaseController
                                 $attacker["ship"] = json_decode($fleet->ship_types);
                                 $attacker["home"] = Planet::getOneById($fleet->planet_id);
                                 $attacker["research"] = Research::getUsersKnowledge($attacker["home"]->user_id);
-
-                                // get defenders ship process
-                                $targetPlanet = Planet::getOneById($fleet->target);
-                                $planet_ids = Planet::getAllUserPlanets($targetPlanet->user_id);
-                                self::checkShipProcesses($planet_ids);
 
                                 $defender = Fleet::getShipsAtPlanet($fleet->target);
                                 if($defender) {
