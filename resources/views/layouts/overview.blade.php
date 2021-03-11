@@ -57,7 +57,7 @@
                 @foreach($incomingFleet as $fleet)
                     @if(strtotime($fleet->arrival) > now()->timestamp)
                         <div class="col-3 text-right {{($fleet->mission == 2 ? 'transport' : ($fleet->mission == 3 ? 'espionage' : ($fleet->mission == 4 ? 'espionage' : ($fleet->mission == 6 ? 'attack' : ($fleet->mission == 7 ? 'invasion' : '')))))}}">
-                            <span class="js-add-countdown" data-seconds-to-count="{{strtotime($fleet->arrival) - now()->timestamp}}"></span> - [{{date('H:i:s', strtotime($fleet->arrival) - now()->timestamp)}}]
+                            <span class="js-add-countdown" data-seconds-to-count="{{strtotime($fleet->arrival) - now()->timestamp}}"></span> - [{{date('H:i:s', strtotime($fleet->arrival))}}]
                         </div>
                         <div class="col-9 {{($fleet->mission == 2 ? 'transport' : ($fleet->mission == 3 ? 'espionage' : ($fleet->mission == 4 ? 'espionage' : ($fleet->mission == 6 ? 'attack' : ($fleet->mission == 7 ? 'invasion' : '')))))}}">
                             <span>Flotte von {{$fleet->galaxy}}:{{$fleet->system}}:{{$fleet->planet}} erreicht {{$fleet->targetPlanet->galaxy}}:{{$fleet->targetPlanet->system}}:{{$fleet->targetPlanet->planet}} ({{$fleet->mission == 1 ? 'Stationierung' : ($fleet->mission == 2 ? 'Transport' : ($fleet->mission == 3 ? 'Spionage' : ($fleet->mission == 4 ? 'Delta Scan' : ($fleet->mission == 5 ? 'Kolonisierung' : ($fleet->mission == 6 ? 'Angriff' : ($fleet->mission == 7 ? 'Invasion' : ''))))))}})</span>
@@ -71,7 +71,7 @@
                 @foreach($fleets as $fleet)
                     @if(strtotime($fleet->arrival) > now()->timestamp)
                         <div class="col-3 text-right" style="background-color:#102f4c;">
-                            <span class="js-add-countdown" data-seconds-to-count="{{strtotime($fleet->arrival) - now()->timestamp}}"></span> - [{{date('H:i:s', strtotime($fleet->arrival) - now()->timestamp)}}]
+                            <span class="js-add-countdown" data-seconds-to-count="{{strtotime($fleet->arrival) - now()->timestamp}}"></span> - [{{date('H:i:s', strtotime($fleet->arrival))}}]
                         </div>
                         <div class="col-9" style="background-color:#102f4c;">
                             <span>Flotte von {{$fleet->readableSource->galaxy}}:{{$fleet->readableSource->system}}:{{$fleet->readableSource->planet}} erreicht {{$fleet->readableTarget->galaxy}}:{{$fleet->readableTarget->system}}:{{$fleet->readableTarget->planet}} ({{$fleet->mission == 1 ? 'Stationierung' : ($fleet->mission == 2 ? 'Transport' : ($fleet->mission == 3 ? 'Spionage' : ($fleet->mission == 4 ? 'Delta Scan' : ($fleet->mission == 5 ? 'Kolonisierung' : ($fleet->mission == 6 ? 'Angriff' : ($fleet->mission == 7 ? 'Invasion' : ''))))))}})</span>
@@ -79,7 +79,7 @@
                     @endif
                     @if($fleet->mission != 1 && $fleet->mission != 3 && $fleet->mission != 5)
                         <div class="col-3 text-right" style="background-color:#001e3b;">
-                            <span class="js-add-countdown" data-seconds-to-count="{{strtotime($fleet->arrival) + (strtotime($fleet->arrival) - strtotime($fleet->departure)) - now()->timestamp}}"></span> - [{{date('H:i:s', strtotime($fleet->arrival) + (strtotime($fleet->arrival) - strtotime($fleet->departure)) - now()->timestamp)}}]
+                            <span class="js-add-countdown" data-seconds-to-count="{{strtotime($fleet->arrival) + (strtotime($fleet->arrival) - strtotime($fleet->departure)) - now()->timestamp}}"></span> - [{{date('H:i:s', strtotime($fleet->arrival) + (strtotime($fleet->arrival) - strtotime($fleet->departure)))}}]
                         </div>
                         <div class="col-9" style="background-color:#001e3b;">
                             <span>Flotte von {{$fleet->readableSource->galaxy}}:{{$fleet->readableSource->system}}:{{$fleet->readableSource->planet}} erreicht {{$fleet->readableTarget->galaxy}}:{{$fleet->readableTarget->system}}:{{$fleet->readableTarget->planet}} ({{$fleet->mission == 1 ? 'Stationierung' : ($fleet->mission == 2 ? 'Transport' : ($fleet->mission == 3 ? 'Spionage' : ($fleet->mission == 4 ? 'Delta Scan' : ($fleet->mission == 5 ? 'Kolonisierung' : ($fleet->mission == 6 ? 'Angriff' : ($fleet->mission == 7 ? 'Invasion' : ''))))))}}) [Rückkehr]</span>
