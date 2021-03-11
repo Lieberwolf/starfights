@@ -57,11 +57,11 @@
                         </select>
                     </div>
                     @if($shipsAtPlanet)
-                        @foreach($shipsAtPlanet->ship_types as $ship)
+                        @foreach($shipsAtPlanet->ship_types as $key => $ship)
                             @if($ship->amount > 0)
-                                <label class="col-12 col-md-3 offset-md-6 mb-1" for="fleet-{{$ship->ship_id}}">{{$ship->ship_name}} (max.: {{$ship->amount}})</label>
+                                <label class="col-12 col-md-3 offset-md-6 mb-1" for="fleet-{{$ship->ship_id}}">{{$ship->ship_name}} <a class="js-add-to-field">(max.: <span>{{$ship->amount}}</span>)</a></label>
                                 <div class=" col-12 col-md-3 mb-1">
-                                    <input id="fleet-{{$ship->ship_id}}" name="fleet[{{$ship->ship_id}}]" type="number" min="0" step="1" max="{{$ship->amount}}" class="form-control" placeholder="{{$ship->ship_name}}"/>
+                                    <input datat-ship-id="{{$ship->ship_id}}" data-ship-name="{{$ship->ship_name}}" id="fleet-{{$ship->ship_id}}" name="fleet[{{$ship->ship_id}}]" type="number" min="0" step="1" max="{{$ship->amount}}" class="form-control" placeholder="{{$ship->ship_name}}"/>
                                 </div>
                             @endif
                         @endforeach

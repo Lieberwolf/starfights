@@ -2,7 +2,8 @@ require('./bootstrap');
 
 var $select = $('.js-planet-select'),
     $planetBefore = $('.js-trigger-before'),
-    $planetNext = $('.js-trigger-next');
+    $planetNext = $('.js-trigger-next'),
+    $addToField = $('.js-add-to-field');
 
 $select.attr('data-url', window.location.pathname.split('/')[0]);
 
@@ -20,6 +21,14 @@ $planetNext.on('click touch', function() {
     } else {
         window.location.href = $select.find('option').first().val();
     }
+});
+
+$addToField.on('click touch', function() {
+    var targetId = $(this).parent().attr('for'),
+        targetVal = $(this).find('span').text(),
+        $target = $('#' + targetId);
+
+    $target.val(targetVal);
 });
 
 
