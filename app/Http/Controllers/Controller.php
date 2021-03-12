@@ -443,8 +443,11 @@ class Controller extends BaseController
                     {
                         // get defenders ship process
                         $targetPlanet = Planet::getOneById($fleet->target);
-                        $planet_ids = Planet::getAllUserPlanets($targetPlanet->user_id);
-                        self::checkShipProcesses($planet_ids);
+                        if($targetPlanet && $targetPlanet->user_id != null)
+                        {
+                           $planet_ids = Planet::getAllUserPlanets($targetPlanet->user_id);
+                            self::checkShipProcesses($planet_ids); 
+                        }
                         // ships are at target
                         switch ($fleet->mission)
                         {

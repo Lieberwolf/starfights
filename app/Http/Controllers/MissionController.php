@@ -265,11 +265,14 @@ class MissionController extends Controller
 
                     }
                     // it is not allowed to conquer main planets
-                    if($targetProfile->start_planet == $target->id)
+                    if($targetProfile)
                     {
-                        $pos = array_search(7, $allowed_missions);
-                        if($pos != false) {
-                            unset($allowed_missions[$pos]);
+                        if($targetProfile->start_planet == $target->id)
+                        {
+                            $pos = array_search(7, $allowed_missions);
+                            if($pos != false) {
+                                unset($allowed_missions[$pos]);
+                            }
                         }
                     }
 
