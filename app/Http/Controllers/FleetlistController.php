@@ -50,4 +50,16 @@ class FleetlistController extends Controller
             return view('error.index');
         }
     }
+
+    public function edit($planet_id, $fleet_id)
+    {
+        $fleet = Fleet::where('id', $fleet_id)->where('planet_id', $planet_id)->first();
+        $runningSeconds = now()->timestamp - strtotime($fleet->departure);
+
+        $fleet->arrival = date('Y-m-d H:i:s',strtotime($fleet->departure) + $runningSeconds);
+        $fleet->mission = 0;
+        $fleet->save();
+
+        return redirect('/fleetlist/' . $planet_id);
+    }
 }

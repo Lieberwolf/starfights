@@ -77,13 +77,22 @@
                             <span>Flotte von {{$fleet->readableSource->galaxy}}:{{$fleet->readableSource->system}}:{{$fleet->readableSource->planet}} erreicht {{$fleet->readableTarget->galaxy}}:{{$fleet->readableTarget->system}}:{{$fleet->readableTarget->planet}} ({{$fleet->mission == 1 ? 'Stationierung' : ($fleet->mission == 2 ? 'Transport' : ($fleet->mission == 3 ? 'Spionage' : ($fleet->mission == 4 ? 'Delta Scan' : ($fleet->mission == 5 ? 'Kolonisierung' : ($fleet->mission == 6 ? 'Angriff' : ($fleet->mission == 7 ? 'Invasion' : ''))))))}})</span>
                         </div>
                     @endif
-                    @if($fleet->mission != 1 && $fleet->mission != 3 && $fleet->mission != 5)
+                    @if($fleet->mission == 0)
                         <div class="col-3 text-right" style="background-color:#001e3b;">
                             <span class="js-add-countdown" data-seconds-to-count="{{strtotime($fleet->arrival) + (strtotime($fleet->arrival) - strtotime($fleet->departure)) - now()->timestamp}}"></span> - [{{date('H:i:s', strtotime($fleet->arrival) + (strtotime($fleet->arrival) - strtotime($fleet->departure)))}}]
                         </div>
                         <div class="col-9" style="background-color:#001e3b;">
-                            <span>Flotte von {{$fleet->readableSource->galaxy}}:{{$fleet->readableSource->system}}:{{$fleet->readableSource->planet}} erreicht {{$fleet->readableTarget->galaxy}}:{{$fleet->readableTarget->system}}:{{$fleet->readableTarget->planet}} ({{$fleet->mission == 1 ? 'Stationierung' : ($fleet->mission == 2 ? 'Transport' : ($fleet->mission == 3 ? 'Spionage' : ($fleet->mission == 4 ? 'Delta Scan' : ($fleet->mission == 5 ? 'Kolonisierung' : ($fleet->mission == 6 ? 'Angriff' : ($fleet->mission == 7 ? 'Invasion' : ''))))))}}) [Rückkehr]</span>
+                            <span>Flotte von {{$fleet->readableSource->galaxy}}:{{$fleet->readableSource->system}}:{{$fleet->readableSource->planet}} kehrt zurück [Mission abgebrochen]</span>
                         </div>
+                    @else
+                        @if($fleet->mission != 1 && $fleet->mission != 3 && $fleet->mission != 5)
+                            <div class="col-3 text-right" style="background-color:#001e3b;">
+                                <span class="js-add-countdown" data-seconds-to-count="{{strtotime($fleet->arrival) + (strtotime($fleet->arrival) - strtotime($fleet->departure)) - now()->timestamp}}"></span> - [{{date('H:i:s', strtotime($fleet->arrival) + (strtotime($fleet->arrival) - strtotime($fleet->departure)))}}]
+                            </div>
+                            <div class="col-9" style="background-color:#001e3b;">
+                                <span>Flotte von {{$fleet->readableSource->galaxy}}:{{$fleet->readableSource->system}}:{{$fleet->readableSource->planet}} erreicht {{$fleet->readableTarget->galaxy}}:{{$fleet->readableTarget->system}}:{{$fleet->readableTarget->planet}} ({{$fleet->mission == 1 ? 'Stationierung' : ($fleet->mission == 2 ? 'Transport' : ($fleet->mission == 3 ? 'Spionage' : ($fleet->mission == 4 ? 'Delta Scan' : ($fleet->mission == 5 ? 'Kolonisierung' : ($fleet->mission == 6 ? 'Angriff' : ($fleet->mission == 7 ? 'Invasion' : ''))))))}}) [Rückkehr]</span>
+                            </div>
+                        @endif
                     @endif
                 @endforeach
             @endforeach

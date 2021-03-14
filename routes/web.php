@@ -58,6 +58,7 @@ Route::get('/mission/{planet_id}/withdata/{targetGalaxy}/{targetSystem}/{targetP
 // fleetlist
 Route::get('/fleetlist', [App\Http\Controllers\FleetlistController::class, 'index']);
 Route::get('/fleetlist/{planet_id}', [App\Http\Controllers\FleetlistController::class, 'show']);
+Route::get('/fleetlist/{planet_id}/edit/{fleet_id}', [App\Http\Controllers\FleetlistController::class, 'edit']);
 
 // resources
 Route::get('/resources', [App\Http\Controllers\ResourcesController::class, 'index']);
