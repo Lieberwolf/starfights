@@ -33,8 +33,7 @@ class ShipyardController extends Controller
 
         $allUserPlanets = Controller::getAllUserPlanets($user_id);
 
-        Controller::checkBuildingProcesses($allUserPlanets);
-        Controller::checkResearchProcesses($allUserPlanets);
+        Controller::checkAllProcesses($allUserPlanets);
         $nextShipIn = Controller::checkShipProcesses($allUserPlanets);
 
         $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);

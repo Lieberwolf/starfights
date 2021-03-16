@@ -30,8 +30,7 @@ class ResearchController extends Controller
         session(['default_planet' => $planet_id]);
         $user_id = Auth::id();
         $allUserPlanets = Controller::getAllUserPlanets($user_id);
-        Controller::checkBuildingProcesses($allUserPlanets);
-        Controller::checkResearchProcesses($allUserPlanets);
+        Controller::checkAllProcesses($allUserPlanets);
         $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
         $planetInformation = Planet::getOneById($planet_id);
         $researchList = Research::getAllAvailableResearches($user_id, $planet_id);

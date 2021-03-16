@@ -32,7 +32,7 @@ class ResourcesController extends Controller
 
         $allUserPlanets = Controller::getAllUserPlanets($user_id);
         $planetInfo = Planet::getOneById($planet_id);
-        Controller::checkBuildingProcesses($allUserPlanets);
+        Controller::checkAllProcesses($allUserPlanets);
         $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
         $stats = Controller::calcResourceRatesForPlanet($planet_id);
         $resourceBuildings = [];

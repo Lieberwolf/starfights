@@ -40,13 +40,13 @@ class ProfileController extends Controller
             // my own profile
             $proof = true;
             $allUserPlanets = Controller::getAllUserPlanets($user_id);
-            Controller::checkBuildingProcesses($allUserPlanets);
+            Controller::checkAllProcesses($allUserPlanets);
             $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
         } else {
             // other ones profile
             $proof = false;
             $allUserPlanets = Controller::getAllUserPlanets(Auth::id());
-            Controller::checkBuildingProcesses($allUserPlanets);
+            Controller::checkAllProcesses($allUserPlanets);
             $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, Auth::id());
         }
 

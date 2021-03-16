@@ -43,7 +43,7 @@ class Controller extends BaseController
         return $planets;
     }
 
-    public function checkBuildingProcesses($planet_ids)
+    public static function checkBuildingProcesses($planet_ids)
     {
         $user_id = Auth::id();
         foreach($planet_ids as $planet_id)
@@ -270,7 +270,7 @@ class Controller extends BaseController
           ->first();
     }
 
-    public function checkResearchProcesses($planet_ids)
+    public static function checkResearchProcesses($planet_ids)
     {
         $user_id = Auth::id();
         foreach($planet_ids as $planet_id)
@@ -332,7 +332,7 @@ class Controller extends BaseController
         }
     }
 
-    public function checkShipProcesses($planet_ids)
+    public static function checkShipProcesses($planet_ids)
     {
         $idList = [];
         foreach($planet_ids as $planet)
@@ -430,7 +430,7 @@ class Controller extends BaseController
         return $buildTimes;
     }
 
-    public function checkTurretProcesses($planet_ids)
+    public static function checkTurretProcesses($planet_ids)
     {
         $idList = [];
         foreach($planet_ids as $planet)
@@ -528,7 +528,7 @@ class Controller extends BaseController
         return $buildTimes;
     }
 
-    public function checkFleetProcesses($planet_ids)
+    public static function checkFleetProcesses($planet_ids)
     {
         $allfleets = Fleet::getFleetsOnMission($planet_ids);
         if($allfleets)
@@ -1936,5 +1936,14 @@ class Controller extends BaseController
         $return->defender = $defender;
 
         return $return;
+    }
+
+    public static function checkAllProcesses($planet_ids)
+    {
+        self::checkBuildingProcesses($planet_ids);
+        self::checkResearchProcesses($planet_ids);
+        self::checkShipProcesses($planet_ids);
+        self::checkTurretProcesses($planet_ids);
+        self::checkFleetProcesses($planet_ids);
     }
 }

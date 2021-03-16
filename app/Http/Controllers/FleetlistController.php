@@ -29,10 +29,7 @@ class FleetlistController extends Controller
         session(['default_planet' => $planet_id]);
         $user_id = Auth::id();
         $allUserPlanets = Controller::getAllUserPlanets($user_id);
-        Controller::checkBuildingProcesses($allUserPlanets);
-        Controller::checkResearchProcesses($allUserPlanets);
-        Controller::checkShipProcesses($allUserPlanets);
-        Controller::checkFleetProcesses($allUserPlanets);
+        Controller::checkAllProcesses($allUserPlanets);
         $fleetsOnMission = Fleet::getFleetsOnMission($allUserPlanets);
         $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
 

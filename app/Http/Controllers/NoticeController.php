@@ -29,7 +29,7 @@ class NoticeController extends Controller
         session(['default_planet' => $planet_id]);
         $user_id = Auth::id();
         $allUserPlanets = Controller::getAllUserPlanets($user_id);
-        Controller::checkBuildingProcesses($allUserPlanets);
+        Controller::checkAllProcesses($allUserPlanets);
         $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
         $notice = DB::table('notices')->where('user_id', $user_id)->first();
 

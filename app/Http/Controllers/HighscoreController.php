@@ -31,7 +31,7 @@ class HighscoreController extends Controller
 
         $user_id = Auth::id();
         $allUserPlanets = Controller::getAllUserPlanets($user_id);
-        Controller::checkBuildingProcesses($allUserPlanets);
+        Controller::checkAllProcesses($allUserPlanets);
         $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
 
         $users = User::getAllUserProfiles();

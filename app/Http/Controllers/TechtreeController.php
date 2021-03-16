@@ -33,7 +33,7 @@ class TechtreeController extends Controller
         session(['default_planet' => $planet_id]);
         $user_id = Auth::id();
         $allUserPlanets = Controller::getAllUserPlanets($user_id);
-        Controller::checkBuildingProcesses($allUserPlanets);
+        Controller::checkAllProcesses($allUserPlanets);
         $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
 
         if(count($planetaryResources)>0)
@@ -55,7 +55,7 @@ class TechtreeController extends Controller
         session(['default_planet' => $planet_id]);
         $user_id = Auth::id();
         $allUserPlanets = Controller::getAllUserPlanets($user_id);
-        Controller::checkBuildingProcesses($allUserPlanets);
+        Controller::checkAllProcesses($allUserPlanets);
         $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
         $allBuildings = Building::all();
         $allResearches = Research::all();
@@ -111,7 +111,7 @@ class TechtreeController extends Controller
         session(['default_planet' => $planet_id]);
         $user_id = Auth::id();
         $allUserPlanets = Controller::getAllUserPlanets($user_id);
-        Controller::checkBuildingProcesses($allUserPlanets);
+        Controller::checkAllProcesses($allUserPlanets);
         $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
         $allBuildings = Building::all();
         $allResearches = Research::all();
@@ -167,7 +167,7 @@ class TechtreeController extends Controller
         session(['default_planet' => $planet_id]);
         $user_id = Auth::id();
         $allUserPlanets = Controller::getAllUserPlanets($user_id);
-        Controller::checkBuildingProcesses($allUserPlanets);
+        Controller::checkAllProcesses($allUserPlanets);
         $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
         $allShips = Ship::all();
         $allBuildings = Building::all();
@@ -224,7 +224,7 @@ class TechtreeController extends Controller
         session(['default_planet' => $planet_id]);
         $user_id = Auth::id();
         $allUserPlanets = Controller::getAllUserPlanets($user_id);
-        Controller::checkBuildingProcesses($allUserPlanets);
+        Controller::checkAllProcesses($allUserPlanets);
         $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
         $allTurrets = Turret::all();
         $allBuildings = Building::all();

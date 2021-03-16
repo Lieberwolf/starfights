@@ -32,7 +32,7 @@ class DatabaseController extends Controller
 
         $allUserPlanets = Controller::getAllUserPlanets($user_id);
 
-        Controller::checkBuildingProcesses($allUserPlanets);
+        Controller::checkAllProcesses($allUserPlanets);
 
         $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
 

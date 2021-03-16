@@ -30,9 +30,7 @@ class DefenseController extends Controller
         session(['default_planet' => $planet_id]);
         $user_id = Auth::id();
         $allUserPlanets = Controller::getAllUserPlanets($user_id);
-        Controller::checkBuildingProcesses($allUserPlanets);
-        Controller::checkResearchProcesses($allUserPlanets);
-        Controller::checkShipProcesses($allUserPlanets);
+        Controller::checkAllProcesses($allUserPlanets);
         $nextTurretIn = Controller::checkTurretProcesses($allUserPlanets);
         $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
         $turretList = Turret::getAllAvailableTurrets($user_id, $planet_id);

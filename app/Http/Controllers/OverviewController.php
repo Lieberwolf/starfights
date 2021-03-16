@@ -47,11 +47,7 @@ class OverviewController extends Controller
         $allUserPlanets = Controller::getAllUserPlanets($user_id);
 
         // first of all check processes
-        Controller::checkBuildingProcesses($allUserPlanets);
-        Controller::checkResearchProcesses($allUserPlanets);
-        Controller::checkShipProcesses($allUserPlanets);
-        Controller::checkFleetProcesses($allUserPlanets);
-        Controller::checkTurretProcesses($allUserPlanets);
+        Controller::checkAllProcesses($allUserPlanets);
 
         $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
 
