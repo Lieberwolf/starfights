@@ -9,6 +9,7 @@ use App\Models\Profile as Profile;
 use App\Models\Planet as Planet;
 use App\Models\Messages as Messages;
 use App\Models\Fleet as Fleet;
+use App\Models\Defense as Defense;
 use Illuminate\Support\Arr;
 
 class OverviewController extends Controller
@@ -50,7 +51,7 @@ class OverviewController extends Controller
         Controller::checkResearchProcesses($allUserPlanets);
         Controller::checkShipProcesses($allUserPlanets);
         Controller::checkFleetProcesses($allUserPlanets);
-        //Controller::checkDefenseProcesses($planet_id);
+        Controller::checkTurretProcesses($allUserPlanets);
 
         $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
 
@@ -60,6 +61,7 @@ class OverviewController extends Controller
         $planetaryResearchProcesses = Planet::getAllPlanetaryResearchProcess($allUserPlanets, $user_id);
 
         $shipsAtPlanet = Fleet::getShipsAtPlanet($planet_id);
+        $turretsAtPlanet = Defense::getTurretsAtPlanet($planet_id);
         $fleetsOnMission = Fleet::getFleetsOnMission($allUserPlanets);
 
         $knowledge = Research::getAllAvailableResearches($user_id, $planet_id);
@@ -149,6 +151,7 @@ class OverviewController extends Controller
                 'allPlanetPoints' => $allPlanetPoints,
                 'allResearchPoints' => $allResearchPoints,
                 'shipsAtPlanet' => $shipsAtPlanet,
+                'turretsAtPlanet' => $turretsAtPlanet,
                 'attackAlert' => $attackAlert,
                 'maxPlanets' => $maxPlanets,
             ]);

@@ -5,7 +5,7 @@
     <form action="/defensedashboard/{{$defense['id']}}/edit" method="post">
         @csrf
 
-        <input value="{{$defense['order']}}" type="number" name="order" placeholder="order"/>
+        <input value="{{$defense['id']}}" type="number" name="order" placeholder="order"/>
         @error('order')
         <span class="invalid-feedback" role="alert">
             <strong>{{ $message }}</strong>
@@ -13,8 +13,8 @@
         @enderror
         <br/>
 
-        <input value="{{$defense['name']}}" type="text" name="name" placeholder="name"/>
-        @error('name')
+        <input value="{{$defense['turret_name']}}" type="text" name="turret_name" placeholder="turret_name"/>
+        @error('turret_name')
         <span class="invalid-feedback" role="alert">
             <strong>{{ $message }}</strong>
         </span>
@@ -23,14 +23,6 @@
 
         <textarea type="text" name="description" placeholder="description">{{$defense['description']}}</textarea>
         @error('description')
-        <span class="invalid-feedback" role="alert">
-            <strong>{{ $message }}</strong>
-        </span>
-        @enderror
-        <br/>
-
-        <input value="{{$defense['speed']}}" type="number" name="speed" placeholder="speed"/>
-        @error('speed')
         <span class="invalid-feedback" role="alert">
             <strong>{{ $message }}</strong>
         </span>
@@ -47,38 +39,6 @@
 
         <input value="{{$defense['defend']}}" type="number" name="defend" placeholder="defend"/>
         @error('defend')
-        <span class="invalid-feedback" role="alert">
-            <strong>{{ $message }}</strong>
-        </span>
-        @enderror
-        <br/>
-
-        <input value="{{$defense['cargo']}}" type="number" name="cargo" placeholder="cargo"/>
-        @error('cargo')
-        <span class="invalid-feedback" role="alert">
-            <strong>{{ $message }}</strong>
-        </span>
-        @enderror
-        <br/>
-
-        <input value="{{$defense['consumption']}}" type="number" name="consumption" placeholder="consumption"/>
-        @error('consumption')
-        <span class="invalid-feedback" role="alert">
-            <strong>{{ $message }}</strong>
-        </span>
-        @enderror
-        <br/>
-
-        <input {{$defense['spy'] == 'on' ? 'checked="checked"' : ''}} type="checkbox" name="spy"/>spy
-        @error('spy')
-        <span class="invalid-feedback" role="alert">
-            <strong>{{ $message }}</strong>
-        </span>
-        @enderror
-        <br/>
-
-        <input {{$defense['stealth'] == 'on' ? 'checked="checked"' : ''}} type="checkbox" name="stealth"/>stealth
-        @error('stealth')
         <span class="invalid-feedback" role="alert">
             <strong>{{ $message }}</strong>
         </span>

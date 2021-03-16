@@ -61,7 +61,7 @@ class UpdateTurretsTableInsertBasicData extends Migration
             ],
             [
                 'turret_name' => 'Flarak',
-                'description' => 'Eine tödliche Flugabwahr Raktenbasis die alles unter Dauerbeschuss nimmt was nicht freundlich gesinnt ist.',
+                'description' => 'Eine tödliche Flugabwahr Raketenbasis die alles unter Dauerbeschuss nimmt was nicht freundlich gesinnt ist.',
                 'attack' => 25000,
                 'defend' => 25000,
                 'fe' => 50000,

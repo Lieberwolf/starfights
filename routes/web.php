@@ -41,6 +41,8 @@ Route::get('/shipyard/{planet_id}/edit', [App\Http\Controllers\ShipyardControlle
 // defense
 Route::get('/defense', [App\Http\Controllers\DefenseController::class, 'index']);
 Route::get('/defense/{planet_id}', [App\Http\Controllers\DefenseController::class, 'show']);
+Route::post('/defense/{planet_id}/build', [App\Http\Controllers\DefenseController::class, 'build']);
+Route::get('/defense/{planet_id}/edit', [App\Http\Controllers\DefenseController::class, 'edit']);
 
 // research
 Route::get('/research', [App\Http\Controllers\ResearchController::class, 'index']);
@@ -89,6 +91,7 @@ Route::get('/techtree/{planet_id}', [App\Http\Controllers\TechtreeController::cl
 Route::get('/techtree/{planet_id}/buildings', [App\Http\Controllers\TechtreeController::class, 'buildings']);
 Route::get('/techtree/{planet_id}/research', [App\Http\Controllers\TechtreeController::class, 'research']);
 Route::get('/techtree/{planet_id}/ships', [App\Http\Controllers\TechtreeController::class, 'ships']);
+Route::get('/techtree/{planet_id}/turrets', [App\Http\Controllers\TechtreeController::class, 'turrets']);
 
 // database
 Route::get('/database', [App\Http\Controllers\DatabaseController::class, 'index']);
@@ -177,6 +180,8 @@ Route::post('/defensedashboard', [App\Http\Controllers\DefenseDashboardControlle
 Route::get('/defensedashboard/create', [App\Http\Controllers\DefenseDashboardController::class, 'create']);
 Route::get('/defensedashboard/{id}', [App\Http\Controllers\DefenseDashboardController::class, 'show']);
 Route::post('/defensedashboard/{id}/edit', [App\Http\Controllers\DefenseDashboardController::class, 'edit']);
+Route::post('/defensedashboard/saveB', [App\Http\Controllers\DefenseDashboardController::class, 'saveB']);
+Route::post('/defensedashboard/saveR', [App\Http\Controllers\DefenseDashboardController::class, 'saveR']);
 
 // Admin Ship Management done
 Route::get('/shipdashboard', [App\Http\Controllers\ShipDashboardController::class, 'index']);

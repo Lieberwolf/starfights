@@ -338,6 +338,14 @@ class Planet extends Model
                      ->first();
     }
 
+    public static function getPlanetaryTurretProcess($planet_id)
+    {
+        return DB::table('turrets_process as tp')
+                     ->where('tp.planet_id', $planet_id)
+                     ->leftJoin('turrets as t', 't.id', '=', 'tp.turret_id')
+                     ->first();
+    }
+
     public static function getPlanetaryResourcesByIds($planet_ids)
     {
         $planets = [];

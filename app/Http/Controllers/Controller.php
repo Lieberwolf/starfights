@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Profile;
 use App\Models\Report;
+use App\Models\Turret;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -17,6 +18,7 @@ use App\Models\Building as Building;
 use App\Models\Research as Research;
 use App\Models\Fleet as Fleet;
 use App\Models\Ship as Ship;
+use App\Models\Defense as Defense;
 use phpDocumentor\Reflection\Types\Null_;
 use Ramsey\Uuid\Uuid;
 
@@ -428,6 +430,104 @@ class Controller extends BaseController
         return $buildTimes;
     }
 
+    public function checkTurretProcesses($planet_ids)
+    {
+        $idList = [];
+        foreach($planet_ids as $planet)
+        {
+            $idList[] = $planet->id;
+        }
+
+        $processes = DB::table('turrets_process AS tp')
+                       ->whereIn('tp.planet_id', $idList)
+                       ->get();
+
+        $buildTimes = [];
+        foreach($processes as $key => $process)
+        {
+            if($process)
+            {
+                if(strtotime($process->finished_at) < now()->timestamp)
+                {
+                    self::addTurretsToDefense($process->planet_id, $process->turret_id, $process->amount_left);
+                    Defense::setEmptyProcessForPlanet($process->planet_id);
+                } else {
+                    if($process->planet_id)
+                        // not finished, how long will it take to finish the NEXT ship?
+                        //how many time is gone since last reload?
+                        $diff = now()->timestamp - strtotime($process->started_at);
+                    $done = floor($diff / $process->buildtime_single);
+                    if($done > 0)
+                    {
+                        self::addTurretsToDefense($process->planet_id, $process->turret_id, $done);
+                        $process->amount_left -= $done;
+                        $process->started_at = strtotime($process->started_at) + ($done * $process->buildtime_single);
+                        $process->buildtime_total -= ($done * $process->buildtime_single);
+                        DB::table('turrets_process AS tp')
+                          ->where('tp.planet_id', $process->planet_id)->update([
+                                'amount_left' => $process->amount_left,
+                                'started_at' => date('Y-m-d H:i:s',$process->started_at)
+                            ]);
+                        $next = strtotime($process->started_at) + $process->buildtime_single - now()->timestamp;
+                        // readable buildtime for FE
+                        $timestamp =  $next;
+                        $suffix = ':';
+
+                        $days = floor(($timestamp / (24*60*60)));
+                        $hours = ($timestamp / (60*60)) % 24;
+                        $minutes = ($timestamp / 60) % 60;
+                        $seconds = ($timestamp / 1) % 60;
+
+                        if($days > 0)
+                        {
+                            $days =  $days < 10 ? '0' . $days . " d, " : $days ." d, ";
+                        } else {
+                            $days = '';
+                        }
+
+                        $hours = $hours < 10 ? '0' . $hours . $suffix : $hours . $suffix;
+                        $minutes = $minutes < 10 ? '0' . $minutes . $suffix : $minutes . $suffix;
+                        $seconds = $seconds < 10 ? '0' . $seconds : $seconds;
+
+                        $bauzeit = $days . $hours . $minutes . $seconds;
+                        $temp = new \stdClass();
+                        $temp->buildtime = $bauzeit;
+                        $temp->planet = $process->planet_id;
+                        $buildTimes[] = $temp;
+                    } else {
+                        $next = strtotime($process->started_at) + $process->buildtime_single - now()->timestamp;
+                        // readable buildtime for FE
+                        $timestamp =  $next;
+                        $suffix = ':';
+
+                        $days = floor(($timestamp / (24*60*60)));
+                        $hours = ($timestamp / (60*60)) % 24;
+                        $minutes = ($timestamp / 60) % 60;
+                        $seconds = ($timestamp / 1) % 60;
+
+                        if($days > 0)
+                        {
+                            $days =  $days < 10 ? '0' . $days . " d, " : $days ." d, ";
+                        } else {
+                            $days = '';
+                        }
+
+                        $hours = $hours < 10 ? '0' . $hours . $suffix : $hours . $suffix;
+                        $minutes = $minutes < 10 ? '0' . $minutes . $suffix : $minutes . $suffix;
+                        $seconds = $seconds < 10 ? '0' . $seconds : $seconds;
+
+                        $bauzeit = $days . $hours . $minutes . $seconds;
+                        $temp = new \stdClass();
+                        $temp->buildtime = $bauzeit;
+                        $temp->planet = $process->planet_id;
+                        $buildTimes[] = $temp;
+                    }
+                }
+            }
+        }
+        return $buildTimes;
+    }
+
     public function checkFleetProcesses($planet_ids)
     {
         $allfleets = Fleet::getFleetsOnMission($planet_ids);
@@ -447,6 +547,7 @@ class Controller extends BaseController
                         {
                            $planet_ids = Planet::getAllUserPlanets($targetPlanet->user_id);
                             self::checkShipProcesses($planet_ids); 
+                            self::checkTurretProcesses($planet_ids);
                         }
                         // ships are at target
                         switch ($fleet->mission)
@@ -602,6 +703,15 @@ class Controller extends BaseController
                                     } else {
                                         $defenderShips = $defenderFleet->ship_types;
                                     }
+
+                                    $defenderTurrets = Defense::getTurretsAtPlanet($fleet->target);
+                                    if($defenderTurrets == null)
+                                    {
+                                        $defenderTurrets = null;
+                                    } else {
+                                        $defenderTurrets = $defenderTurrets->turret_types;
+                                    }
+
                                     $defenderResourcesRaw = Planet::getPlanetaryResourcesByPlanetId($fleet->target, $fleet->readableTarget->user_id);
                                     $defenderResources = $defenderResourcesRaw[0];
 
@@ -620,7 +730,7 @@ class Controller extends BaseController
                                         'defender_id' => $fleet->readableTarget->user_id,
                                         'attacker_fleet' => null,
                                         'defender_fleet' => $defenderShips,
-                                        'defender_defense' => null,
+                                        'defender_defense' => $defenderTurrets,
                                         'resources' => json_encode($resourceJson),
                                         'attacker_planet_id' => $fleet->readableSource->id,
                                         'defender_planet_id' => $fleet->readableTarget->id,
@@ -766,6 +876,15 @@ class Controller extends BaseController
                                         } else {
                                             $defenderShips = $defenderFleet->ship_types;
                                         }
+
+                                        $defenderTurrets = Defense::getTurretsAtPlanet($fleet->target);
+                                        if($defenderTurrets == null)
+                                        {
+                                            $defenderTurrets = null;
+                                        } else {
+                                            $defenderTurrets = $defenderTurrets->turret_types;
+                                        }
+
                                         $defenderResourcesRaw = Planet::getPlanetaryResourcesByPlanetId($fleet->target, $fleet->readableTarget->user_id);
                                         $defenderResources = $defenderResourcesRaw[0];
 
@@ -810,7 +929,7 @@ class Controller extends BaseController
                                             'defender_id' => $fleet->readableTarget->user_id,
                                             'attacker_fleet' => null,
                                             'defender_fleet' => $defenderShips,
-                                            'defender_defense' => null,
+                                            'defender_defense' => $defenderTurrets,
                                             'resources' => json_encode($resourceJson),
                                             'attacker_planet_id' => $fleet->readableSource->id,
                                             'defender_planet_id' => $fleet->readableTarget->id,
@@ -968,7 +1087,7 @@ class Controller extends BaseController
                                     'defender_id' => $fleet->readableTarget->user_id,
                                     'attacker_fleet' => json_encode($attacker["ship"]),
                                     'defender_fleet' => json_encode($defender["ship"]),
-                                    'defender_defense' => null,
+                                    'defender_defense' => json_encode($defender["turrets"]),
                                     'resources' => $temp->cargo,
                                     'attacker_planet_id' => $fleet->readableSource->id,
                                     'defender_planet_id' => $fleet->readableTarget->id,
@@ -1005,8 +1124,28 @@ class Controller extends BaseController
 
                                 // set defender fleet
                                 $defenderList = [];
-                                if($defender["ship"]) {
-                                    foreach ( $defender["ship"] as $key => $defenderShip ) {
+                                $defenderTurretList = [];
+                                if($defender["turrets"])
+                                {
+                                    foreach($defender["turrets"] as $key => $defenderTurret)
+                                    {
+                                        $temp            = new \stdClass();
+                                        $temp->turret_id   = $defenderTurret->turret_id;
+                                        $temp->turret_name = $defenderTurret->turret_name;
+                                        $temp->amount    = $defenderTurret->newAmount;
+                                        $defenderTurretList[]  = $temp;
+                                    }
+                                    $defender->turret_types = json_encode($defenderTurretList);
+                                    Defense::where('planet_id', $fleet->target)->update(['turret_types' => $defender->turret_types]);
+                                    unset($defender["turrets"]);
+                                    unset($defender->turret_types);
+                                }
+
+
+                                if($defender["ship"])
+                                {
+                                    foreach ( $defender["ship"] as $key => $defenderShip )
+                                    {
                                         $temp            = new \stdClass();
                                         $temp->ship_id   = $defenderShip->ship_id;
                                         $temp->ship_name = $defenderShip->ship_name;
@@ -1026,6 +1165,7 @@ class Controller extends BaseController
                                     unset( $defender["survivedDefRatio"] );
                                     $defender->save();
                                 }
+
                                 break;
                             case 7:
                                 $result = self::fightCalculation($fleet);
@@ -1045,7 +1185,7 @@ class Controller extends BaseController
                                         'defender_id' => $fleet->readableTarget->user_id,
                                         'attacker_fleet' => json_encode($attacker["ship"]),
                                         'defender_fleet' => json_encode($defender["ship"]),
-                                        'defender_defense' => null,
+                                        'defender_defense' => json_encode($defender["turrets"]),
                                         'resources' => $temp->cargo,
                                         'attacker_planet_id' => $fleet->readableSource->id,
                                         'defender_planet_id' => $fleet->readableTarget->id,
@@ -1074,6 +1214,14 @@ class Controller extends BaseController
                                     {
                                         $defender->delete();
                                     }
+
+                                    // delete defender defense
+                                    $turrets = Defense::getTurretsAtPlanet($fleet->target);
+                                    if($turrets)
+                                    {
+                                        $turrets->delete();
+                                    }
+
                                     // rewrite user id for planet
                                     $targetPlanet->user_id = $fleet->readableSource->user_id;
                                     $targetPlanet->save();
@@ -1114,7 +1262,7 @@ class Controller extends BaseController
                                         'defender_id' => $fleet->readableTarget->user_id,
                                         'attacker_fleet' => json_encode($attacker["ship"]),
                                         'defender_fleet' => json_encode($defender["ship"]),
-                                        'defender_defense' => null,
+                                        'defender_defense' => json_encode($defender["turrets"]),
                                         'resources' => $temp->cargo,
                                         'attacker_planet_id' => $fleet->readableSource->id,
                                         'defender_planet_id' => $fleet->readableTarget->id,
@@ -1152,6 +1300,23 @@ class Controller extends BaseController
 
                                     // set defender fleet
                                     $defenderList = [];
+                                    $defenderTurretList = [];
+                                    if($defender["turrets"])
+                                    {
+                                        foreach($defender["turrets"] as $key => $defenderTurret)
+                                        {
+                                            $temp            = new \stdClass();
+                                            $temp->turret_id   = $defenderTurret->turret_id;
+                                            $temp->turret_name = $defenderTurret->turret_name;
+                                            $temp->amount    = $defenderTurret->newAmount;
+                                            $defenderTurretList[]  = $temp;
+                                        }
+                                        $defender->turret_types = json_encode($defenderTurretList);
+                                        Defense::where('planet_id', $fleet->target)->update(['turret_types' => $defender->turret_types]);
+                                        unset($defender["turrets"]);
+                                        unset($defender->turret_types);
+                                    }
+
                                     if($defender["ship"]) {
                                         foreach ( $defender["ship"] as $key => $defenderShip ) {
                                             $temp            = new \stdClass();
@@ -1249,6 +1414,36 @@ class Controller extends BaseController
         } else {
             // add new fleet to planet
             $proof = Fleet::setFleetForPlanet($planet_id, $ship_id, $amount);
+            if($proof != false)
+            {
+                return true;
+            }
+        }
+    }
+
+    private static function addTurretsToDefense($planet_id, $turret_id, $amount)
+    {
+        // turret is done, add it to planetary defense
+        $defense = Defense::getTurretsAtPlanet($planet_id);
+        if($defense)
+        {
+            // add to existing defense
+            $turret_types = json_decode($defense->turret_types);
+            foreach($turret_types as $key => $turret_type)
+            {
+                if($turret_type->turret_id == $turret_id)
+                {
+                    $turret_types[$key]->amount += $amount;
+                }
+            }
+
+            $defense->turret_types = json_encode($turret_types);
+            $defense->save();
+            return true;
+
+        } else {
+            // add new Defense to planet
+            $proof = Defense::setDefenseForPlanet($planet_id, $turret_id, $amount);
             if($proof != false)
             {
                 return true;
@@ -1426,6 +1621,8 @@ class Controller extends BaseController
         $attacker["research"] = Research::getUsersKnowledge($attacker["home"]->user_id);
 
         $defender = Fleet::getShipsAtPlanet($fleet->target);
+        $turrets = Defense::getTurretsAtPlanet($fleet->target);
+
         if($defender) {
             $defender["ship"] = json_decode($defender->ship_types);
         } else {
@@ -1585,12 +1782,38 @@ class Controller extends BaseController
                 }
             }
         }
+
+        $turretList = [];
+
+        if($turrets)
+        {
+            $turretAtt = 0;
+            $turretDef = 0;
+
+            $turrets = json_decode($turrets->turret_types);
+
+            foreach($turrets as $turret)
+            {
+                $tempTurret = Turret::getOneById($turret->turret_id)->first();
+                $tempListEntry = new \stdClass();
+                $tempListEntry->turret_id = $turret->turret_id;
+                $tempListEntry->turret_name = $turret->turret_name;
+                $tempListEntry->amount = $turret->amount;
+                $turretList[] = $tempListEntry;
+                $turretAtt += $tempTurret->attack * $turret->amount;
+                $turretDef += $tempTurret->defend * $turret->amount;
+            }
+
+            $defender["final_attack_value"] += $turretAtt;
+            $defender["final_defense_value"] += $turretDef;
+
+        }
+
         $defender["final_attack_value"] += $defender["attack_value"];
         $defender["final_defense_value"] += $defender["defense_value"] + $defender["final_shield_value"];
 
         $defender["final_attack_value"] = floor($defender["final_attack_value"]);
         $defender["final_defense_value"] = floor($defender["final_defense_value"]);
-
 
         $survivedDef = $defender["final_defense_value"] - $attacker["final_attack_value"];
         if($defender["final_defense_value"] > 0 && $survivedDef > 0)
@@ -1630,6 +1853,15 @@ class Controller extends BaseController
             {
                 $defenderShip->newAmount = ceil($defenderShip->amount * ($survivedDefRatio/100));
             }
+        }
+
+        if($turrets) {
+            foreach($turretList as $key => $defenderTurret)
+            {
+                $defenderTurret->newAmount = ceil($defenderTurret->amount * ($survivedDefRatio/100));
+            }
+
+            $defender["turrets"] = $turretList;
         }
 
         // attacker can return? collect resources

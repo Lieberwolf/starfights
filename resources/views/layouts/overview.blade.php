@@ -44,7 +44,16 @@
             <div class="col-12 sub-line">- keine -</div>
         @endif
         <div class="col-12 title-line mt-3">Verteidigungsanlagen</div>
-        <div class="col-12 sub-line">- keine -</div>
+        @if($turretsAtPlanet)
+            @foreach(json_decode($turretsAtPlanet->turret_types) as $turret)
+                @if($turret->amount > 0)
+                    <div class="col-6 sub-line">{{$turret->turret_name}}</div>
+                    <div class="col-6 sub-line">{{number_format($turret->amount, 0, ',', '.')}}</div>
+                @endif
+            @endforeach
+        @else
+            <div class="col-12 sub-line">- keine -</div>
+        @endif
         <div class="col-12 title-line mt-3">Ereignisse</div>
         @if(count($planetaryProcesses) > 0 || $fleetsOnMission)
             <div class="col-3 text-right sub-line">Restzeit - [Uhrzeit]</div>

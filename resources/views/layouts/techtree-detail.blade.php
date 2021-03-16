@@ -16,7 +16,7 @@
                                     <span>{{$entry->ship_name}}</span>
                                 @endif
                                 @if($isDefense)
-                                    <span>{{$entry->defense_name}}</span>
+                                    <span>{{$entry->turret_name}}</span>
                                 @endif
                             </div>
                             <div class="col-6 item-list">

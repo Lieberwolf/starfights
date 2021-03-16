@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Building as Building;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Profile as Profile;
 use App\Models\Planet as Planet;
+use App\Models\Turret as Turret;
 
 class DefenseController extends Controller
 {
@@ -26,16 +28,58 @@ class DefenseController extends Controller
     {
         // update session with new planet id
         session(['default_planet' => $planet_id]);
-
         $user_id = Auth::id();
-
         $allUserPlanets = Controller::getAllUserPlanets($user_id);
-
         Controller::checkBuildingProcesses($allUserPlanets);
-
+        Controller::checkResearchProcesses($allUserPlanets);
+        Controller::checkShipProcesses($allUserPlanets);
+        $nextTurretIn = Controller::checkTurretProcesses($allUserPlanets);
         $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
+        $turretList = Turret::getAllAvailableTurrets($user_id, $planet_id);
 
+        $currentTurrets = Planet::getPlanetaryTurretProcess($planet_id);
 
+        if(is_bool($nextTurretIn) || $nextTurretIn == null || $currentTurrets == null)
+        {
+            $currentTurrets = false;
+        } else {
+            $currentTurrets->nextTurretIn = $nextTurretIn;
+        }
+
+        self::populateBuildtimes($planet_id, $turretList);
+
+        foreach($turretList as $key => $turret)
+        {
+            $maxWithFe = true;
+            $maxWithLut = true;
+            $maxWithCry = true;
+            $maxWithH2o = true;
+            $maxWithH2 = true;
+
+            if($turret->fe > 0)
+            {
+                $maxWithFe = floor($planetaryResources[0][0]->fe / $turret->fe);
+            }
+            if($turret->lut > 0)
+            {
+                $maxWithLut = floor($planetaryResources[0][0]->lut / $turret->lut);
+            }
+            if($turret->cry > 0)
+            {
+                $maxWithCry = floor($planetaryResources[0][0]->cry / $turret->cry);
+            }
+            if($turret->h2o > 0)
+            {
+                $maxWithH2o = floor($planetaryResources[0][0]->h2o / $turret->h2o);
+            }
+            if($turret->h2 > 0)
+            {
+                $maxWithH2 = floor($planetaryResources[0][0]->h2 / $turret->h2);
+            }
+
+            $maxBuildable = min($maxWithFe, $maxWithLut, $maxWithCry, $maxWithH2o, $maxWithH2);
+            $turretList[$key]->max_amount = $maxBuildable;
+        }
 
         if(count($planetaryResources)>0)
         {
@@ -45,9 +89,171 @@ class DefenseController extends Controller
                 'planetaryStorage' => $planetaryResources[1],
                 'allUserPlanets' => $allUserPlanets,
                 'activePlanet' => $planet_id,
+                'turretList' => $turretList,
+                'currentTurrets' => $currentTurrets,
             ]);
         } else {
             return view('error.index');
+        }
+    }
+
+    public function build($planet_id)
+    {
+        $data = request()->all();
+        $turretsToBuild = $data["turret"];
+        $user_id = Auth::id();
+        $availableResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
+        $availableTurrets = Turret::getAllAvailableTurrets($user_id, $planet_id);
+        $defensePlatform = Building::getOneByNameWithData($planet_id, "Verteidigungsstation");
+
+        self::populateBuildtimes($planet_id, $availableTurrets);
+
+        foreach($turretsToBuild as $key => $turretAmount)
+        {
+            foreach($availableTurrets as $keyB => $available_turret)
+            {
+                if($key == $available_turret->turret_name)
+                {
+                    if($available_turret->buildable)
+                    {
+                        // ship can theoretically be built
+                        // check resources to get lowest max amount
+                        $maxWithFe = 99999999;
+                        $maxWithLut = 99999999;
+                        $maxWithCry = 99999999;
+                        $maxWithH2o = 99999999;
+                        $maxWithH2 = 99999999;
+
+                        if($available_turret->fe > 0)
+                        {
+                            $maxWithFe = floor($availableResources[0][0]->fe / $available_turret->fe);
+                        }
+                        if($available_turret->lut > 0)
+                        {
+                            $maxWithLut = floor($availableResources[0][0]->lut / $available_turret->lut);
+                        }
+                        if($available_turret->cry > 0)
+                        {
+                            $maxWithCry = floor($availableResources[0][0]->cry / $available_turret->cry);
+                        }
+                        if($available_turret->h2o > 0)
+                        {
+                            $maxWithH2o = floor($availableResources[0][0]->h2o / $available_turret->h2o);
+                        }
+                        if($available_turret->h2 > 0)
+                        {
+                            $maxWithH2 = floor($availableResources[0][0]->h2 / $available_turret->h2);
+                        }
+
+                        $maxBuildable = min($maxWithFe, $maxWithLut, $maxWithCry, $maxWithH2o, $maxWithH2);
+
+                        $turretAmount = floor($turretAmount);
+
+                        if($turretAmount > $maxBuildable)
+                        {
+                            $turretAmount = $maxBuildable;
+                        }
+
+                        if($turretAmount <= 0)
+                        {
+                            return redirect('/defense/' . $planet_id);
+                        }
+
+                        $resourceArray[0] = new \stdClass();
+                        $resourceArray[0]->fe = $availableResources[0][0]->fe - ($turretAmount * $available_turret->fe);
+                        $resourceArray[0]->lut = $availableResources[0][0]->lut - ($turretAmount * $available_turret->lut);
+                        $resourceArray[0]->cry = $availableResources[0][0]->cry - ($turretAmount * $available_turret->cry);
+                        $resourceArray[0]->h2o = $availableResources[0][0]->h2o - ($turretAmount * $available_turret->h2o);
+                        $resourceArray[0]->h2 = $availableResources[0][0]->h2 - ($turretAmount * $available_turret->h2);
+
+                        $updateResources = Planet::setResourcesForPlanetById($planet_id, $resourceArray);
+                        if($updateResources)
+                        {
+                            $success = Turret::setProductionProcess($planet_id, $turretAmount, $available_turret);
+                            if($success)
+                            {
+                                return redirect('/defense/' . $planet_id);
+                            } else {
+                                dd('error starting process');
+                            }
+                        } else {
+                            dd('error processing resources');
+                        }
+                    } else {
+                        dd('not buildable');
+                    }
+                }
+            }
+        }
+
+    }
+
+    public function edit($planet_id)
+    {
+        $user_id = Auth::id();
+        $allUserPlanets = Controller::getAllUserPlanets($user_id);
+
+        Controller::checkBuildingProcesses($allUserPlanets);
+        Controller::checkResearchProcesses($allUserPlanets);
+        Controller::checkShipProcesses($allUserPlanets);
+        $process = Planet::cancelShipProcess($planet_id);
+
+        return redirect('/shipyard/' . $planet_id);
+    }
+
+    // helpers
+    private static function populateBuildtimes($planet_id, $turretList)
+    {
+        $defensePlatform = Building::getOneByNameWithData($planet_id, "Verteidigungsstation");
+
+        foreach($turretList as $key => $turret)
+        {
+            $base = $turret->initial_buildtime;
+            $lvl = $defensePlatform ? $defensePlatform->level : 1;
+            foreach(json_decode($turret->building_requirements) as $keyB => $req)
+            {
+                if($keyB == "Schiffswerft")
+                {
+                    if($lvl >= $req)
+                    {
+                        for($i = $req; $lvl > $i; $i++)
+                        {
+                            $base *= .9;
+                        }
+                    }
+                }
+            }
+
+            if($base < 1)
+            {
+                // faster than a second? Set it back to 1 sec.
+                $base = 1;
+            }
+
+            $turretList[$key]->current_buildtime = $base;
+
+            // readable buildtime for FE
+            $timestamp =  $base;
+            $suffix = ':';
+
+            $days = floor(($timestamp / (24*60*60)));
+            $hours = ($timestamp / (60*60)) % 24;
+            $minutes = ($timestamp / 60) % 60;
+            $seconds = ($timestamp / 1) % 60;
+
+            if($days > 0)
+            {
+                $days =  $days < 10 ? '0' . $days . " d, " : $days ." d, ";
+            } else {
+                $days = '';
+            }
+
+            $hours = $hours < 10 ? '0' . $hours . $suffix : $hours . $suffix;
+            $minutes = $minutes < 10 ? '0' . $minutes . $suffix : $minutes . $suffix;
+            $seconds = $seconds < 10 ? '0' . $seconds : $seconds;
+
+            $bauzeit = $days . $hours . $minutes . $seconds;
+            $turretList[$key]->current_buildtime_readable = $bauzeit;
         }
     }
 }

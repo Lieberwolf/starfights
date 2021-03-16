@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Building;
 use App\Models\Research;
 use App\Models\Ship;
+use App\Models\Turret;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Profile as Profile;
@@ -212,6 +213,63 @@ class TechtreeController extends Controller
                 'isResearch' => false,
                 'isShips' => true,
                 'isDefense' => false,
+            ]);
+        } else {
+            return view('error.index');
+        }
+    }
+
+    public function turrets($planet_id) {
+        // update session with new planet id
+        session(['default_planet' => $planet_id]);
+        $user_id = Auth::id();
+        $allUserPlanets = Controller::getAllUserPlanets($user_id);
+        Controller::checkBuildingProcesses($allUserPlanets);
+        $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
+        $allTurrets = Turret::all();
+        $allBuildings = Building::all();
+        $allResearches = Research::all();
+        $knowledge = Research::getUsersKnowledge($user_id);
+        $infrastructure = DB::table('infrastructures')
+                            ->where('planet_id', $planet_id)
+                            ->get();
+
+        foreach($allResearches as $key => $research) {
+            foreach($knowledge as $tech) {
+                if($tech->research_id == $research->id) {
+                    $allResearches[$key]->level = $tech->level;
+                }
+            }
+        }
+
+        foreach($allBuildings as $key => $building) {
+            foreach($infrastructure as $tech) {
+                if($tech->building_id == $building->id) {
+                    $allBuildings[$key]->level = $tech->level;
+                }
+            }
+        }
+
+        foreach($allTurrets as $key => $turret) {
+            $allTurrets[$key]->building_requirements = json_decode($turret->building_requirements);
+            $allTurrets[$key]->research_requirements = json_decode($turret->research_requirements);
+        }
+
+        if(count($planetaryResources)>0)
+        {
+            return view('techtree.detail', [
+                'defaultPlanet' => session('default_planet'),
+                'planetaryResources' => $planetaryResources[0][0],
+                'planetaryStorage' => $planetaryResources[1],
+                'allUserPlanets' => $allUserPlanets,
+                'activePlanet' => $planet_id,
+                'knowledge' => $allResearches,
+                'infrastructure' => $allBuildings,
+                'data' => $allTurrets,
+                'isBuilding' => false,
+                'isResearch' => false,
+                'isShips' => false,
+                'isDefense' => true,
             ]);
         } else {
             return view('error.index');
