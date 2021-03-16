@@ -55,6 +55,24 @@
                             @endif
                         </div>
                     </div>
+                    <div class="col-4 col-md-4 offset-md-8">
+                        <div class="row">
+                            @if($report[1]["def"])
+                                <div class="col-4">Verteidigung</div>
+                                <div class="col-4">Eingesetzt</div>
+                                <div class="col-4">Verbelibend</div>
+                                @foreach($report[1]["def"] as $turret)
+                                    <div class="col-4">{{$turret->turret_name}}</div>
+                                    <div class="col-4">{{$turret->amount}}</div>
+                                    <div class="col-4">{{$turret->newAmount}}</div>
+                                @endforeach
+                            @else
+                                <div class="col-12">
+                                    <span>- keine -</span>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
                 </div>
                 <hr/>
             @endif
@@ -89,8 +107,8 @@
                 <div class="col-6 offset-6">
                     @foreach($allDefense as $defense)
                         <div class="form-group">
-                            <label for="def-def-{{$defense->id}}">{{$defense->defense_name}}</label>
-                            <input value="0" class="form-control" id="def-def-{{$defense->id}}" type="number" min="0" step="1" name="sim[def][def][{{$defense->id}}]"/>
+                            <label for="def-def-{{$defense->id}}">{{$defense->turret_name}}</label>
+                            <input value="{{$defense->defenderAmount != null ? $defense->defenderAmount : 0 }}" class="form-control" id="def-def-{{$defense->id}}" type="number" min="0" step="1" name="sim[def][def][{{$defense->id}}]"/>
                         </div>
                     @endforeach
                 </div>

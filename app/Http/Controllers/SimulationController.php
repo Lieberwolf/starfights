@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Defense;
 use App\Models\Research;
 use App\Models\Ship;
+use App\Models\Turret;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Profile as Profile;
@@ -35,7 +36,7 @@ class SimulationController extends Controller
         $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
         $allShips = Ship::all();
         $allResearch = Research::getAllResearchesWithEffect();
-        $allDefense = Defense::all();
+        $allDefense = Turret::all();
         $report = session('report');
         $request->session()->forget('report');
 
@@ -55,6 +56,16 @@ class SimulationController extends Controller
                     if($ship->id == $defenderShip->id)
                     {
                         $allShips[$key]->defenderAmount = $defenderShip->amount;
+                    }
+                }
+            }
+            foreach($allDefense as $key => $turret)
+            {
+                foreach($report[1]["def"] as $defenderTurret)
+                {
+                    if($turret->id == $defenderTurret->id)
+                    {
+                        $turret->defenderAmount = $defenderTurret->newAmount;
                     }
                 }
             }
@@ -232,6 +243,29 @@ class SimulationController extends Controller
                 }
             }
         }
+
+        $turretList = [];
+
+        if($defender["def"])
+        {
+            $turretAtt = 0;
+            $turretDef = 0;
+            foreach($defender["def"] as $key => $amount)
+            {
+                $tempTurret = Turret::getOneById($key);
+                $tempListEntry = new \stdClass();
+                $tempListEntry->id = $tempTurret->id;
+                $tempListEntry->turret_name = $tempTurret->turret_name;
+                $tempListEntry->amount = $amount;
+                $turretList[] = $tempListEntry;
+                $turretAtt += $tempTurret->attack * $amount;
+                $turretDef += $tempTurret->defend * $amount;
+            }
+            $defender["final_attack_value"] += $turretAtt;
+            $defender["final_defense_value"] += $turretDef;
+
+        }
+
         $defender["final_attack_value"] += $defender["attack_value"];
         $defender["final_defense_value"] += $defender["defense_value"] + $defender["final_shield_value"];
 
@@ -276,6 +310,15 @@ class SimulationController extends Controller
         foreach($defender["ship"] as $key => $defenderShip)
         {
             $defenderShip->newAmount = ceil($defenderShip->amount * ($survivedDefRatio/100));
+        }
+
+        if($defender["def"]) {
+            foreach($turretList as $key => $defenderTurret)
+            {
+                $defenderTurret->newAmount = ceil($defenderTurret->amount * ($survivedDefRatio/100));
+            }
+
+            $defender["def"] = $turretList;
         }
 
         return redirect('/simulation/' . $planet_id)->with('report', [$attacker, $defender]);
