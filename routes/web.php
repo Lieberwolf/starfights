@@ -26,6 +26,10 @@ Auth::routes();
 Route::get('/overview', [App\Http\Controllers\OverviewController::class, 'index']);
 Route::get('/overview/{planet_id}', [App\Http\Controllers\OverviewController::class, 'show']);
 
+// Planetary Overview
+Route::get('/planetary', [App\Http\Controllers\PlanetaryOverviewController::class, 'index']);
+Route::get('/planetary/{planet_id}', [App\Http\Controllers\PlanetaryOverviewController::class, 'show']);
+
 // Construction
 Route::get('/construction', [App\Http\Controllers\ConstructionController::class, 'index']);
 Route::get('/construction/{planet_id}', [App\Http\Controllers\ConstructionController::class, 'show']);

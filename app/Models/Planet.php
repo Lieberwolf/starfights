@@ -282,6 +282,38 @@ class Planet extends Model
         return $list;
     }
 
+    public static function getAllPlanetaryShipsProcess($planet_ids)
+    {
+        $list = false;
+
+        foreach ($planet_ids as $planet_id)
+        {
+            $list[] = DB::table('ships_process AS sp')
+                        ->leftJoin('planets AS p', 'sp.planet_id', '=', 'p.id')
+                        ->leftJoin('ships AS s','sp.ship_id','=','s.id')
+                        ->where('sp.planet_id', $planet_id->id)
+                        ->first();
+
+        }
+        return $list;
+    }
+
+    public static function getAllPlanetaryTurretsProcess($planet_ids)
+    {
+        $list = false;
+
+        foreach ($planet_ids as $planet_id)
+        {
+            $list[] = DB::table('turrets_process AS tp')
+                        ->leftJoin('planets AS p', 'tp.planet_id', '=', 'p.id')
+                        ->leftJoin('turrets AS t','tp.turret_id','=','t.id')
+                        ->where('tp.planet_id', $planet_id->id)
+                        ->first();
+
+        }
+        return $list;
+    }
+
     public static function getPlanetaryBuildingProcess($planet_id)
     {
 

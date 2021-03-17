@@ -8,7 +8,7 @@
         <div class="col-12 sub-line">
             <div class="row">
                 <div class="col-6 col-md-2 offset-md-1">
-                    <a href="">Planetenübersicht</a>
+                    <a href="/planetary/{{$activePlanet}}">Planetenübersicht</a>
                 </div>
                 <div class="col-6 col-md-2">
                     <a href="">Schiffsübersicht</a>

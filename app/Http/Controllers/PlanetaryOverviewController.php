@@ -7,7 +7,7 @@ use App\Models\Profile as Profile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class DetailsController extends Controller
+class PlanetaryOverviewController extends Controller
 {
     public function __construct()
     {
@@ -19,7 +19,7 @@ class DetailsController extends Controller
         $user_id = Auth::id();
         $start_planet = Profile::getStartPlanetByUserId($user_id);
         session(['default_planet' => $start_planet[0]->start_planet]);
-        return redirect('details/' . $start_planet[0]->start_planet);
+        return redirect('planetary/' . $start_planet[0]->start_planet);
     }
 
     public function show($planet_id)
@@ -31,41 +31,45 @@ class DetailsController extends Controller
         $allUserPlanets = Controller::getAllUserPlanets($user_id);
         Controller::checkAllProcesses($allUserPlanets);
         $planetInfo = Planet::getOneById($planet_id);
+        $allBuildProcesses = Planet::getAllPlanetaryBuildingProcess($allUserPlanets);
+        $allResearchProcesses = Planet::getAllPlanetaryResearchProcess($allUserPlanets, $user_id);
+
+        foreach($allUserPlanets as $planet)
+        {
+            $tempShips = Controller::checkShipProcesses($allUserPlanets);
+            $planet->nextShip = false;
+            foreach($tempShips as $ship)
+            {
+                if($ship->planet == $planet->id)
+                {
+                    $planet->nextShip = $ship;
+                }
+            }
+            $tempTurrets = Controller::checkTurretProcesses($allUserPlanets);
+            $planet->nextTurret = false;
+            foreach($tempTurrets as $turret)
+            {
+                if($turret->planet == $planet->id)
+                {
+                    $planet->nextTurret = $turret;
+                }
+            }
+        }
 
         if(count($planetaryResources)>0)
         {
-            return view('details.show', [
+            return view('planetary.show', [
                 'defaultPlanet' => session('default_planet'),
                 'planetaryResources' => $planetaryResources[0][0],
                 'planetaryStorage' => $planetaryResources[1],
                 'allUserPlanets' => $allUserPlanets,
                 'activePlanet' => $planet_id,
                 'planetInfo' => $planetInfo,
+                'buildings' => $allBuildProcesses,
+                'research' => $allResearchProcesses,
             ]);
         } else {
             return view('error.index');
         }
-    }
-
-    public function name($planet_id)
-    {
-        $planet = Planet::getOneById($planet_id);
-        $data = request()->validate([
-            'planet_name' => 'required']);
-        $planet->planet_name = $data["planet_name"];
-        $planet->save();
-
-        return redirect('/details/' . $planet_id);
-    }
-
-    public function image($planet_id)
-    {
-        $planet = Planet::getOneById($planet_id);
-        $data = request()->validate([
-            'image' => 'required|url']);
-        $planet->image = $data["image"];
-        $planet->save();
-
-        return redirect('/details/' . $planet_id);
     }
 }
