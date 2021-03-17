@@ -90,7 +90,7 @@ function startTimer(timeRemaining, element) {
 }
 
 function startCounter(counter) {
-    var ratePerSec = counter.dataset.rate / 36000,
+    var ratePerSec = counter.dataset.rate / 3600,
         stored = parseFloat(counter.dataset.stored),
         maxStored = parseFloat(counter.dataset.storedMax);
     setInterval(function() {
@@ -103,7 +103,7 @@ function startCounter(counter) {
         }
 
         counter.innerText = Trenner(Math.floor(counter.dataset.stored));
-    }, 100);
+    }, 1000);
 }
 
 window.onload = function () {

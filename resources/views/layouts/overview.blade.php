@@ -26,8 +26,6 @@
         </div>
         <div class="col-6 sub-line">Serverzeit</div>
         <div class="col-6 sub-line">{{now()}}</div>
-        <div class="col-6 sub-line">Automatischer Logout</div>
-        <div class="col-6 sub-line">{{now()->addHours(4)}}</div>
         <div class="col-12 title-line mt-3">Planetenbild <a href="/details/{{$activePlanet}}">[ändern]</a></div>
         <div class="col-12 sub-line py-2">
             <img class="img-fluid" src="{{$planetInformation->image != null ? $planetInformation->image : 'https://i.pinimg.com/originals/b7/8e/31/b78e312d9ca9152233d995d2803e1b8d.jpg'}}" title="Toller Planet" alt="Kaputt" width="480" height="270"/>
