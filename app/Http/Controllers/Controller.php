@@ -394,6 +394,7 @@ class Controller extends BaseController
                         $bauzeit = $days . $hours . $minutes . $seconds;
                         $temp = new \stdClass();
                         $temp->buildtime = $bauzeit;
+                        $temp->seconds = $timestamp;
                         $temp->planet = $process->planet_id;
                         $buildTimes[] = $temp;
                     } else {
@@ -421,6 +422,7 @@ class Controller extends BaseController
                         $bauzeit = $days . $hours . $minutes . $seconds;
                         $temp = new \stdClass();
                         $temp->buildtime = $bauzeit;
+                        $temp->seconds = $timestamp;
                         $temp->planet = $process->planet_id;
                         $buildTimes[] = $temp;
                     }
@@ -492,6 +494,7 @@ class Controller extends BaseController
                         $bauzeit = $days . $hours . $minutes . $seconds;
                         $temp = new \stdClass();
                         $temp->buildtime = $bauzeit;
+                        $temp->seconds = $timestamp;
                         $temp->planet = $process->planet_id;
                         $buildTimes[] = $temp;
                     } else {
@@ -519,6 +522,7 @@ class Controller extends BaseController
                         $bauzeit = $days . $hours . $minutes . $seconds;
                         $temp = new \stdClass();
                         $temp->buildtime = $bauzeit;
+                        $temp->seconds = $timestamp;
                         $temp->planet = $process->planet_id;
                         $buildTimes[] = $temp;
                     }

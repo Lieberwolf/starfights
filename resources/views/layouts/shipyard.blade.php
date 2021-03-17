@@ -4,8 +4,8 @@
             @foreach($currentShips->nextShipIn as $next)
                 @if($next->planet == $activePlanet)
                     <div class="col-8 current-process process-entry">
-                        <span>Aktuell in Bau: {{$currentShips->ship_name}} ({{$currentShips->amount_left}} Stück)
-                        {{$next->buildtime != false ? ' Nächstes Schiff fertig in: ' . $next->buildtime : ''}}</span>
+                        <span>Aktuell in Bau: {{$currentShips->ship_name}} ({{$currentShips->amount_left}} Stück) Nächstes Schiff fertig in:</span>
+                        <span class="js-add-countdown" data-seconds-to-count="{{$next->seconds}}">{{$next->buildtime != false ? $next->buildtime : ''}}</span>
                     </div>
                     <div class="col-4 process-action">
                         <a href="/shipyard/{{$activePlanet}}/edit">Abbrechen</a><br/>

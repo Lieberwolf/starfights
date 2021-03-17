@@ -2,7 +2,8 @@
     <div class="row">
         @if($currentConstruction)
             <div class="col-10 current-process process-entry">
-                <span>Aktuell in Konstruktion: {{$currentConstruction->building_name}} Stufe {{$currentConstruction->infrastructure != null ? $currentConstruction->infrastructure->level + 1 : 1}}</span>
+                <span>Aktuell in Konstruktion: {{$currentConstruction->building_name}} Stufe {{$currentConstruction->infrastructure != null ? $currentConstruction->infrastructure->level + 1 : 1}} Abgeschlossen in:</span>
+                <span class="js-add-countdown" data-seconds-to-count="{{strtotime($currentConstruction->finished_at) - now()->timestamp}}">-</span>
             </div>
             <div class="col-2 process-action">
                 <a class="process-denied" href="/construction/{{$activePlanet}}/edit">Abbrechen</a>

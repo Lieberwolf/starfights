@@ -11464,6 +11464,9 @@ body a:hover {
 .process-entry span {
   display: block;
 }
+.process-entry.current-process span {
+  display: inline-block;
+}
 
 .process-action {
   display: flex;

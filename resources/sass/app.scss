@@ -131,6 +131,11 @@ body {
     span {
         display: block;
     }
+    &.current-process {
+        span {
+            display: inline-block;
+        }
+    }
 }
 
 .process-action {

@@ -4,8 +4,8 @@
             @foreach($currentTurrets->nextTurretIn as $next)
                 @if($next->planet == $activePlanet)
                     <div class="col-8 current-process process-entry">
-                        <span>Aktuell in Bau: {{$currentTurrets->turret_name}} ({{$currentTurrets->amount_left}} Stück)
-                        {{$next->buildtime != false ? ' Nächste Anlage fertig in: ' . $next->buildtime : ''}}</span>
+                        <span>Aktuell in Bau: {{$currentTurrets->turret_name}} ({{$currentTurrets->amount_left}} Stück) Nächste Anlage fertig in:</span>
+                        <span class="js-add-countdown" data-seconds-to-count="{{$next->seconds}}">{{$next->buildtime != false ? $next->buildtime : ''}}</span>
                     </div>
                     <div class="col-4 process-action">
                         <a href="/defense/{{$activePlanet}}/edit">Abbrechen</a><br/>
