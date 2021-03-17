@@ -19,14 +19,10 @@ class ReportController extends Controller
     public function show($report_uuid)
     {
         $user_id = Auth::id();
-
         $planet_id = session('default_planet');
-
-        $allUserPlanets = Controller::getAllUserPlanets($user_id);
-
-        Controller::checkAllProcesses($allUserPlanets);
-
         $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
+        $allUserPlanets = Controller::getAllUserPlanets($user_id);
+        Controller::checkAllProcesses($allUserPlanets);
 
         $report = Report::where('link', $report_uuid)->first();
         $report->attacker_fleet = json_decode($report->attacker_fleet);

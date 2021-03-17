@@ -26,15 +26,10 @@ class MessagesController extends Controller
     {
         // update session with new planet id
         $planet_id = session('default_planet');
-
         $user_id = Auth::id();
-
-        $allUserPlanets = Controller::getAllUserPlanets($user_id);
-
-        Controller::checkAllProcesses($allUserPlanets);
-
         $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
-
+        $allUserPlanets = Controller::getAllUserPlanets($user_id);
+        Controller::checkAllProcesses($allUserPlanets);
         $messages = Messages::getAllUnreadMessages($user_id);
 
         if(count($planetaryResources)>0)

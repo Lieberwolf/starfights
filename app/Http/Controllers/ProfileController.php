@@ -30,24 +30,24 @@ class ProfileController extends Controller
         $planetsList = Controller::getAllUserPlanetsWithData($user_id);
         $userInformation->planetsList = $planetsList;
 
-        foreach($userInformation->planetsList as $key => $planet)
-        {
-            $userInformation->planetsList[$key]->points = Planet::getPlanetaryPointsById($planet->id);
-        }
-
         if($user_id == Auth::id())
         {
+            $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
             // my own profile
             $proof = true;
             $allUserPlanets = Controller::getAllUserPlanets($user_id);
             Controller::checkAllProcesses($allUserPlanets);
-            $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
         } else {
+            $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, Auth::id());
             // other ones profile
             $proof = false;
             $allUserPlanets = Controller::getAllUserPlanets(Auth::id());
             Controller::checkAllProcesses($allUserPlanets);
-            $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, Auth::id());
+        }
+
+        foreach($userInformation->planetsList as $key => $planet)
+        {
+            $userInformation->planetsList[$key]->points = Planet::getPlanetaryPointsById($planet->id);
         }
 
         $planets = Planet::getAllUserPlanets($user_id);

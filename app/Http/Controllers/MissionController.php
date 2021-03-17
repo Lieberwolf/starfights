@@ -69,8 +69,8 @@ class MissionController extends Controller
     {
         $user_id = Auth::id();
         $allUserPlanets = Controller::getAllUserPlanets($user_id);
-        Controller::checkAllProcesses($allUserPlanets);
         $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
+        Controller::checkAllProcesses($allUserPlanets);
         $data = request()->validate([
             'galaxy' => 'required|integer',
             'system' => 'required|integer',

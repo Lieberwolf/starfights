@@ -38,13 +38,12 @@ class ConstructionController extends Controller
         // update session with new planet id
         session(['default_planet' => $planet_id]);
         $user_id = Auth::id();
-        $allUserPlanets = Controller::getAllUserPlanets($user_id);
-        Controller::checkAllProcesses($allUserPlanets);
         $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
         $planetInformation = Planet::getOneById($planet_id);
+        $allUserPlanets = Controller::getAllUserPlanets($user_id);
+        Controller::checkAllProcesses($allUserPlanets);
         $buildingListRaw = Building::getAllAvailableBuildings($planet_id, $user_id);
         $currentConstruction = Planet::getPlanetaryBuildingProcess($planet_id);
-
         $buildingList = Controller::factorizeBuildings($buildingListRaw);
 
         // check is a build process started

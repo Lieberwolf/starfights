@@ -32,9 +32,9 @@ class TechtreeController extends Controller
         // update session with new planet id
         session(['default_planet' => $planet_id]);
         $user_id = Auth::id();
+        $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
         $allUserPlanets = Controller::getAllUserPlanets($user_id);
         Controller::checkAllProcesses($allUserPlanets);
-        $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
 
         if(count($planetaryResources)>0)
         {
@@ -54,9 +54,9 @@ class TechtreeController extends Controller
         // update session with new planet id
         session(['default_planet' => $planet_id]);
         $user_id = Auth::id();
+        $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
         $allUserPlanets = Controller::getAllUserPlanets($user_id);
         Controller::checkAllProcesses($allUserPlanets);
-        $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
         $allBuildings = Building::all();
         $allResearches = Research::all();
         $knowledge = Research::getUsersKnowledge($user_id);
@@ -110,9 +110,9 @@ class TechtreeController extends Controller
         // update session with new planet id
         session(['default_planet' => $planet_id]);
         $user_id = Auth::id();
+        $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
         $allUserPlanets = Controller::getAllUserPlanets($user_id);
         Controller::checkAllProcesses($allUserPlanets);
-        $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
         $allBuildings = Building::all();
         $allResearches = Research::all();
         $knowledge = Research::getUsersKnowledge($user_id);
@@ -166,9 +166,9 @@ class TechtreeController extends Controller
         // update session with new planet id
         session(['default_planet' => $planet_id]);
         $user_id = Auth::id();
+        $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
         $allUserPlanets = Controller::getAllUserPlanets($user_id);
         Controller::checkAllProcesses($allUserPlanets);
-        $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
         $allShips = Ship::all();
         $allBuildings = Building::all();
         $allResearches = Research::all();

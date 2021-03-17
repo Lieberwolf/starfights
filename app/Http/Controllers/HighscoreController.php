@@ -30,10 +30,9 @@ class HighscoreController extends Controller
         session(['default_planet' => $planet_id]);
 
         $user_id = Auth::id();
+        $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
         $allUserPlanets = Controller::getAllUserPlanets($user_id);
         Controller::checkAllProcesses($allUserPlanets);
-        $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
-
         $users = User::getAllUserProfiles();
 
         $list = [];

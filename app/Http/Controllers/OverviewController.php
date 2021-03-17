@@ -41,21 +41,13 @@ class OverviewController extends Controller
     {
         // update session with new planet id
         session(['default_planet' => $planet_id]);
-
         $user_id = Auth::id();
-
-        $allUserPlanets = Controller::getAllUserPlanets($user_id);
-
-        // first of all check processes
-        Controller::checkAllProcesses($allUserPlanets);
-
         $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
-
         $planetInformation = Planet::getOneById($planet_id);
-
+        $allUserPlanets = Controller::getAllUserPlanets($user_id);
+        Controller::checkAllProcesses($allUserPlanets);
         $planetaryBuildingProcesses = Planet::getAllPlanetaryBuildingProcess($allUserPlanets);
         $planetaryResearchProcesses = Planet::getAllPlanetaryResearchProcess($allUserPlanets, $user_id);
-
         $shipsAtPlanet = Fleet::getShipsAtPlanet($planet_id);
         $turretsAtPlanet = Defense::getTurretsAtPlanet($planet_id);
         $fleetsOnMission = Fleet::getFleetsOnMission($allUserPlanets);

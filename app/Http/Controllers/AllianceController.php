@@ -27,16 +27,10 @@ class AllianceController extends Controller
     {
         // update session with new planet id
         session(['default_planet' => $planet_id]);
-
         $user_id = Auth::id();
-
-        $allUserPlanets = Controller::getAllUserPlanets($user_id);
-
-        Controller::checkAllProcesses($allUserPlanets);
-
         $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
-
-
+        $allUserPlanets = Controller::getAllUserPlanets($user_id);
+        Controller::checkAllProcesses($allUserPlanets);
 
         if(count($planetaryResources)>0)
         {
