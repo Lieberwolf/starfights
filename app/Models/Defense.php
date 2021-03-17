@@ -54,7 +54,28 @@ class Defense extends Model
 
     public static function getTurretsAtPlanet($planet_id)
     {
-        return Defense::where('planet_id', $planet_id)->first();
+        $defense = Defense::where('planet_id', $planet_id)->first();
+
+        if($defense && $defense->turret_types != null)
+        {
+            $turretsPresent = false;
+            foreach(json_decode($defense->turret_types) as $turret)
+            {
+                if($turret->amount > 0)
+                {
+                    $turretsPresent = true;
+                    break;
+                }
+            }
+
+            if($turretsPresent) {
+                return $defense;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
     }
 
     public static function setEmptyProcessForPlanet($planet_id)
