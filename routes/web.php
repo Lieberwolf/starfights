@@ -33,6 +33,10 @@ Route::get('/overview/{planet_id}', [App\Http\Controllers\OverviewController::cl
 Route::get('/planetary', [App\Http\Controllers\PlanetaryOverviewController::class, 'index']);
 Route::get('/planetary/{planet_id}', [App\Http\Controllers\PlanetaryOverviewController::class, 'show']);
 
+// Planetary Overview
+Route::get('/ships', [App\Http\Controllers\ShipsOverviewController::class, 'index']);
+Route::get('/ships/{planet_id}', [App\Http\Controllers\ShipsOverviewController::class, 'show']);
+
 // Construction
 Route::get('/construction', [App\Http\Controllers\ConstructionController::class, 'index']);
 Route::get('/construction/{planet_id}', [App\Http\Controllers\ConstructionController::class, 'show']);

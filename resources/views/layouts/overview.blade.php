@@ -11,7 +11,7 @@
                     <a href="/planetary/{{$activePlanet}}">Planetenübersicht</a>
                 </div>
                 <div class="col-6 col-md-2">
-                    <a href="">Schiffsübersicht</a>
+                    <a href="/ships/{{$activePlanet}}">Schiffsübersicht</a>
                 </div>
                 <div class="col-12 col-md-2">
                     <a href="/notice/{{$activePlanet}}">Notizblock</a>
