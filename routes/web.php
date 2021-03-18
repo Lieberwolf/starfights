@@ -19,6 +19,9 @@ Route::get('/', function () {
 
 Auth::routes();
 
+Route::get('/chat/messages', [App\Http\Controllers\ChatController::class, 'index']);
+Route::post('/chat/messages/send', [App\Http\Controllers\ChatController::class, 'send']);
+
 /**
  * Public
  */

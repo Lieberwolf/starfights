@@ -25,6 +25,30 @@
             @yield('content')
         </main>
     </div>
+    @if(Auth::user())
+    <div id="chat-opener" class="chat js-show-chat">
+        <i class="bi bi-chat-left-dots"></i>
+    </div>
+    <div id="chat-window" class="container js-chat-window">
+        <div class="row">
+            <div class="col-12 text-right">
+                <i class="bi bi-box-arrow-in-down-right js-hide-chat"></i>
+            </div>
+            <div class="col-12" style="max-height: 200px;overflow: hidden;">
+                <ul id="chat-list" class="chat-list js-chat-list mb-3"></ul>
+            </div>
+            <div class="col-12">
+                <form action="" method="" class="js-prevent">
+                    @csrf
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" placeholder="Nachricht" aria-label="Nachricht" aria-describedby="button-addon2">
+                        <button class="btn btn-secondary js-send-chat-message" type="button" id="button-addon2">Senden</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    @endif
     @if(Auth::user() && Auth::user()->isAdmin != 0)
     <!-- Todo: only admin -->
     <div style="position:fixed; width: 90%; top: 0; right: 0;">

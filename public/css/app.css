@@ -11521,3 +11521,37 @@ body a:hover {
 .report .title-line:first-of-type {
   margin-top: 0;
 }
+
+#chat-opener {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 20px;
+  background-color: #213f5d;
+  line-height: 1;
+  border-radius: 50%;
+  box-shadow: 0 0 4px #001e3b;
+  cursor: pointer;
+}
+#chat-opener:hover {
+  box-shadow: 0 0 4px #f2f2f2;
+}
+
+#chat-window {
+  display: none;
+  position: fixed;
+  max-width: 50%;
+  bottom: 20px;
+  right: 20px;
+  background-color: #001e3b;
+}
+#chat-window .chat-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  position: relative;
+}
+#chat-window .chat-list .chat-message {
+  margin-bottom: 2px;
+  padding: 0 10px;
+}

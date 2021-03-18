@@ -31,6 +31,73 @@ $addToField.on('click touch', function() {
     $target.val(targetVal);
 });
 
+$('.js-prevent').each(function() {
+    $(this).submit(function(e) {
+        e.preventDefault();
+    });
+});
+
+if($('#chat-window').length > 0) {
+    var $opener = $('.js-show-chat'),
+        $chatWindow = $('.js-chat-window'),
+        $close = $('.js-hide-chat'),
+        $send = $('.js-send-chat-message'),
+        $list = $('.js-chat-list');
+
+    $opener.on('click touch', function() {
+        $(this).fadeOut();
+        $chatWindow.fadeIn();
+    });
+
+    $close.on('click touch', function() {
+        $opener.fadeIn();
+        $chatWindow.fadeOut();
+    });
+
+    $send.on('click touch', function() {
+        if($send.prev('input').val().length > 0)
+        {
+            sendMessage();
+        }
+    });
+
+    $send.prev('input').keypress(function(e) {
+        if(e.which == 13)
+        {
+            sendMessage();
+        }
+    });
+
+    function sendMessage() {
+        $.ajax({
+            url: window.location.origin + '/chat/messages/send',
+            method: 'post',
+            data: {'_token': $send.parents('form').find('> input').val(), 'message': $send.prev('input').val()},
+            success: function() {
+                $send.prev('input').val('');
+            }
+        });
+    }
+
+    setInterval(function() {
+        $.ajax({
+            url: window.location.origin + '/chat/messages',
+            method: 'get',
+            success: function(response) {
+                $list.html('');
+                for(var i = 0; i < response.length; i++)
+                {
+                    $li = $('<li/>').addClass('sub-line chat-message').text(response[i].created_at + ' | ' + response[i].nickname + ': ' + response[i].message);
+                    $list.append($li);
+                }
+
+                $('#chat-list').animate({bottom: ($('#chat-list').height() - $('#chat-list').parent().height()) + 'px'});
+
+            }
+        });
+    }, 1000);
+}
+
 
 // native stuff
 function Trenner(number) {
