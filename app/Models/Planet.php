@@ -54,10 +54,10 @@ class Planet extends Model
             if($free_planet->id == $index)
             {
                 $free_planet['user_id']=$user_id;
-                $free_planet['fe']=500;
-                $free_planet['lut']=500;
+                $free_planet['fe']=10000;
+                $free_planet['lut']=10000;
                 $free_planet['cry']=0;
-                $free_planet['h2o']=500;
+                $free_planet['h2o']=10000;
                 $free_planet['h2']=0;
                 $free_planet['rate_fe']=10;
                 $free_planet['rate_lut']=10;
