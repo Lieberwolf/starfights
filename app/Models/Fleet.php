@@ -57,9 +57,12 @@ class Fleet extends Model
 
     public static function getShipsAtPlanet($planet_id)
     {
-        $fleet = Fleet::where('mission',null)->where('planet_id', $planet_id)->first();
+        $fleet = Fleet::where([
+            'mission' => null,
+            'planet_id' => $planet_id
+        ])->first();
 
-        if($fleet && $fleet->ship_types != null)
+        if($fleet)
         {
             $shipsPresent = false;
             foreach(json_decode($fleet->ship_types) as $ship)

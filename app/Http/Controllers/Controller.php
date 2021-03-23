@@ -560,7 +560,12 @@ class Controller extends BaseController
                                 $target = Planet::getOneById($fleet->target);
 
                                 $targetShips = Fleet::getShipsAtPlanet($fleet->target);
-                                $targetFleet = json_decode($targetShips->ship_types);
+                                if($targetShips)
+                                {
+                                    $targetFleet = json_decode($targetShips->ship_types);
+                                } else {
+                                    $targetFleet = json_decode('[{"ship_id":1,"ship_name":"Spionagesonde","amount":0},{"ship_id":2,"ship_name":"Warpsonde","amount":0},{"ship_id":3,"ship_name":"Delta Dancer","amount":0},{"ship_id":4,"ship_name":"Crusader","amount":0},{"ship_id":5,"ship_name":"Sternenj\u00e4ger","amount":0},{"ship_id":6,"ship_name":"Tarnbomber","amount":0},{"ship_id":7,"ship_name":"Kolonisationsschiff","amount":0},{"ship_id":8,"ship_name":"Kleines Handelsschiff","amount":0},{"ship_id":9,"ship_name":"Gro\u00dfes Handelsschiff","amount":0},{"ship_id":10,"ship_name":"Akira","amount":0},{"ship_id":11,"ship_name":"Cobra","amount":0},{"ship_id":12,"ship_name":"Pegasus","amount":0},{"ship_id":13,"ship_name":"Phoenix","amount":0},{"ship_id":14,"ship_name":"Aurora","amount":0},{"ship_id":15,"ship_name":"Lavi","amount":0},{"ship_id":16,"ship_name":"Moskito","amount":0},{"ship_id":17,"ship_name":"Vega","amount":0},{"ship_id":18,"ship_name":"Black Dragon","amount":0},{"ship_id":19,"ship_name":"Invasionseinheit","amount":0}]');
+                                }
                                 // optional resource transport
                                 if($fleet->cargo != null) {
                                     $resources = json_decode($fleet->cargo);
@@ -584,8 +589,16 @@ class Controller extends BaseController
                                     }
                                 }
 
-                                $targetShips->ship_types = json_encode($targetFleet);
-                                $targetShips->save();
+                                if($targetShips)
+                                {
+                                    $targetShips->ship_types = json_encode($targetFleet);
+                                    $targetShips->save();
+                                } else {
+                                    Fleet::create([
+                                        'planet_id' => $fleet->target,
+                                        'ship_types' => json_encode($targetFleet)
+                                    ]);
+                                }
 
                                 // process done write message
                                 // emit system message to user
