@@ -1097,6 +1097,11 @@ class Controller extends BaseController
                                 $attacker = $result->attacker;
                                 $defender = $result->defender;
 
+                                if(!isset($defender["turrets"]))
+                                {
+                                    $defender["turrets"] = [];
+                                }
+
                                 // create report
                                 $report = Report::create([
                                     'link' => Uuid::uuid4(),
