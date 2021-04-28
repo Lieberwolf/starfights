@@ -123,7 +123,11 @@ Route::get('/settings/{planet_id}', [App\Http\Controllers\SettingsController::cl
 
 // alliance
 Route::get('/alliance', [App\Http\Controllers\AllianceController::class, 'index']);
-Route::get('/alliance/{planet_id}', [App\Http\Controllers\AllianceController::class, 'show']);
+Route::get('/alliance/{planet_id}', [App\Http\Controllers\AllianceController::class, 'redirect']);
+Route::get('/alliance/{planet_id}/{alliance_id}', [App\Http\Controllers\AllianceController::class, 'show']);
+Route::get('/alliance/found/{planet_id}', [App\Http\Controllers\AllianceController::class, 'found']);
+Route::post('/alliance/found/{planet_id}', [App\Http\Controllers\AllianceController::class, 'founding']);
+Route::post('/alliance/option/{planet_id}', [App\Http\Controllers\AllianceController::class, 'option']);
 
 // profile
 Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'index']);
