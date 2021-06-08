@@ -2,7 +2,7 @@
     <div class="row">
         <div class="col-12 title-line">Allianz Gründen</div>
         <div class="col-12 sub-line">
-            <form action="/alliance/found/{{$activePlanet}}" method="post">
+            <form action="/alliance/{{$activePlanet}}/found" method="post">
                 @csrf
                 <div class="form-group row">
                     <label class="col-6" for="name">Allianzname</label>

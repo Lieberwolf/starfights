@@ -47,8 +47,17 @@ class AllianceController extends Controller
         $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
         $allUserPlanets = Controller::getAllUserPlanets($user_id);
         Controller::checkAllProcesses($allUserPlanets);
-        if(!is_numeric($alliance_id)) {
+        if(!is_numeric($alliance_id) && $alliance_id != "found") {
             return redirect('/overview/' . $planet_id);
+        } else if(!is_numeric($alliance_id) && $alliance_id == "found") {
+            // not a good solution Todo: find a better way redirecting to correct method
+            return view('alliance.found', [
+                'defaultPlanet' => session('default_planet'),
+                'planetaryResources' => $planetaryResources[0][0],
+                'planetaryStorage' => $planetaryResources[1],
+                'allUserPlanets' => $allUserPlanets,
+                'activePlanet' => $planet_id,
+            ]);
         } else {
             $alliance = $profile->getAllianceForUser($user_id);
             if($alliance_id == $alliance->alliance_id) {
@@ -56,7 +65,10 @@ class AllianceController extends Controller
             } else {
                 // get foreign alliance data
                 $alliance = $profile->getAllianceByAllyId($alliance_id);
-                $alliance->own = false;
+                //dd($alliance);
+                if($alliance) {
+                    $alliance->own = false;
+                }
             }
         }
 
@@ -85,7 +97,7 @@ class AllianceController extends Controller
         if($data["target"] == 'new')
         {
             // if option is new, redirect to founding page
-            return redirect('/alliance/found/' . $planet_id);
+            return redirect('/alliance/' . $planet_id . '/found');
         } else {
             // else redirect direct to search page
             return redirect('/search/' . $planet_id);
@@ -94,6 +106,7 @@ class AllianceController extends Controller
 
     public function found($planet_id)
     {
+        dd($planet_id);
         // update session with new planet id
         session(['default_planet' => $planet_id]);
         $user_id = Auth::id();

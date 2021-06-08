@@ -34,8 +34,14 @@ class Profile extends Model
     public function getAllianceByAllyid($ally_id)
     {
         // add join to alliances table
-        return DB::table('alliances')
-                 ->where('id', $ally_id)
+        return DB::table('alliances as a')
+                 ->where('a.id', $ally_id)
+                 ->leftJoin('profiles as p', 'a.founder_id','=', 'p.user_id')
+                 ->select([
+                     'a.*',
+                     'p.nickname',
+                     DB::raw('(SELECT COUNT(`user_id`) from profiles WHERE alliance_id = ' . $ally_id . ') AS members')
+                 ])
                  ->first();
     }
 

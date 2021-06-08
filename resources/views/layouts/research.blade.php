@@ -37,7 +37,7 @@
                 </div>
             @else
                 @if($key == count($availableResearches) - 1)
-                    Keine Forschungen Verfügbar
+                    <div class="col-12">Keine Forschungen Verfügbar</div>
                 @endif
             @endif
         @endforeach

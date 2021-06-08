@@ -3,9 +3,9 @@
         @if($alliance != null)
             <div class="col-12 title-line">Allianz "{{$alliance->alliance_name}}"</div>
             <div class="col-6 sub-line" style="margin-top: 1px;">Mitglieder</div>
-            <div class="col-6 sub-line" style="margin-top: 1px;">XX (<a href="/alliance/memberslist/{{$activePlanet}}">Liste</a>)</div>
+            <div class="col-6 sub-line" style="margin-top: 1px;">{{$alliance->members}} (<a href="/alliance/memberslist/{{$activePlanet}}">Liste</a>)</div>
             <div class="col-6 sub-line" style="margin-top: 1px;">Gründer</div>
-            <div class="col-6 sub-line" style="margin-top: 1px;"><a href="/profile/[FOUNDER_USER_ID]">FOUNDER NAME</a></div>
+            <div class="col-6 sub-line" style="margin-top: 1px;"><a href="/profile/{{$alliance->founder_id}}">{{$alliance->nickname}}</a></div>
             <div class="col-12 title-line" style="margin-top: 1px;">Allianzlogo</div>
             <div class="col-12 sub-line" style="margin-top: 1px;">
                 @if($alliance->alliance_logo != null)
@@ -51,7 +51,7 @@
 
             @else
             <div class="col-12 sub-line">
-                <form method="post" action="/alliance/option/{{$activePlanet}}">
+                <form method="post" action="/alliance/{{$activePlanet}}/option">
                     @csrf
                     <div class="form-check">
                         <input class="form-check-input" type="radio" name="target" id="targetRadios1" value="new">
