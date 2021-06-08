@@ -1960,6 +1960,60 @@ class Controller extends BaseController
         return $return;
     }
 
+    public static function checkForLostFleets($planet_ids) {
+        // empty fleets array | each planet has its own index
+        $lostFleets = [];
+
+        // run through every planet and get all fleets with target and mission null to combine them
+        foreach($planet_ids as $index => $planet)
+        {
+            // first should be the main fleet
+            $firstFleetEntry = Fleet::where([
+                "planet_id" => $planet->id,
+                "mission" => null,
+                "target" => null
+            ])->first();
+
+            // collection of not proper added ships
+            $lostFleets[$planet->id] = Fleet::where([
+                "planet_id" => $planet->id,
+                "mission" => null,
+                "target" => null
+            ])->get()->skip(1);
+
+
+            // only collection with 1 and above entries are worth to be shown at
+            if(count($lostFleets[$planet->id]) > 0) {
+                $mainFleetShips = json_decode($firstFleetEntry->ship_types);
+                $fleetCollection = $lostFleets[$planet->id];
+
+                // ran through every fleet and add amounts to main fleet
+                foreach ($fleetCollection as $rawFleet) {
+                    $fleet = json_decode($rawFleet->ship_types);
+
+                    foreach($mainFleetShips as $mainFleetShip) {
+
+                        // every ship step by step
+                        foreach($fleet as $ship) {
+
+                            // only watch for amount > 0 and count on correct id
+                            if($ship->amount > 0 && $mainFleetShip->ship_id == $ship->ship_id) {
+                                $mainFleetShip->amount += $ship->amount;
+                            }
+                        }
+                    }
+                    // when done delete the current record
+                    $rawFleet->delete();
+                }
+
+                // encode ship types and save to main fleet
+                $firstFleetEntry->ship_types = json_encode($mainFleetShips);
+                $firstFleetEntry->save();
+            }
+        }
+
+    }
+
     public static function checkAllProcesses($planet_ids)
     {
         self::checkBuildingProcesses($planet_ids);
@@ -1967,5 +2021,6 @@ class Controller extends BaseController
         self::checkShipProcesses($planet_ids);
         self::checkTurretProcesses($planet_ids);
         self::checkFleetProcesses($planet_ids);
+        self::checkForLostFleets($planet_ids);
     }
 }

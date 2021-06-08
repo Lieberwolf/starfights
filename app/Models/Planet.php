@@ -448,6 +448,37 @@ class Planet extends Model
         return Fleet::setEmptyProcessForPlanet($planet->id);
     }
 
+    public static function cancelTurretProcess($planet_id)
+    {
+        $process = DB::table('turrets_process AS tp')
+            ->where('tp.planet_id', $planet_id)
+            ->leftJoin('turrets AS t', 't.id','=','tp.turret_id')
+            ->leftJoin('planets AS p', 'p.id','=','tp.planet_id')
+            ->first([
+                't.fe AS turret_fe',
+                't.lut AS turret_lut',
+                't.cry AS turret_cry',
+                't.h2o AS turret_h2o',
+                't.h2 AS turret_h2',
+                'tp.*',
+                'p.*'
+            ]);
+
+        $shipAmount = $process->amount_left;
+        $resourceArray[0] = new \stdClass();
+        $resourceArray[0]->fe = $process->fe + ($shipAmount * $process->turret_fe);
+        $resourceArray[0]->lut = $process->lut + ($shipAmount * $process->turret_lut);
+        $resourceArray[0]->cry = $process->cry + ($shipAmount * $process->turret_cry);
+        $resourceArray[0]->h2o = $process->h2o + ($shipAmount * $process->turret_h2o);
+        $resourceArray[0]->h2 = $process->h2 + ($shipAmount * $process->turret_h2);
+
+        $planet = new \stdClass();
+        $planet->id = $planet_id;
+
+        self::setResourcesForPlanetById($planet_id, $resourceArray);
+        return Turret::setEmptyProcessForPlanet($planet->id);
+    }
+
     public static function getPlanetByCoordinates($galaxy, $system, $planet)
     {
         return DB::table('planets AS p')

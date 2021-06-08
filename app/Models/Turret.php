@@ -161,4 +161,9 @@ class Turret extends Model
         ]);
     }
 
+    public static function setEmptyProcessForPlanet($planet_id)
+    {
+        return DB::table('turrets_process')->where('planet_id', $planet_id)->delete();
+    }
+
 }
