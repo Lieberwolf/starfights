@@ -3,7 +3,7 @@
         @if($alliance != null)
             <div class="col-12 title-line">Allianz "{{$alliance->alliance_name}}"</div>
             <div class="col-6 sub-line" style="margin-top: 1px;">Mitglieder</div>
-            <div class="col-6 sub-line" style="margin-top: 1px;">{{$alliance->members}} (<a href="/alliance/memberslist/{{$activePlanet}}">Liste</a>)</div>
+            <div class="col-6 sub-line" style="margin-top: 1px;">{{$alliance->members}} (<a href="/alliance/{{$activePlanet}}/memberslist/{{$alliance->alliance_id}}">Liste</a>)</div>
             <div class="col-6 sub-line" style="margin-top: 1px;">Gründer</div>
             <div class="col-6 sub-line" style="margin-top: 1px;"><a href="/profile/{{$alliance->founder_id}}">{{$alliance->nickname}}</a></div>
             <div class="col-12 title-line" style="margin-top: 1px;">Allianzlogo</div>

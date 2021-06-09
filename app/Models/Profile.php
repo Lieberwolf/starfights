@@ -28,7 +28,13 @@ class Profile extends Model
         return DB::table('profiles as p')
                  ->leftJoin('alliances as a', 'a.id', '=', 'p.alliance_id')
                  ->where('p.user_id', $user_id)
-                 ->first(['alliance_id', 'a.*']);
+                 ->select([
+                     'p.alliance_id',
+                     'p.nickname',
+                     'a.*',
+                     DB::raw('(SELECT COUNT(`user_id`) from profiles WHERE alliance_id = p.alliance_id) AS members')
+                 ])
+                 ->first();
     }
 
     public function getAllianceByAllyid($ally_id)
@@ -65,5 +71,18 @@ class Profile extends Model
         $alliance = DB::table('alliances')->where('founder_id', $user_id)->first(['id']);
         $process = self::setAlliance($user_id, $alliance->id);
         return $process;
+    }
+
+    public static function getUsersInAlliance($alliance_id)
+    {
+        // pickup members
+        $members = DB::table('profiles as p')->where('p.alliance_id', $alliance_id)->get();
+        //get alliance data
+        $alliance = DB::table('alliances as a')->where('a.id', $alliance_id)->first();
+        // add members to alliance data
+        $alliance->members = $members;
+
+        // return full data set
+        return $alliance;
     }
 }

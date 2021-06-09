@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Research;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Profile as Profile;
@@ -47,11 +48,19 @@ class AllianceController extends Controller
         $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
         $allUserPlanets = Controller::getAllUserPlanets($user_id);
         Controller::checkAllProcesses($allUserPlanets);
-        if(!is_numeric($alliance_id) && $alliance_id != "found") {
+        if(!is_numeric($alliance_id) && $alliance_id != "found" && $alliance_id != "memberslist") {
             return redirect('/overview/' . $planet_id);
         } else if(!is_numeric($alliance_id) && $alliance_id == "found") {
             // not a good solution Todo: find a better way redirecting to correct method
             return view('alliance.found', [
+                'defaultPlanet' => session('default_planet'),
+                'planetaryResources' => $planetaryResources[0][0],
+                'planetaryStorage' => $planetaryResources[1],
+                'allUserPlanets' => $allUserPlanets,
+                'activePlanet' => $planet_id,
+            ]);
+        } else if(!is_numeric($alliance_id) && $alliance_id == "memberslist") {
+            return view('alliance.memberslist', [
                 'defaultPlanet' => session('default_planet'),
                 'planetaryResources' => $planetaryResources[0][0],
                 'planetaryStorage' => $planetaryResources[1],
@@ -106,7 +115,6 @@ class AllianceController extends Controller
 
     public function found($planet_id)
     {
-        dd($planet_id);
         // update session with new planet id
         session(['default_planet' => $planet_id]);
         $user_id = Auth::id();
@@ -124,6 +132,49 @@ class AllianceController extends Controller
                 'planetaryStorage' => $planetaryResources[1],
                 'allUserPlanets' => $allUserPlanets,
                 'activePlanet' => $planet_id,
+            ]);
+        } else {
+            return view('error.index');
+        }
+    }
+
+    public function memberslist($planet_id, $alliance_id)
+    {
+        // update session with new planet id
+        session(['default_planet' => $planet_id]);
+        $user_id = Auth::id();
+        $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
+        $allUserPlanets = Controller::getAllUserPlanets($user_id);
+        Controller::checkAllProcesses($allUserPlanets);
+        $allianceData = Profile::getUsersInAlliance($alliance_id);
+
+        $list = [];
+        foreach($allianceData->members as $key => $user) {
+            $planets = Planet::getAllUserPlanets($user->user_id);
+            $allPlanetPoints = Planet::getAllPlanetaryPointsByIds($planets);
+            $allResearchPoints = Research::getAllUserResearchPointsByUserId($user->user_id);
+
+            $list[$key] = $user;
+            $list[$key]->planetPoints = $allPlanetPoints;
+            $list[$key]->researchPoints = $allResearchPoints;
+            $list[$key]->totalPoints = $allPlanetPoints + $allResearchPoints;
+        }
+
+        usort($list, function($a, $b) {
+            if($a->totalPoints == $b->totalPoints){ return 0 ; }
+            return ($a->totalPoints < $b->totalPoints) ? 1 : -1;
+        });
+
+        if(count($planetaryResources)>0)
+        {
+            return view('alliance.memberslist', [
+                'defaultPlanet' => session('default_planet'),
+                'planetaryResources' => $planetaryResources[0][0],
+                'planetaryStorage' => $planetaryResources[1],
+                'allUserPlanets' => $allUserPlanets,
+                'activePlanet' => $planet_id,
+                'allianceData' => $allianceData,
+                'members' => $list
             ]);
         } else {
             return view('error.index');
