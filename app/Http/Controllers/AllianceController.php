@@ -45,6 +45,7 @@ class AllianceController extends Controller
         session(['default_planet' => $planet_id]);
         $user_id = Auth::id();
         $profile = new Profile();
+        $profileData = Profile::getUsersProfileById($user_id);
         $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
         $allUserPlanets = Controller::getAllUserPlanets($user_id);
         Controller::checkAllProcesses($allUserPlanets);
@@ -74,7 +75,6 @@ class AllianceController extends Controller
             } else {
                 // get foreign alliance data
                 $alliance = $profile->getAllianceByAllyId($alliance_id);
-                //dd($alliance);
                 if($alliance) {
                     $alliance->own = false;
                 }
@@ -91,6 +91,7 @@ class AllianceController extends Controller
                 'allUserPlanets' => $allUserPlanets,
                 'activePlanet' => $planet_id,
                 'alliance' => $alliance,
+                'userData' => $profileData
             ]);
         } else {
             return view('error.index');

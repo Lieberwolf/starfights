@@ -45,6 +45,7 @@ class Profile extends Model
                  ->leftJoin('profiles as p', 'a.founder_id','=', 'p.user_id')
                  ->select([
                      'a.*',
+                     'a.id as alliance_id',
                      'p.nickname',
                      DB::raw('(SELECT COUNT(`user_id`) from profiles WHERE alliance_id = ' . $ally_id . ') AS members')
                  ])
@@ -84,5 +85,10 @@ class Profile extends Model
 
         // return full data set
         return $alliance;
+    }
+
+    public static function getUsersProfileById($user_id)
+    {
+        return Profile::where('user_id', $user_id)->first();
     }
 }

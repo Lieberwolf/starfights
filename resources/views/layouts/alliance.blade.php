@@ -45,7 +45,9 @@
                     </form>
                 </div>
                 @else
-                <div class="col-12 sub-line"><a href="/alliance/apply/{{$alliance->id}}">Bewerben</a></div>
+                @if(!$userData->alliance_id)
+                    <div class="col-12 sub-line"><a href="/alliance/apply/{{$alliance->id}}">Bewerben</a></div>
+                @endif
             @endif
 
 
