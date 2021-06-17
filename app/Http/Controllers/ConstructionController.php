@@ -102,15 +102,18 @@ class ConstructionController extends Controller
         $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
         $buildingList = Building::getAllAvailableBuildings($planet_id, $user_id);
         $currentConstruction = Planet::getPlanetaryBuildingProcess($planet_id);
-        $selectedBuilding = $buildingList->firstWhere('id', $currentConstruction->building_id);
+        $buildingListFactorized = Controller::factorizeBuildings($buildingList);
+        $levelResources = $buildingListFactorized->first(function($value) use ($currentConstruction) {
+            return $value->id == $currentConstruction->building_id;
+        });
 
         // calculate new resources
         // todo: higher levels => higher cost, it only calculates level 1 costs
-        $planetaryResources[0][0]->fe += $selectedBuilding->fe;
-        $planetaryResources[0][0]->lut += $selectedBuilding->lut;
-        $planetaryResources[0][0]->cry += $selectedBuilding->cry;
-        $planetaryResources[0][0]->h2o += $selectedBuilding->h2o;
-        $planetaryResources[0][0]->h2 += $selectedBuilding->h2;
+        $planetaryResources[0][0]->fe += $levelResources->fe;
+        $planetaryResources[0][0]->lut += $levelResources->lut;
+        $planetaryResources[0][0]->cry += $levelResources->cry;
+        $planetaryResources[0][0]->h2o += $levelResources->h2o;
+        $planetaryResources[0][0]->h2 += $levelResources->h2;
         Planet::setResourcesForPlanetById($planet_id, $planetaryResources[0]);
 
         $canceled = Building::cancelBuilding($planet_id);
