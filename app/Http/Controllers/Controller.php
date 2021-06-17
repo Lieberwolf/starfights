@@ -1039,6 +1039,10 @@ class Controller extends BaseController
                                     ];
                                     Messages::create($message);
                                 }
+                                unset($fleet->readableSource);
+                                unset($fleet->readableTarget);
+                                $fleet->arrived = true;
+                                $fleet->save();
 
                                 break;
                             case 5:
