@@ -1905,33 +1905,91 @@ class Controller extends BaseController
             $cargoH2o = $cargo * .05;
             $cargoH2 = $cargo * .1;
 
-            if($defender["home"]->fe < $cargoFe)
+            $buildingsList = Building::getAllAvailableBuildings($fleet->target, $fleet->readableTarget->user_id);
+
+            $storage = new \stdClass();
+            $storage->fe = 10000;
+            $storage->lut = 10000;
+            $storage->cry = 100;
+            $storage->h2o = 10000;
+            $storage->h2 = 1000;
+
+            foreach($buildingsList as $building) {
+                if($building->store_fe > 0) {
+                    if($building->infrastructure && $building->infrastructure->level > 0) {
+                        $storage->fe += $building->store_fe * $building->infrastructure->level;
+                    }
+                }
+                if($building->store_lut > 0) {
+                    if($building->infrastructure && $building->infrastructure->level > 0) {
+                        $storage->lut += $building->store_lut * $building->infrastructure->level;
+                    }
+                }
+                if($building->store_cry > 0) {
+                    if($building->infrastructure && $building->infrastructure->level > 0) {
+                        $storage->cry += $building->store_cry * $building->infrastructure->level;
+                    }
+                }
+                if($building->store_h2o > 0) {
+                    if($building->infrastructure && $building->infrastructure->level > 0) {
+                        $storage->h2o += $building->store_h2o * $building->infrastructure->level;
+                    }
+                }
+                if($building->store_h2 > 0) {
+                    if($building->infrastructure && $building->infrastructure->level > 0) {
+                        $storage->h2 += $building->store_h2 * $building->infrastructure->level;
+                    }
+                }
+            }
+
+            if($defender["home"]->fe > -1)
             {
-                $cargoFe = floor($defender["home"]->fe);
+                $maxFe = floor($defender["home"]->fe - ($storage->fe * 0.04));
+                $maxFe = $maxFe < 0 ? 0 : $maxFe;
+                if($maxFe < $cargoFe) {
+                    $cargoFe = $maxFe;
+                }
             }
             $defender["home"]->fe -= $cargoFe;
 
-            if($defender["home"]->lut < $cargoLut)
+            if($defender["home"]->lut > -1)
             {
-                $cargoLut = floor($defender["home"]->lut);
+                $maxLut = floor($defender["home"]->lut - ($storage->lut * 0.04));
+                $maxLut = $maxLut < 0 ? 0 : $maxLut;
+                if($maxLut < $cargoLut) {
+                    $cargoLut = $maxLut;
+                }
             }
             $defender["home"]->lut -= $cargoLut;
 
-            if($defender["home"]->cry < $cargoCry)
+            if($defender["home"]->cry > -1)
             {
-                $cargoCry = floor($defender["home"]->cry);
+
+                $maxCry = floor($defender["home"]->cry - ($storage->cry * 0.04));
+                $maxCry = $maxCry < 0 ? 0 : $maxCry;
+                if($cargoCry > $maxCry) {
+                    $cargoCry = $maxCry;
+                }
             }
             $defender["home"]->cry -= $cargoCry;
 
-            if($defender["home"]->h2o < $cargoH2o)
+            if($defender["home"]->h2o > -1)
             {
-                $cargoH2o = floor($defender["home"]->h2o);
+                $maxH2o = floor($defender["home"]->h2o - ($storage->h2o * 0.04));
+                $maxH2o = $maxH2o < 0 ? 0 : $maxH2o;
+                if($maxH2o < $cargoH2o) {
+                    $cargoH2o = $maxH2o;
+                }
             }
             $defender["home"]->h2o -= $cargoH2o;
 
-            if($defender["home"]->h2 < $cargoH2)
+            if($defender["home"]->h2 > -1)
             {
-                $cargoH2 = floor($defender["home"]->h2);
+                $maxH2 = floor($defender["home"]->h2- ($storage->h2 * 0.04));
+                $maxH2 = $maxH2 < 0 ? 0 : $maxH2;
+                if($maxH2 < $cargoH2) {
+                    $cargoH2 = $maxH2;
+                }
             }
             $defender["home"]->h2 -= $cargoH2;
 
