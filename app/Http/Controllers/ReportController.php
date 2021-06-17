@@ -19,6 +19,8 @@ class ReportController extends Controller
     public function show($report_uuid)
     {
         $user_id = Auth::id();
+
+        if($user_id != null) {
         $planet_id = session('default_planet');
         $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
         $allUserPlanets = Controller::getAllUserPlanets($user_id);
@@ -37,6 +39,7 @@ class ReportController extends Controller
         $report->planet_infrastructure = json_decode($report->planet_infrastructure);
         $report->defender_knowledge = json_decode($report->defender_knowledge);
 
+
         return view('report.show', [
             'defaultPlanet' => session('default_planet'),
             'planetaryResources' => $planetaryResources[0][0],
@@ -45,5 +48,9 @@ class ReportController extends Controller
             'activePlanet' => $planet_id,
             'report' => $report
         ]);
+
+        } else {
+            return view('auth.login');
+        }
     }
 }
