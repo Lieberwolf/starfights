@@ -193,9 +193,12 @@ class DefenseController extends Controller
         Controller::checkBuildingProcesses($allUserPlanets);
         Controller::checkResearchProcesses($allUserPlanets);
         Controller::checkShipProcesses($allUserPlanets);
-        $process = Planet::cancelShipProcess($planet_id);
-
-        return redirect('/shipyard/' . $planet_id);
+        $process = Planet::cancelTurretProcess($planet_id);
+        if($process) {
+            return redirect('/defense/' . $planet_id);
+        } else {
+            dd("Something wrong :(");
+        }
     }
 
     // helpers

@@ -1039,6 +1039,10 @@ class Controller extends BaseController
                                     ];
                                     Messages::create($message);
                                 }
+                                unset($fleet->readableSource);
+                                unset($fleet->readableTarget);
+                                $fleet->arrived = true;
+                                $fleet->save();
 
                                 break;
                             case 5:
@@ -1159,8 +1163,6 @@ class Controller extends BaseController
                                     }
                                     $defender->turret_types = json_encode($defenderTurretList);
                                     Defense::where('planet_id', $fleet->target)->update(['turret_types' => $defender->turret_types]);
-                                    unset($defender["turrets"]);
-                                    unset($defender->turret_types);
                                 }
 
 
@@ -1185,6 +1187,8 @@ class Controller extends BaseController
                                     unset( $defender["defense_value"] );
                                     unset( $defender["final_shield_value"] );
                                     unset( $defender["survivedDefRatio"] );
+                                    unset( $defender["turrets"] );
+                                    unset( $defender->turret_types );
                                     $defender->save();
                                 }
 
@@ -1747,9 +1751,12 @@ class Controller extends BaseController
                 {
                     $defenderList[$key] = new \stdClass();
                     $defenderList[$key] = Ship::getOneById($ship->ship_id);
-                    $defenderList[$key]->amount = $ship->amount;
-                    $defender["attack_value"] += $defenderList[$key]->amount * $defenderList[$key]->attack;
-                    $defender["defense_value"] += $defenderList[$key]->amount * $defenderList[$key]->defend;
+                    $ship->destroyable = $defenderList[$key]->destroyable;
+                    if($defenderList[$key]->destroyable) {
+                        $defenderList[$key]->amount = $ship->amount;
+                        $defender["attack_value"] += $defenderList[$key]->amount * $defenderList[$key]->attack;
+                        $defender["defense_value"] += $defenderList[$key]->amount * $defenderList[$key]->defend;
+                    }
                 }
             }
         }
@@ -1871,9 +1878,14 @@ class Controller extends BaseController
         }
 
         if($defender["ship"]) {
+
             foreach($defender["ship"] as $key => $defenderShip)
             {
-                $defenderShip->newAmount = ceil($defenderShip->amount * ($survivedDefRatio/100));
+                if($defenderShip->amount > 0 && $defenderShip->destroyable) {
+                    $defenderShip->newAmount = ceil($defenderShip->amount * ($survivedDefRatio/100));
+                } else {
+                    $defenderShip->newAmount = $defenderShip->amount;
+                }
             }
         }
 
@@ -1905,33 +1917,91 @@ class Controller extends BaseController
             $cargoH2o = $cargo * .05;
             $cargoH2 = $cargo * .1;
 
-            if($defender["home"]->fe < $cargoFe)
+            $buildingsList = Building::getAllAvailableBuildings($fleet->target, $fleet->readableTarget->user_id);
+
+            $storage = new \stdClass();
+            $storage->fe = 10000;
+            $storage->lut = 10000;
+            $storage->cry = 100;
+            $storage->h2o = 10000;
+            $storage->h2 = 1000;
+
+            foreach($buildingsList as $building) {
+                if($building->store_fe > 0) {
+                    if($building->infrastructure && $building->infrastructure->level > 0) {
+                        $storage->fe += $building->store_fe * $building->infrastructure->level;
+                    }
+                }
+                if($building->store_lut > 0) {
+                    if($building->infrastructure && $building->infrastructure->level > 0) {
+                        $storage->lut += $building->store_lut * $building->infrastructure->level;
+                    }
+                }
+                if($building->store_cry > 0) {
+                    if($building->infrastructure && $building->infrastructure->level > 0) {
+                        $storage->cry += $building->store_cry * $building->infrastructure->level;
+                    }
+                }
+                if($building->store_h2o > 0) {
+                    if($building->infrastructure && $building->infrastructure->level > 0) {
+                        $storage->h2o += $building->store_h2o * $building->infrastructure->level;
+                    }
+                }
+                if($building->store_h2 > 0) {
+                    if($building->infrastructure && $building->infrastructure->level > 0) {
+                        $storage->h2 += $building->store_h2 * $building->infrastructure->level;
+                    }
+                }
+            }
+
+            if($defender["home"]->fe > -1)
             {
-                $cargoFe = floor($defender["home"]->fe);
+                $maxFe = floor($defender["home"]->fe - ($storage->fe * 0.04));
+                $maxFe = $maxFe < 0 ? 0 : $maxFe;
+                if($maxFe < $cargoFe) {
+                    $cargoFe = $maxFe;
+                }
             }
             $defender["home"]->fe -= $cargoFe;
 
-            if($defender["home"]->lut < $cargoLut)
+            if($defender["home"]->lut > -1)
             {
-                $cargoLut = floor($defender["home"]->lut);
+                $maxLut = floor($defender["home"]->lut - ($storage->lut * 0.04));
+                $maxLut = $maxLut < 0 ? 0 : $maxLut;
+                if($maxLut < $cargoLut) {
+                    $cargoLut = $maxLut;
+                }
             }
             $defender["home"]->lut -= $cargoLut;
 
-            if($defender["home"]->cry < $cargoCry)
+            if($defender["home"]->cry > -1)
             {
-                $cargoCry = floor($defender["home"]->cry);
+
+                $maxCry = floor($defender["home"]->cry - ($storage->cry * 0.04));
+                $maxCry = $maxCry < 0 ? 0 : $maxCry;
+                if($cargoCry > $maxCry) {
+                    $cargoCry = $maxCry;
+                }
             }
             $defender["home"]->cry -= $cargoCry;
 
-            if($defender["home"]->h2o < $cargoH2o)
+            if($defender["home"]->h2o > -1)
             {
-                $cargoH2o = floor($defender["home"]->h2o);
+                $maxH2o = floor($defender["home"]->h2o - ($storage->h2o * 0.04));
+                $maxH2o = $maxH2o < 0 ? 0 : $maxH2o;
+                if($maxH2o < $cargoH2o) {
+                    $cargoH2o = $maxH2o;
+                }
             }
             $defender["home"]->h2o -= $cargoH2o;
 
-            if($defender["home"]->h2 < $cargoH2)
+            if($defender["home"]->h2 > -1)
             {
-                $cargoH2 = floor($defender["home"]->h2);
+                $maxH2 = floor($defender["home"]->h2- ($storage->h2 * 0.04));
+                $maxH2 = $maxH2 < 0 ? 0 : $maxH2;
+                if($maxH2 < $cargoH2) {
+                    $cargoH2 = $maxH2;
+                }
             }
             $defender["home"]->h2 -= $cargoH2;
 
@@ -1960,6 +2030,60 @@ class Controller extends BaseController
         return $return;
     }
 
+    public static function checkForLostFleets($planet_ids) {
+        // empty fleets array | each planet has its own index
+        $lostFleets = [];
+
+        // run through every planet and get all fleets with target and mission null to combine them
+        foreach($planet_ids as $index => $planet)
+        {
+            // first should be the main fleet
+            $firstFleetEntry = Fleet::where([
+                "planet_id" => $planet->id,
+                "mission" => null,
+                "target" => null
+            ])->first();
+
+            // collection of not proper added ships
+            $lostFleets[$planet->id] = Fleet::where([
+                "planet_id" => $planet->id,
+                "mission" => null,
+                "target" => null
+            ])->get()->skip(1);
+
+
+            // only collection with 1 and above entries are worth to be shown at
+            if(count($lostFleets[$planet->id]) > 0) {
+                $mainFleetShips = json_decode($firstFleetEntry->ship_types);
+                $fleetCollection = $lostFleets[$planet->id];
+
+                // ran through every fleet and add amounts to main fleet
+                foreach ($fleetCollection as $rawFleet) {
+                    $fleet = json_decode($rawFleet->ship_types);
+
+                    foreach($mainFleetShips as $mainFleetShip) {
+
+                        // every ship step by step
+                        foreach($fleet as $ship) {
+
+                            // only watch for amount > 0 and count on correct id
+                            if($ship->amount > 0 && $mainFleetShip->ship_id == $ship->ship_id) {
+                                $mainFleetShip->amount += $ship->amount;
+                            }
+                        }
+                    }
+                    // when done delete the current record
+                    $rawFleet->delete();
+                }
+
+                // encode ship types and save to main fleet
+                $firstFleetEntry->ship_types = json_encode($mainFleetShips);
+                $firstFleetEntry->save();
+            }
+        }
+
+    }
+
     public static function checkAllProcesses($planet_ids)
     {
         self::checkBuildingProcesses($planet_ids);
@@ -1967,5 +2091,6 @@ class Controller extends BaseController
         self::checkShipProcesses($planet_ids);
         self::checkTurretProcesses($planet_ids);
         self::checkFleetProcesses($planet_ids);
+        self::checkForLostFleets($planet_ids);
     }
 }

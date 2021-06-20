@@ -15,7 +15,7 @@ class CreateResearchtimefactorsTable extends Migration
     {
         Schema::create('researchtimefactors', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('research_id')->default(0.0001);
+            $table->unsignedBigInteger('research_id')->default(0);
             $table->float('factor_1', 8, 4)->default(0.0001);
             $table->float('factor_2', 8, 4)->default(0.0001);
             $table->float('factor_3', 8, 4)->default(0.0001);

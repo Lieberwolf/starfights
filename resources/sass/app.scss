@@ -211,7 +211,10 @@ body {
 #chat-window {
     display: none;
     position: fixed;
-    max-width: 50%;
+    max-width: calc(100% - 40px);
+    @media (min-width: 768px) {
+        max-width: 50%;
+    }
     bottom: 20px;
     right: 20px;
     background-color: #001e3b;
