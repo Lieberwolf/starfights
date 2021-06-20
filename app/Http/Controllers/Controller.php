@@ -1163,8 +1163,6 @@ class Controller extends BaseController
                                     }
                                     $defender->turret_types = json_encode($defenderTurretList);
                                     Defense::where('planet_id', $fleet->target)->update(['turret_types' => $defender->turret_types]);
-                                    unset($defender["turrets"]);
-                                    unset($defender->turret_types);
                                 }
 
 
@@ -1189,6 +1187,8 @@ class Controller extends BaseController
                                     unset( $defender["defense_value"] );
                                     unset( $defender["final_shield_value"] );
                                     unset( $defender["survivedDefRatio"] );
+                                    unset( $defender["turrets"] );
+                                    unset( $defender->turret_types );
                                     $defender->save();
                                 }
 

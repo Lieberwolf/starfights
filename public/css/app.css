@@ -11540,10 +11540,15 @@ body a:hover {
 #chat-window {
   display: none;
   position: fixed;
-  max-width: 50%;
+  max-width: calc(100% - 40px);
   bottom: 20px;
   right: 20px;
   background-color: #001e3b;
+}
+@media (min-width: 768px) {
+  #chat-window {
+    max-width: 50%;
+  }
 }
 #chat-window .chat-list {
   margin: 0;
