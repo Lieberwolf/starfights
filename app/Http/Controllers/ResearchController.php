@@ -137,11 +137,11 @@ class ResearchController extends Controller
 
         foreach($buildingList as $building)
         {
-            if($building->decrease_building_timeBy > 0 && $building->infrastructure != null)
+            if($building->decrease_research_timeBy > 0 && $building->infrastructure != null)
             {
                 $temp = new \stdClass();
                 $temp->level = $building->infrastructure->level;
-                $temp->factor = $building->decrease_building_timeBy;
+                $temp->factor = $building->decrease_research_timeBy;
 
                 $decreasers[] = $temp;
             }
