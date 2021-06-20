@@ -21,11 +21,21 @@
                         <span>{{$ship->description}}</span>
                         <span>Baukosten:</span>
                         <span>
-                            Eisen: {{number_format($ship->fe,0, ',', '.')}}
-                            Lutinum: {{number_format($ship->lut,0, ',', '.')}}
-                            Kristalle: {{number_format($ship->cry,0, ',', '.')}}
-                            Wasser: {{number_format($ship->h2o,0, ',', '.')}}
-                            Wasserstoff: {{number_format($ship->h2,0, ',', '.')}}
+                            @if($ship->fe > 0)
+                                Eisen: {{number_format($ship->fe,0, ',', '.')}}
+                            @endif
+                            @if($ship->lut > 0)
+                                Lutinum: {{number_format($ship->lut,0, ',', '.')}}
+                            @endif
+                            @if($ship->cry > 0)
+                                Kristalle: {{number_format($ship->cry,0, ',', '.')}}
+                            @endif
+                            @if($ship->h2o > 0)
+                                Wasser: {{number_format($ship->h2o,0, ',', '.')}}
+                            @endif
+                            @if($ship->h2 > 0)
+                                Wasserstoff: {{number_format($ship->h2,0, ',', '.')}}
+                            @endif
                         </span>
                         <span>Dauer: {{$ship->current_buildtime_readable}}</span>
                     </div>

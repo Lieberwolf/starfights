@@ -17,11 +17,21 @@
                     <span>{{$building->description}}</span>
                     <span>Ausbau auf Stufe {{$building->infrastructure != null ? $building->infrastructure->level + 1 : 1}}:</span>
                     <span>
-                        Eisen: {{number_format($building->fe, 0, ',', '.')}}
-                        Lutinum: {{number_format($building->lut, 0, ',', '.')}}
-                        Kristalle: {{number_format($building->cry, 0, ',', '.')}}
-                        Wasser: {{number_format($building->h2o, 0, ',', '.')}}
-                        Wasserstoff: {{number_format($building->h2, 0, ',', '.')}}
+                        @if($building->fe > 0)
+                            Eisen: {{number_format($building->fe,0, ',', '.')}}
+                        @endif
+                        @if($building->lut > 0)
+                            Lutinum: {{number_format($building->lut,0, ',', '.')}}
+                        @endif
+                        @if($building->cry > 0)
+                            Kristalle: {{number_format($building->cry,0, ',', '.')}}
+                        @endif
+                        @if($building->h2o > 0)
+                            Wasser: {{number_format($building->h2o,0, ',', '.')}}
+                        @endif
+                        @if($building->h2 > 0)
+                            Wasserstoff: {{number_format($building->h2,0, ',', '.')}}
+                        @endif
                     </span>
                     <span>Dauer: {{$building->readableBuildtime}}</span>
                 </div>
