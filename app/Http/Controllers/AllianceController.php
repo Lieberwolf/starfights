@@ -49,25 +49,8 @@ class AllianceController extends Controller
         $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
         $allUserPlanets = Controller::getAllUserPlanets($user_id);
         Controller::checkAllProcesses($allUserPlanets);
-        if(!is_numeric($alliance_id) && $alliance_id != "found" && $alliance_id != "memberslist") {
+        if(!is_numeric($alliance_id)) {
             return redirect('/overview/' . $planet_id);
-        } else if(!is_numeric($alliance_id) && $alliance_id == "found") {
-            // not a good solution Todo: find a better way redirecting to correct method
-            return view('alliance.found', [
-                'defaultPlanet' => session('default_planet'),
-                'planetaryResources' => $planetaryResources[0][0],
-                'planetaryStorage' => $planetaryResources[1],
-                'allUserPlanets' => $allUserPlanets,
-                'activePlanet' => $planet_id,
-            ]);
-        } else if(!is_numeric($alliance_id) && $alliance_id == "memberslist") {
-            return view('alliance.memberslist', [
-                'defaultPlanet' => session('default_planet'),
-                'planetaryResources' => $planetaryResources[0][0],
-                'planetaryStorage' => $planetaryResources[1],
-                'allUserPlanets' => $allUserPlanets,
-                'activePlanet' => $planet_id,
-            ]);
         } else {
             $alliance = $profile->getAllianceForUser($user_id);
             if($alliance_id == $alliance->alliance_id) {
@@ -122,8 +105,6 @@ class AllianceController extends Controller
         $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
         $allUserPlanets = Controller::getAllUserPlanets($user_id);
         Controller::checkAllProcesses($allUserPlanets);
-
-
 
         if(count($planetaryResources)>0)
         {
@@ -185,8 +166,8 @@ class AllianceController extends Controller
     public function founding($planet_id)
     {
         $data = request()->validate([
-            'name' => 'required|max:24',
-            'tag' => 'required|max:5'
+            'name' => 'required|max:24|min:3',
+            'tag' => 'required|max:5|min:3'
         ]);
 
         $founded = Profile::foundAlliance($data, Auth::id());
