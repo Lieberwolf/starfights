@@ -221,8 +221,8 @@
                             @foreach($report->attacker_fleet as $ship)
                                 @if($ship->amount > 0)
                                     <div class="col-4 sub-line">{{$ship->ship_name}}</div>
-                                    <div class="col-4 sub-line">{{$ship->amount}}</div>
-                                    <div class="col-4 sub-line">{{$ship->newAmount}}</div>
+                                    <div class="col-4 sub-line">{{number_format($ship->amount, 0, ',', '.')}}</div>
+                                    <div class="col-4 sub-line">{{number_format($ship->newAmount, 0, ',', '.')}}</div>
                                 @endif
                             @endforeach
                         @endif
@@ -239,8 +239,8 @@
                                 @foreach($report->defender_fleet as $ship)
                                     @if($ship->amount > 0)
                                         <div class="col-4 sub-line">{{$ship->ship_name}}</div>
-                                        <div class="col-4 sub-line">{{$ship->amount}}</div>
-                                        <div class="col-4 sub-line">{{$ship->newAmount}}</div>
+                                        <div class="col-4 sub-line">{{number_format($ship->amount, 0, ',', '.')}}</div>
+                                        <div class="col-4 sub-line">{{number_format($ship->newAmount, 0, ',', '.')}}</div>
                                     @endif
                                 @endforeach
                             @endif
@@ -261,8 +261,8 @@
                             @foreach($report->defender_defense as $turret)
                                 @if($turret->amount > 0)
                                     <div class="col-4 sub-line">{{$turret->turret_name}}</div>
-                                    <div class="col-4 sub-line">{{$turret->amount}}</div>
-                                    <div class="col-4 sub-line">{{$turret->newAmount}}</div>
+                                    <div class="col-4 sub-line">{{number_format($turret->amount, 0, ',', '.')}}</div>
+                                    <div class="col-4 sub-line">{{number_format($turret->newAmount, 0, ',', '.')}}</div>
                                 @endif
                             @endforeach
                         @endif
@@ -294,7 +294,7 @@
                             @endif
                         </div>
                         <div class="col-6 sub-line">
-                            {{$resource}}
+                            {{number_format(floor($resource), 0, ',', '.')}}
                         </div>
                     @endif
                 @endforeach
@@ -330,8 +330,8 @@
                             @foreach($report->attacker_fleet as $ship)
                                 @if($ship->amount > 0)
                                     <div class="col-4 sub-line">{{$ship->ship_name}}</div>
-                                    <div class="col-4 sub-line">{{$ship->amount}}</div>
-                                    <div class="col-4 sub-line">{{$ship->newAmount}}</div>
+                                    <div class="col-4 sub-line">{{number_format($ship->amount, 0, ',', '.')}}</div>
+                                    <div class="col-4 sub-line">{{number_format($ship->newAmount, 0, ',', '.')}}</div>
                                 @endif
                             @endforeach
                         @endif
@@ -348,8 +348,8 @@
                                 @foreach($report->defender_fleet as $ship)
                                     @if($ship->amount > 0)
                                         <div class="col-4 sub-line">{{$ship->ship_name}}</div>
-                                        <div class="col-4 sub-line">{{$ship->amount}}</div>
-                                        <div class="col-4 sub-line">{{$ship->newAmount}}</div>
+                                        <div class="col-4 sub-line">{{number_format($ship->amount, 0, ',', '.')}}</div>
+                                        <div class="col-4 sub-line">{{number_format($ship->newAmount, 0, ',', '.')}}</div>
                                     @endif
                                 @endforeach
                             @endif
@@ -370,8 +370,8 @@
                                 @foreach($report->defender_defense as $turret)
                                     @if($turret->amount > 0)
                                         <div class="col-4 sub-line">{{$turret->turret_name}}</div>
-                                        <div class="col-4 sub-line">{{$turret->amount}}</div>
-                                        <div class="col-4 sub-line">{{$turret->newAmount}}</div>
+                                        <div class="col-4 sub-line">{{number_format($turret->amount, 0, ',', '.')}}</div>
+                                        <div class="col-4 sub-line">{{number_format($turret->newAmount, 0, ',', '.')}}</div>
                                     @endif
                                 @endforeach
                             @endif
@@ -403,7 +403,7 @@
                                 @endif
                             </div>
                             <div class="col-6 sub-line">
-                                {{$resource}}
+                                {{number_format(floor($resource), 0, ',', '.')}}
                             </div>
                         @endif
                     @endforeach

@@ -45,11 +45,20 @@
             Planeten Bild (URL):
         </div>
         <div class="col-12 col-md-6 sub-line">
+            @if($planetInfo->image)
             <form action="/details/{{$activePlanet}}/image" method="post">
                 @csrf
                 <input type="text" value="{{$planetInfo->image}}" class="form-control" name="image"/>
                 <input type="submit" class="btn btn-primary" value="Speichern"/>
             </form>
+            @else
+            <form action="/details/{{$activePlanet}}/image" method="post">
+                @csrf
+                <input type="text" value="{{$planetInfo->image}}" class="form-control" name="image"/>
+                <input type="submit" class="btn btn-primary" value="Speichern"/>
+            </form>
+            @endif
+
         </div>
     </div>
 </div>

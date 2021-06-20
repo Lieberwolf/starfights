@@ -1751,9 +1751,12 @@ class Controller extends BaseController
                 {
                     $defenderList[$key] = new \stdClass();
                     $defenderList[$key] = Ship::getOneById($ship->ship_id);
-                    $defenderList[$key]->amount = $ship->amount;
-                    $defender["attack_value"] += $defenderList[$key]->amount * $defenderList[$key]->attack;
-                    $defender["defense_value"] += $defenderList[$key]->amount * $defenderList[$key]->defend;
+                    $ship->destroyable = $defenderList[$key]->destroyable;
+                    if($defenderList[$key]->destroyable) {
+                        $defenderList[$key]->amount = $ship->amount;
+                        $defender["attack_value"] += $defenderList[$key]->amount * $defenderList[$key]->attack;
+                        $defender["defense_value"] += $defenderList[$key]->amount * $defenderList[$key]->defend;
+                    }
                 }
             }
         }
@@ -1875,9 +1878,14 @@ class Controller extends BaseController
         }
 
         if($defender["ship"]) {
+
             foreach($defender["ship"] as $key => $defenderShip)
             {
-                $defenderShip->newAmount = ceil($defenderShip->amount * ($survivedDefRatio/100));
+                if($defenderShip->amount > 0 && $defenderShip->destroyable) {
+                    $defenderShip->newAmount = ceil($defenderShip->amount * ($survivedDefRatio/100));
+                } else {
+                    $defenderShip->newAmount = $defenderShip->amount;
+                }
             }
         }
 
