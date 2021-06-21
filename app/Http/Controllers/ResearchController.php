@@ -213,6 +213,10 @@ class ResearchController extends Controller
             }
         }
 
+        $researchList = $researchList->filter(function($value, $key) {
+            return $value->buildable == true;
+        });
+
         if(count($planetaryResources)>0)
         {
             return view('research.show', [
