@@ -1,7 +1,17 @@
 <div class="container">
     <div class="row">
         <div class="col-12 title-line">
-            Planeten Informationen zu <a href="/universe/{{$activePlanet}}/{{$planetInfo->galaxy}}/{{$planetInfo->system}}">{{$planetInfo->galaxy . ':' . $planetInfo->system . ':' . $planetInfo->planet}}</a>
+            @if($prevPlanet)
+            <span>
+                <a href="/details/{{$prevPlanet->id}}"><<</a>
+            </span>
+            @endif
+            <span>Planeten Informationen zu <a href="/universe/{{$activePlanet}}/{{$planetInfo->galaxy}}/{{$planetInfo->system}}">{{$planetInfo->galaxy . ':' . $planetInfo->system . ':' . $planetInfo->planet}}</a></span>
+            @if($nextPlanet)
+            <span>
+                <a href="/details/{{$nextPlanet->id}}">>></a>
+            </span>
+            @endif
         </div>
         <div class="col-6 sub-line">
             Durchmesser
@@ -45,7 +55,7 @@
             Planeten Bild (URL):
         </div>
         <div class="col-12 col-md-6 sub-line">
-            @if($planetInfo->image)
+            @if(!$planetInfo->image)
             <form action="/details/{{$activePlanet}}/image" method="post">
                 @csrf
                 <input type="text" value="{{$planetInfo->image}}" class="form-control" name="image"/>
@@ -57,8 +67,24 @@
                 <input type="text" value="{{$planetInfo->image}}" class="form-control" name="image"/>
                 <input type="submit" class="btn btn-primary" value="Speichern"/>
             </form>
+            <form action="/details/{{$activePlanet}}/deleteImage" method="post">
+                @csrf
+                <input type="submit" class="btn btn-warning" value="Löschen"/>
+            </form>
             @endif
-
+        </div>
+        <div class="col-12 col-md-6 mt-4 sub-line">
+            Planet löschen:
+        </div>
+        <div class="col-12 col-md-6 mt-4 sub-line">
+            @if($activePlanet != $startPlanet[0]->start_planet)
+            <form action="/details/{{$activePlanet}}/delete" method="post">
+                @csrf
+                <button type="submit" class="btn btn-warning">Löschen</button>
+            </form>
+            @else
+            <span>Startplaneten können nicht gelöscht werden.</span>
+            @endif
         </div>
     </div>
 </div>

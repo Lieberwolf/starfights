@@ -39,6 +39,30 @@ class ResearchController extends Controller
         $researchProcesses = Research::getResearchProcesses($allUserPlanets);
         $decreasers = [];
 
+        $prevPlanet = false;
+        foreach($allUserPlanets as $key => $planet)
+        {
+            if($planet->id == $planet_id)
+            {
+                if(!empty($allUserPlanets[$key-1]))
+                {
+                    $prevPlanet = $allUserPlanets[$key-1];
+                }
+            }
+        }
+
+        $nextPlanet = false;
+        foreach($allUserPlanets as $key => $planet)
+        {
+            if($planet->id == $planet_id)
+            {
+                if(!empty($allUserPlanets[$key+1]))
+                {
+                    $nextPlanet = $allUserPlanets[$key+1];
+                }
+            }
+        }
+
         foreach($researchList as $key => $entry)
         {
             $researchList[$key]->inProgress = false;
@@ -137,11 +161,11 @@ class ResearchController extends Controller
 
         foreach($buildingList as $building)
         {
-            if($building->decrease_building_timeBy > 0 && $building->infrastructure != null)
+            if($building->decrease_research_timeBy > 0 && $building->infrastructure != null)
             {
                 $temp = new \stdClass();
                 $temp->level = $building->infrastructure->level;
-                $temp->factor = $building->decrease_building_timeBy;
+                $temp->factor = $building->decrease_research_timeBy;
 
                 $decreasers[] = $temp;
             }
@@ -213,6 +237,10 @@ class ResearchController extends Controller
             }
         }
 
+        $researchList = $researchList->filter(function($value, $key) {
+            return $value->buildable == true;
+        });
+
         if(count($planetaryResources)>0)
         {
             return view('research.show', [
@@ -224,6 +252,8 @@ class ResearchController extends Controller
                 'planetInformation' => $planetInformation,
                 'availableResearches' => $researchList,
                 'currentResearch' => $currentResearch,
+                'prevPlanet' => $prevPlanet,
+                'nextPlanet' => $nextPlanet,
             ]);
         } else {
             return view('error.index');
