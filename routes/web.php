@@ -96,6 +96,7 @@ Route::get('/universe/{planet_id}/{galaxy}/{system}', [App\Http\Controllers\Univ
 // search
 Route::get('/search', [App\Http\Controllers\SearchController::class, 'index']);
 Route::get('/search/{planet_id}', [App\Http\Controllers\SearchController::class, 'show']);
+Route::post('/search/{planet_id}/mode', [App\Http\Controllers\SearchController::class, 'mode']);
 
 // techtree
 Route::get('/techtree', [App\Http\Controllers\TechtreeController::class, 'index']);

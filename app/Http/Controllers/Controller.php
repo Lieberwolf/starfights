@@ -1875,6 +1875,11 @@ class Controller extends BaseController
             {
                 $attacker["hasSurvived"] = true;
             }
+
+            if($attackerShip->newAmount < 0)
+            {
+                $attackerShip->newAmount = 0;
+            }
         }
 
         if($defender["ship"]) {
