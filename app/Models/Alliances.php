@@ -12,6 +12,11 @@ class Alliances extends Model
 
     protected $guarded = [];
 
+    public function statistics()
+    {
+        return $this->hasOne(Statistics::class);
+    }
+
     public static function getAllianceForUser($user_id)
     {
         // add join to alliances table
