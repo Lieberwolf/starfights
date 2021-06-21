@@ -427,6 +427,13 @@ class MissionController extends Controller
                 foreach($selectedShips as $keyB => $selectedShip)
                 {
                     if($shipAtPlanet->ship_id == $selectedShip->id) {
+
+                        // are there enough ships to be sent?
+                        if($ship_types[$key]->amount - $selectedShip->amount < 0)
+                        {
+                            return redirect('/mission/' . $planet_id)->with('status', 'Es stehen nicht genügend Schiffe zur Verfügung.');
+                        }
+
                         $ship_types[$key]->amount -= $selectedShip->amount;
                         $proof = false;
 
