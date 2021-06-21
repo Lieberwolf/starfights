@@ -2030,7 +2030,8 @@ class Controller extends BaseController
         return $return;
     }
 
-    public static function checkForLostFleets($planet_ids) {
+    public static function checkForLostFleets($planet_ids)
+    {
         // empty fleets array | each planet has its own index
         $lostFleets = [];
 
@@ -2084,6 +2085,61 @@ class Controller extends BaseController
 
     }
 
+    public static function checkForLostTurrets($planet_ids)
+    {
+        // empty defense array | each planet has its own index
+        $lostTurrets = [];
+
+        // run through every planet and get all defenses to combine them
+        foreach($planet_ids as $index => $planet)
+        {
+            // first should be the main turret
+            $firstTurretEntry = Defense::where([
+                "planet_id" => $planet->id,
+            ])->first();
+
+            // collection of not proper added turrets
+            $lostTurrets[$planet->id] = Defense::where([
+                "planet_id" => $planet->id,
+            ])->get()->skip(1);
+
+
+            // only collection with 1 and above entries are worth to be shown at
+            if(count($lostTurrets[$planet->id]) > 0) {
+                $mainTurretTurrets = json_decode($firstTurretEntry->turret_types);
+                $turretCollection = $lostTurrets[$planet->id];
+
+                // ran through every turret and add amounts to main turret
+                foreach ($turretCollection as $rawTurret) {
+                    $turrets = json_decode($rawTurret->turret_types);
+
+                    foreach($mainTurretTurrets as $mainTurretTurret) {
+
+                        // every turret step by step
+                        foreach($turrets as $turret) {
+
+                            // only watch for amount > 0 and count on correct id
+                            if($turret->amount > 0 && $mainTurretTurret->turret_id == $turret->turret_id) {
+                                $mainTurretTurret->amount += $turret->amount;
+                            }
+                        }
+                    }
+                    // when done delete the current record
+                    $rawTurret->delete();
+                }
+
+                // encode turret types and save to main turret
+                $firstTurretEntry->turret_types = json_encode($mainTurretTurrets);
+                $firstTurretEntry->save();
+
+                $firstTurretEntry = Defense::where([
+                    "planet_id" => $planet->id,
+                ])->first();
+
+            }
+        }
+    }
+
     public static function checkAllProcesses($planet_ids)
     {
         self::checkBuildingProcesses($planet_ids);
@@ -2092,5 +2148,6 @@ class Controller extends BaseController
         self::checkTurretProcesses($planet_ids);
         self::checkFleetProcesses($planet_ids);
         self::checkForLostFleets($planet_ids);
+        self::checkForLostTurrets($planet_ids);
     }
 }
