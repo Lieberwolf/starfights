@@ -2132,10 +2132,6 @@ class Controller extends BaseController
                 $firstTurretEntry->turret_types = json_encode($mainTurretTurrets);
                 $firstTurretEntry->save();
 
-                $firstTurretEntry = Defense::where([
-                    "planet_id" => $planet->id,
-                ])->first();
-
             }
         }
     }
