@@ -1,9 +1,26 @@
 <div class="container">
     <div class="row">
+        <div class="col-12 title-line">
+            @if($prevPlanet)
+            <span>
+                <a href="/construction/{{$prevPlanet->id}}"><<</a>
+            </span>
+            @endif
+            <span>Verfügbare Konstruktionen auf {{$planetInformation->galaxy}}:{{$planetInformation->system}}:{{$planetInformation->planet}}</span>
+            @if($nextPlanet)
+            <span>
+                <a href="/construction/{{$nextPlanet->id}}">>></a>
+            </span>
+            @endif
+        </div>
         @if($currentConstruction)
             <div class="col-10 current-process process-entry">
-                <span>Aktuell in Konstruktion: {{$currentConstruction->building_name}} Stufe {{$currentConstruction->infrastructure != null ? $currentConstruction->infrastructure->level + 1 : 1}} Abgeschlossen in:</span>
+                <span>Aktuell in Konstruktion: {{$currentConstruction->building_name}} Stufe {{$currentConstruction->infrastructure != null ? $currentConstruction->infrastructure->level + 1 : 1}}</span>
+                <br/>
+                <span>Abgeschlossen in: </span>
                 <span class="js-add-countdown" data-seconds-to-count="{{strtotime($currentConstruction->finished_at) - now()->timestamp}}">-</span>
+                <br/>
+                <span>Fertigstellung: {{ date("d.m.Y H:i:s", strtotime($currentConstruction->finished_at)) }}</span>
             </div>
             <div class="col-2 process-action">
                 <a class="process-denied" href="/construction/{{$activePlanet}}/edit">Abbrechen</a>
@@ -17,11 +34,21 @@
                     <span>{{$building->description}}</span>
                     <span>Ausbau auf Stufe {{$building->infrastructure != null ? $building->infrastructure->level + 1 : 1}}:</span>
                     <span>
-                        Eisen: {{number_format($building->fe, 0, ',', '.')}}
-                        Lutinum: {{number_format($building->lut, 0, ',', '.')}}
-                        Kristalle: {{number_format($building->cry, 0, ',', '.')}}
-                        Wasser: {{number_format($building->h2o, 0, ',', '.')}}
-                        Wasserstoff: {{number_format($building->h2, 0, ',', '.')}}
+                        @if($building->fe > 0)
+                            Eisen: {{number_format($building->fe,0, ',', '.')}}
+                        @endif
+                        @if($building->lut > 0)
+                            Lutinum: {{number_format($building->lut,0, ',', '.')}}
+                        @endif
+                        @if($building->cry > 0)
+                            Kristalle: {{number_format($building->cry,0, ',', '.')}}
+                        @endif
+                        @if($building->h2o > 0)
+                            Wasser: {{number_format($building->h2o,0, ',', '.')}}
+                        @endif
+                        @if($building->h2 > 0)
+                            Wasserstoff: {{number_format($building->h2,0, ',', '.')}}
+                        @endif
                     </span>
                     <span>Dauer: {{$building->readableBuildtime}}</span>
                 </div>
