@@ -1,7 +1,17 @@
 <div class="container">
     <div class="row">
         <div class="col-12 title-line">
+            @if($prevPlanet)
+            <span>
+                <a href="/defense/{{$prevPlanet->id}}"><<</a>
+            </span>
+            @endif
             <span>Verfügbare Verteidigung auf {{$planetInformation->galaxy}}:{{$planetInformation->system}}:{{$planetInformation->planet}}</span>
+            @if($nextPlanet)
+            <span>
+                <a href="/defense/{{$nextPlanet->id}}">>></a>
+            </span>
+            @endif
         </div>
         @if($currentTurrets)
             @foreach($currentTurrets->nextTurretIn as $next)

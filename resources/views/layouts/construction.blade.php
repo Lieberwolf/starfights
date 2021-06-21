@@ -1,7 +1,17 @@
 <div class="container">
     <div class="row">
         <div class="col-12 title-line">
+            @if($prevPlanet)
+            <span>
+                <a href="/construction/{{$prevPlanet->id}}"><<</a>
+            </span>
+            @endif
             <span>Verfügbare Konstruktionen auf {{$planetInformation->galaxy}}:{{$planetInformation->system}}:{{$planetInformation->planet}}</span>
+            @if($nextPlanet)
+            <span>
+                <a href="/construction/{{$nextPlanet->id}}">>></a>
+            </span>
+            @endif
         </div>
         @if($currentConstruction)
             <div class="col-10 current-process process-entry">

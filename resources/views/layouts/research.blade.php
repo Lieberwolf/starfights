@@ -1,7 +1,17 @@
 <div class="container">
     <div class="row">
         <div class="col-12 title-line">
+            @if($prevPlanet)
+            <span>
+                <a href="/research/{{$prevPlanet->id}}"><<</a>
+            </span>
+            @endif
             <span>Verfügbare Forschungen auf {{$planetInformation->galaxy}}:{{$planetInformation->system}}:{{$planetInformation->planet}}</span>
+            @if($nextPlanet)
+            <span>
+                <a href="/research/{{$nextPlanet->id}}">>></a>
+            </span>
+            @endif
         </div>
         @if($currentResearch)
         <div class="col-10 current-process process-entry">
@@ -18,7 +28,9 @@
         </div>
         @endif
         @if(count($availableResearches) <= 0)
+        <div class="col-12">
             Keine Forschungen Verfügbar
+        </div>
         @else
             @foreach($availableResearches as $key => $research)
             @if($research->buildable)

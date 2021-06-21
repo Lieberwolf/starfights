@@ -37,6 +37,30 @@ class ShipyardController extends Controller
         $currentShips = Planet::getPlanetaryShipProcess($planet_id);
         $planetInformation = Planet::getOneById($planet_id);
 
+        $prevPlanet = false;
+        foreach($allUserPlanets as $key => $planet)
+        {
+            if($planet->id == $planet_id)
+            {
+                if(!empty($allUserPlanets[$key-1]))
+                {
+                    $prevPlanet = $allUserPlanets[$key-1];
+                }
+            }
+        }
+
+        $nextPlanet = false;
+        foreach($allUserPlanets as $key => $planet)
+        {
+            if($planet->id == $planet_id)
+            {
+                if(!empty($allUserPlanets[$key+1]))
+                {
+                    $nextPlanet = $allUserPlanets[$key+1];
+                }
+            }
+        }
+
         if(is_bool($nextShipIn) || $nextShipIn == null || $currentShips == null)
         {
             $currentShips = false;
@@ -90,6 +114,8 @@ class ShipyardController extends Controller
                 'shipList' => $shipList,
                 'currentShips' => $currentShips,
                 'planetInformation' => $planetInformation,
+                'prevPlanet' => $prevPlanet,
+                'nextPlanet' => $nextPlanet,
             ]);
         } else {
             return view('error.index');
