@@ -2,8 +2,12 @@
     <div class="row">
         @if($currentResearch)
             <div class="col-10 current-process process-entry">
-                <span>Aktuell in Forschung: {{$currentResearch->research_name}} Stufe {{$currentResearch->knowledge != null ? $currentResearch->knowledge->level + 1 : 1}} Abgeschlossen in:</span>
+                <span>Aktuell in Forschung: {{$currentResearch->research_name}} Stufe {{$currentResearch->knowledge != null ? $currentResearch->knowledge->level + 1 : 1}}</span>
+                <br/>
+                <span>Abgeschlossen in: </span>
                 <span class="js-add-countdown" data-seconds-to-count="{{strtotime($currentResearch->finished_at) - now()->timestamp}}">-</span>
+                <br/>
+                <span>Fertigstellung: {{ date("d.m.Y H:m:s", strtotime($currentResearch->finished_at)) }}</span>
             </div>
             <div class="col-2 process-action">
                 <a class="process-denied" href="/research/{{$activePlanet}}/edit">Abbrechen</a>
