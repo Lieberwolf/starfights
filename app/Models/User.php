@@ -63,6 +63,11 @@ class User extends Authenticatable
         return $this->hasOne(Race::class);
     }
 
+    public function statistics()
+    {
+        return $this->hasOne(Statistics::class);
+    }
+
     public static function getAllUserProfiles() {
         return Profile::all();
     }
