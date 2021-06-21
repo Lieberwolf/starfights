@@ -53,7 +53,7 @@
                     @endif
                 </div>
             @else
-                @if($key == count($availableResearches) - 1)
+                @if(count($availableResearches) <= 0)
                     Keine Forschungen Verfügbar
                 @endif
             @endif
