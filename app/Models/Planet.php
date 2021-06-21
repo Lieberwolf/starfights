@@ -518,4 +518,11 @@ class Planet extends Model
 
         ]);
     }
+
+    public static function deletePlanetImage($planet_id)
+    {
+        DB::table('planets')->where('id', '=', $planet_id)->update([
+            'image' => null,
+        ]);
+    }
 }

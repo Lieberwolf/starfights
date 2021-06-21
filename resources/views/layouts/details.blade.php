@@ -55,7 +55,7 @@
             Planeten Bild (URL):
         </div>
         <div class="col-12 col-md-6 sub-line">
-            @if($planetInfo->image)
+            @if(!$planetInfo->image)
             <form action="/details/{{$activePlanet}}/image" method="post">
                 @csrf
                 <input type="text" value="{{$planetInfo->image}}" class="form-control" name="image"/>
@@ -66,6 +66,10 @@
                 @csrf
                 <input type="text" value="{{$planetInfo->image}}" class="form-control" name="image"/>
                 <input type="submit" class="btn btn-primary" value="Speichern"/>
+            </form>
+            <form action="/details/{{$activePlanet}}/deleteImage" method="post">
+                @csrf
+                <input type="submit" class="btn btn-warning" value="Löschen"/>
             </form>
             @endif
         </div>

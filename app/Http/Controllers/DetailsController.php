@@ -119,4 +119,27 @@ class DetailsController extends Controller
         }
 
     }
+
+    public function deleteImage($planet_id)
+    {
+        $user_id = Auth::id();
+        $allUserPlanets = Controller::getAllUserPlanets($user_id);
+        $allowed = false;
+        foreach ($allUserPlanets as $planet)
+        {
+            if($planet->id == $planet_id)
+            {
+                $allowed = true;
+            }
+        }
+
+        if($allowed)
+        {
+            Planet::deletePlanetImage($planet_id);
+            return redirect('/overview/'. $planet_id);
+        } else {
+            return view('error.index');
+        }
+
+    }
 }
