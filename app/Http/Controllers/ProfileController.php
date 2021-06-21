@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Alliances;
 use App\Models\Research;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -29,6 +30,7 @@ class ProfileController extends Controller
         $userInformation = Profile::where('user_id', $user_id)->first();
         $planetsList = Controller::getAllUserPlanetsWithData($user_id);
         $userInformation->planetsList = $planetsList;
+        $alliance = Alliances::getAllianceForUser($user_id);
 
         if($user_id == Auth::id())
         {
@@ -67,6 +69,7 @@ class ProfileController extends Controller
                 'ownProfile' => $proof,
                 'profileData' => $userInformation,
                 'totalPoints' => $totalPoints,
+                'alliance' => $alliance
             ]);
         } else {
             return view('error.index');

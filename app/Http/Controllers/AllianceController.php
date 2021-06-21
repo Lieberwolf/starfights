@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Alliances as Alliance;
+use App\Models\Alliances;
 use App\Models\Research;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -29,8 +31,7 @@ class AllianceController extends Controller
         // update session with new planet id
         session(['default_planet' => $planet_id]);
         $user_id = Auth::id();
-        $profile = new Profile();
-        $alliance = $profile->getAllianceForUser($user_id);
+        $alliance = Alliance::getAllianceForUser($user_id);
 
         if(!$alliance->alliance_id) {
             return redirect('/alliance/' . $planet_id . '/0');
@@ -44,7 +45,6 @@ class AllianceController extends Controller
         // update session with new planet id
         session(['default_planet' => $planet_id]);
         $user_id = Auth::id();
-        $profile = new Profile();
         $profileData = Profile::getUsersProfileById($user_id);
         $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
         $allUserPlanets = Controller::getAllUserPlanets($user_id);
@@ -52,14 +52,16 @@ class AllianceController extends Controller
         if(!is_numeric($alliance_id)) {
             return redirect('/overview/' . $planet_id);
         } else {
-            $alliance = $profile->getAllianceForUser($user_id);
+            $alliance = Alliance::getAllianceForUser($user_id);
             if($alliance_id == $alliance->alliance_id) {
                 $alliance->own = true;
             } else {
                 // get foreign alliance data
-                $alliance = $profile->getAllianceByAllyId($alliance_id);
+                $alliance = Alliance::getAllianceByAllyId($alliance_id);
                 if($alliance) {
                     $alliance->own = false;
+                } else {
+                    return redirect('/overview/' . $planet_id);
                 }
             }
         }
@@ -105,6 +107,12 @@ class AllianceController extends Controller
         $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
         $allUserPlanets = Controller::getAllUserPlanets($user_id);
         Controller::checkAllProcesses($allUserPlanets);
+        $alliance = Alliance::getAllianceForUser($user_id);
+
+        if($alliance)
+        {
+            return redirect('/overview/' . $planet_id);
+        }
 
         if(count($planetaryResources)>0)
         {
@@ -128,7 +136,7 @@ class AllianceController extends Controller
         $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
         $allUserPlanets = Controller::getAllUserPlanets($user_id);
         Controller::checkAllProcesses($allUserPlanets);
-        $allianceData = Profile::getUsersInAlliance($alliance_id);
+        $allianceData = Alliance::getUsersInAlliance($alliance_id);
 
         $list = [];
         foreach($allianceData->members as $key => $user) {
@@ -170,11 +178,11 @@ class AllianceController extends Controller
             'tag' => 'required|max:5|min:3'
         ]);
 
-        $founded = Profile::foundAlliance($data, Auth::id());
+        $founded = Alliance::foundAlliance($data, Auth::id());
 
         if($founded)
         {
-            $updated = Profile::setAllianceToFounder(Auth::id());
+            $updated = Alliance::setAllianceToFounder(Auth::id());
             if($updated)
             {
                 return redirect('/alliance/' . $planet_id);
@@ -184,5 +192,54 @@ class AllianceController extends Controller
         } else {
             return view('error.index');
         }
+    }
+
+    public function send($planet_id, $alliance_id)
+    {
+        $user_id = Auth::id();
+        $profile = Profile::getUsersProfileById($user_id);
+        $alliance = Alliance::getAllianceForUser($user_id);
+        if($alliance_id == $alliance->alliance_id) {
+            // this is the users alliance
+            $data = request()->validate([
+                'message' => 'required|min:3',
+            ]);
+
+            // messages object:
+            /*
+            {
+                user_id: integer,
+                user_name: string,
+                message: string,
+                date: timestamp
+            }
+
+             */
+            $messages = json_decode($alliance->alliance_messages);
+            if($messages)
+            {
+                $message = new \stdClass();
+                $message->user_id = $user_id;
+                $message->user_name = $profile->nickname;
+                $message->message = $data["message"];
+                $message->date = now()->timestamp;
+            } else {
+                $messages = [];
+                $message = new \stdClass();
+                $message->user_id = $user_id;
+                $message->user_name = $profile->nickname;
+                $message->message = $data["message"];
+                $message->date = now()->timestamp;
+            }
+
+            array_push($messages, $message);
+            Alliance::saveMessages($alliance_id, json_encode($messages));
+            return redirect('/alliance/' . $planet_id);
+
+        } else {
+            return redirect('/alliance/' . $planet_id);
+        }
+
+
     }
 }

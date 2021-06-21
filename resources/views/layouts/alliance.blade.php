@@ -2,6 +2,8 @@
     <div class="row">
         @if($alliance != null)
             <div class="col-12 title-line">Allianz "{{$alliance->alliance_name}}"</div>
+            <div class="col-6 sub-line" style="margin-top: 1px;">Allianz Tag</div>
+            <div class="col-6 sub-line" style="margin-top: 1px;">{{$alliance->alliance_tag}}</div>
             <div class="col-6 sub-line" style="margin-top: 1px;">Mitglieder</div>
             <div class="col-6 sub-line" style="margin-top: 1px;">{{$alliance->members}} (<a href="/alliance/{{$activePlanet}}/memberslist/{{$alliance->alliance_id}}">Liste</a>)</div>
             <div class="col-6 sub-line" style="margin-top: 1px;">Gründer</div>
@@ -31,15 +33,25 @@
             @if($alliance->own)
                 <div class="col-12 title-line" style="margin-top: 1px;">Allianznachrichten</div>
                 @if($alliance->alliance_messages != null)
-                    <!-- foreach -->
-                    @else
+                    @foreach(json_decode($alliance->alliance_messages) as $message)
+                        <div class="col-6 sub-line text-left">{{date("H:i:s - d.m.Y", $message->date)}} - <a href="/profile/{{$message->user_id}}">{{$message->user_name}} sagt:</a></div>
+                        <div class="col-6 sub-line text-right"></div>
+                        <div class="col-12 sub-line text-left">{{{$message->message}}}</div>
+                    @endforeach
+                @else
                     <div class="col-12 sub-line" style="margin-top: 1px;">- keine -</div>
                 @endif
                 <div class="col-12 title-line" style="margin-top: 1px;">Neue Nachricht</div>
                 <div class="col-12 sub-line">
-                    <form class="col-12 col-sm-6 offset-sm-3" action="/alliance/send" method="post">
+                    <form class="col-12 col-sm-6 offset-sm-3" action="/alliance/{{$activePlanet}}/send/{{$alliance->alliance_id}}" method="post">
+                        @csrf
                         <div class="form-group">
                             <textarea name="message" id="message" rows="10" class="form-control" style="margin: 1rem 0;"></textarea>
+                            @error('message')
+                            <span class="ui-state-error" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span><br/>
+                            @enderror
                             <button type="submit" class="btn btn-primary">Absenden</button>
                         </div>
                     </form>

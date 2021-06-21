@@ -129,6 +129,7 @@ Route::get('/alliance/{planet_id}/found', [App\Http\Controllers\AllianceControll
 Route::get('/alliance/{planet_id}/memberslist/{alliance_id}', [App\Http\Controllers\AllianceController::class, 'memberslist']);
 Route::post('/alliance/{planet_id}/found', [App\Http\Controllers\AllianceController::class, 'founding']);
 Route::post('/alliance/{planet_id}/option', [App\Http\Controllers\AllianceController::class, 'option']);
+Route::post('/alliance/{planet_id}/send/{alliance_id}', [App\Http\Controllers\AllianceController::class, 'send']);
 Route::get('/alliance/{planet_id}/{alliance_id}', [App\Http\Controllers\AllianceController::class, 'show']);
 
 // profile

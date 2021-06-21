@@ -42,7 +42,6 @@ class UniverseController extends Controller
         }
 
         $planets = (new Planet)->universePart($galaxy, $system);
-
         foreach($planets as $key => $planet)
         {
             $planet->points = Planet::getPlanetaryPointsById($planet->id);
