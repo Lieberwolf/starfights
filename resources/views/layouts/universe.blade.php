@@ -45,7 +45,12 @@
                                 <td class="sub-line"></td>
                             @else
                                 <td class="title-line">{{$planet->planet}}</td>
-                                <td class="sub-line">{{$planet->planet_name != null ? $planet->planet_name : 'Unbenannter Planet'}} <a href="/profile/{{$planet->user_id}}">{{$planet->username}}</a></td>
+                                <td class="sub-line">
+                                    {{$planet->planet_name != null ? $planet->planet_name : 'Unbenannter Planet'}}
+                                    <a href="/profile/{{$planet->user_id}}">({{$planet->username}})</a>
+                                    @if($planet->alliance_id != null)
+                                        <a href="/alliance/{{$activePlanet}}/{{$planet->alliance_id}}">[{{$planet->alliance_tag}}]</a></td>
+                                    @endif
                                 <td class="sub-line">{{number_format($planet->points, 0, ',', '.')}}</td>
                                 <td class="sub-line">
                                     @if($activePlanet != $planet->id)
