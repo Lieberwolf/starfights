@@ -26,16 +26,12 @@
         </div>
         <div class="col-6 sub-line">Serverzeit</div>
         <div class="col-6 sub-line">{{now()}}</div>
-        <div class="col-12 title-line mt-3">Planetenbild <a href="/details/{{$activePlanet}}">[ändern]</a></div>
-            @if($planetInformation->image != null)
+        @if($planetInformation->image != null)
+            <div class="col-12 title-line mt-3">Planetenbild <a href="/details/{{$activePlanet}}">[ändern]</a></div>
             <div class="col-12 sub-line py-2">
                 <img class="img-fluid" src="{{$planetInformation->image}}" title="Toller Planet" alt="Kaputt"/>
             </div>
-            @else
-            <div class="col-12 sub-line">
-                <span>- nicht vorhanden -</span>
-            </div>
-            @endif
+        @endif
         <div class="col-12 title-line mt-3">Schiffe am Planeten</div>
         @if($shipsAtPlanet)
             @foreach(json_decode($shipsAtPlanet->ship_types) as $ship)
