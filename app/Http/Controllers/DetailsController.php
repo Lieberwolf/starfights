@@ -31,6 +31,31 @@ class DetailsController extends Controller
         $allUserPlanets = Controller::getAllUserPlanets($user_id);
         Controller::checkAllProcesses($allUserPlanets);
         $planetInfo = Planet::getOneById($planet_id);
+        $start_planet = Profile::getStartPlanetByUserId($user_id);
+
+        $prevPlanet = false;
+        foreach($allUserPlanets as $key => $planet)
+        {
+            if($planet->id == $planet_id)
+            {
+                if(!empty($allUserPlanets[$key-1]))
+                {
+                    $prevPlanet = $allUserPlanets[$key-1];
+                }
+            }
+        }
+
+        $nextPlanet = false;
+        foreach($allUserPlanets as $key => $planet)
+        {
+            if($planet->id == $planet_id)
+            {
+                if(!empty($allUserPlanets[$key+1]))
+                {
+                    $nextPlanet = $allUserPlanets[$key+1];
+                }
+            }
+        }
 
         if(count($planetaryResources)>0)
         {
@@ -41,6 +66,9 @@ class DetailsController extends Controller
                 'allUserPlanets' => $allUserPlanets,
                 'activePlanet' => $planet_id,
                 'planetInfo' => $planetInfo,
+                'prevPlanet' => $prevPlanet,
+                'nextPlanet' => $nextPlanet,
+                'startPlanet' => $start_planet,
             ]);
         } else {
             return view('error.index');
@@ -67,5 +95,28 @@ class DetailsController extends Controller
         $planet->save();
 
         return redirect('/details/' . $planet_id);
+    }
+
+    public function delete($planet_id)
+    {
+        $user_id = Auth::id();
+        $allUserPlanets = Controller::getAllUserPlanets($user_id);
+        $allowed = false;
+        foreach ($allUserPlanets as $planet)
+        {
+            if($planet->id == $planet_id)
+            {
+                $allowed = true;
+            }
+        }
+
+        if($allowed)
+        {
+            Planet::deletePlanet($planet_id);
+            return redirect('/details/');
+        } else {
+            return view('error.index');
+        }
+
     }
 }

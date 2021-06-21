@@ -138,6 +138,7 @@ Route::get('/details', [App\Http\Controllers\DetailsController::class, 'index'])
 Route::get('/details/{planet_id}', [App\Http\Controllers\DetailsController::class, 'show']);
 Route::post('/details/{planet_id}/name', [App\Http\Controllers\DetailsController::class, 'name']);
 Route::post('/details/{planet_id}/image', [App\Http\Controllers\DetailsController::class, 'image']);
+Route::post('/details/{planet_id}/delete', [App\Http\Controllers\DetailsController::class, 'delete']);
 
 // notice
 Route::get('/notice', [App\Http\Controllers\NoticeController::class, 'index']);
