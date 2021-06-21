@@ -35,6 +35,7 @@ class DefenseController extends Controller
         $nextTurretIn = Controller::checkTurretProcesses($allUserPlanets);
         $turretList = Turret::getAllAvailableTurrets($user_id, $planet_id);
         $currentTurrets = Planet::getPlanetaryTurretProcess($planet_id);
+        $planetInformation = Planet::getOneById($planet_id);
 
         if(is_bool($nextTurretIn) || $nextTurretIn == null || $currentTurrets == null)
         {
@@ -88,6 +89,7 @@ class DefenseController extends Controller
                 'activePlanet' => $planet_id,
                 'turretList' => $turretList,
                 'currentTurrets' => $currentTurrets,
+                'planetInformation' => $planetInformation,
             ]);
         } else {
             return view('error.index');

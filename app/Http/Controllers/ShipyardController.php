@@ -35,6 +35,7 @@ class ShipyardController extends Controller
         $nextShipIn = Controller::checkShipProcesses($allUserPlanets);
         $shipList = Ship::getAllAvailableShips($user_id, $planet_id);
         $currentShips = Planet::getPlanetaryShipProcess($planet_id);
+        $planetInformation = Planet::getOneById($planet_id);
 
         if(is_bool($nextShipIn) || $nextShipIn == null || $currentShips == null)
         {
@@ -88,6 +89,7 @@ class ShipyardController extends Controller
                 'activePlanet' => $planet_id,
                 'shipList' => $shipList,
                 'currentShips' => $currentShips,
+                'planetInformation' => $planetInformation,
             ]);
         } else {
             return view('error.index');

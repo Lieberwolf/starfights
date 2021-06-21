@@ -1,5 +1,8 @@
 <div class="container">
     <div class="row">
+        <div class="col-12 title-line">
+            <span>Verfügbare Forschungen auf {{$planetInformation->galaxy}}:{{$planetInformation->system}}:{{$planetInformation->planet}}</span>
+        </div>
         @if($currentResearch)
             <div class="col-10 current-process process-entry">
                 <span>Aktuell in Forschung: {{$currentResearch->research_name}} Stufe {{$currentResearch->knowledge != null ? $currentResearch->knowledge->level + 1 : 1}}</span>
@@ -7,7 +10,7 @@
                 <span>Abgeschlossen in: </span>
                 <span class="js-add-countdown" data-seconds-to-count="{{strtotime($currentResearch->finished_at) - now()->timestamp}}">-</span>
                 <br/>
-                <span>Fertigstellung: {{ date("d.m.Y H:m:s", strtotime($currentResearch->finished_at)) }}</span>
+                <span>Fertigstellung: {{ date("d.m.Y H:i:s", strtotime($currentResearch->finished_at)) }}</span>
             </div>
             <div class="col-2 process-action">
                 <a class="process-denied" href="/research/{{$activePlanet}}/edit">Abbrechen</a>

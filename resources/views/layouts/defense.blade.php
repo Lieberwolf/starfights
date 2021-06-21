@@ -1,5 +1,8 @@
 <div class="container">
     <div class="row">
+        <div class="col-12 title-line">
+            <span>Verfügbare Verteidigung auf {{$planetInformation->galaxy}}:{{$planetInformation->system}}:{{$planetInformation->planet}}</span>
+        </div>
         @if($currentTurrets)
             @foreach($currentTurrets->nextTurretIn as $next)
                 @if($next->planet == $activePlanet)
@@ -9,7 +12,7 @@
                         <span>Nächste Anlage fertig in: </span>
                         <span class="js-add-countdown" data-seconds-to-count="{{$next->seconds}}">{{$next->buildtime != false ? $next->buildtime : ''}}</span>
                         <br/>
-                        <span>Fertigstellung: {{ date("d.m.Y H:m:s", strtotime($currentTurrets->finished_at)) }}</span>
+                        <span>Fertigstellung: {{ date("d.m.Y H:i:s", strtotime($currentTurrets->finished_at)) }}</span>
                     </div>
                     <div class="col-4 process-action">
                         <a href="/defense/{{$activePlanet}}/edit">Abbrechen</a><br/>
