@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Alliances as Alliance;
 use App\Models\Alliances;
+use App\Models\Messages as Messages;
 use App\Models\Research;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -49,15 +50,24 @@ class AllianceController extends Controller
         $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
         $allUserPlanets = Controller::getAllUserPlanets($user_id);
         Controller::checkAllProcesses($allUserPlanets);
+        $applications = false;
         if(!is_numeric($alliance_id)) {
             return redirect('/overview/' . $planet_id);
         } else {
             $alliance = Alliance::getAllianceForUser($user_id);
             if($alliance_id == $alliance->alliance_id) {
                 $alliance->own = true;
+                $applications = Alliance::getUserApplications($alliance_id);
             } else {
                 // get foreign alliance data
                 $alliance = Alliance::getAllianceByAllyId($alliance_id);
+
+                if($alliance == null && $alliance_id == 0)
+                {
+                    $alliance = new \stdClass();
+                    $alliance->id = null;
+                }
+
                 if($alliance) {
                     $alliance->own = false;
                 } else {
@@ -65,8 +75,6 @@ class AllianceController extends Controller
                 }
             }
         }
-
-
         if(count($planetaryResources)>0)
         {
             return view('alliance.show', [
@@ -76,7 +84,8 @@ class AllianceController extends Controller
                 'allUserPlanets' => $allUserPlanets,
                 'activePlanet' => $planet_id,
                 'alliance' => $alliance,
-                'userData' => $profileData
+                'userData' => $profileData,
+                'applications' => $applications,
             ]);
         } else {
             return view('error.index');
@@ -108,8 +117,7 @@ class AllianceController extends Controller
         $allUserPlanets = Controller::getAllUserPlanets($user_id);
         Controller::checkAllProcesses($allUserPlanets);
         $alliance = Alliance::getAllianceForUser($user_id);
-
-        if($alliance)
+        if($alliance->alliance_id)
         {
             return redirect('/overview/' . $planet_id);
         }
@@ -239,7 +247,57 @@ class AllianceController extends Controller
         } else {
             return redirect('/alliance/' . $planet_id);
         }
+    }
 
+    public function apply($planet_id, $alliance_id)
+    {
+        $user_id = Auth::id();
+        // save the alliance id as *-1 in users profile to mark him as already applied somewhere
+        $profile = Profile::getUsersProfileById($user_id);
+        $profile->alliance_application = $alliance_id;
+        $profile->save();
+
+        return redirect('/alliance/' . $planet_id . '/' . $alliance_id)->with('status', 'Bewerbung eingereicht');
+    }
+
+    public function accept($planet_id, $alliance_id, $user_id)
+    {
+        $profile = Profile::getUsersProfileById($user_id);
+        $profile->alliance_application = null;
+        $profile->alliance_id = $alliance_id;
+        $profile->save();
+        $alliance = Alliance::getAllianceByAllyid($alliance_id);
+
+        // emit system message to user
+        $message = [
+            'user_id' => 0,
+            'receiver_id' => $user_id,
+            'subject' => 'Bewerbung bei ' . $alliance->alliance_name,
+            'message' => 'Deine Bewerbung bei ' . $alliance->alliance_name . ' wurde akzeptiert.'
+        ];
+        Messages::create($message);
+
+        return redirect('/alliance/' . $planet_id . '/' . $alliance_id)->with('status', 'Bewerbung von ' . $profile->nickname . ' akzeptiert.');
+
+    }
+
+    public function decline($planet_id, $alliance_id, $user_id)
+    {
+        $profile = Profile::getUsersProfileById($user_id);
+        $profile->alliance_application = null;
+        $profile->save();
+        $alliance = Alliance::getAllianceByAllyid($alliance_id);
+
+        // emit system message to user
+        $message = [
+            'user_id' => 0,
+            'receiver_id' => $user_id,
+            'subject' => 'Bewerbung bei ' . $alliance->alliance_name,
+            'message' => 'Deine Bewerbung bei ' . $alliance->alliance_name . ' wurde abgelehnt.'
+        ];
+        Messages::create($message);
+
+        return redirect('/alliance/' . $planet_id . '/' . $alliance_id)->with('status', 'Bewerbung von ' . $profile->nickname . ' abgelehnt.');
 
     }
 }

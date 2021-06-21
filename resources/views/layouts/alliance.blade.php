@@ -1,6 +1,6 @@
 <div class="container">
     <div class="row">
-        @if($alliance != null)
+        @if($alliance->id != null)
             <div class="col-12 title-line">Allianz "{{$alliance->alliance_name}}"</div>
             <div class="col-6 sub-line" style="margin-top: 1px;">Allianz Tag</div>
             <div class="col-6 sub-line" style="margin-top: 1px;">{{$alliance->alliance_tag}}</div>
@@ -56,9 +56,48 @@
                         </div>
                     </form>
                 </div>
-                @else
-                @if(!$userData->alliance_id)
-                    <div class="col-12 sub-line"><a href="/alliance/apply/{{$alliance->id}}">Bewerben</a></div>
+                @if($alliance->founder_id == $userData->user_id)
+                    <div class="col-6 sub-line p-1" style="margin-top: 1px;">Bewerbungen:</div>
+                    <div class="col-6 sub-line p-1" style="margin-top: 1px;">
+                        @if(count($applications) > 0)
+                            <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#applicationCollapse" aria-expanded="false" aria-controls="applicationCollapse">({{count($applications)}}) Anzeigen</button>
+                        @else
+                            <span>- keine -</span>
+                        @endif
+                    </div>
+                    @if(count($applications) > 0)
+                        <div class="col-12 collapse pb-2" id="applicationCollapse">
+                            <div class="row">
+                                @foreach($applications as $application)
+                                <div class="col-6 sub-line mt-1 p-1">
+                                    <span><a href="/profile/{{$application->user_id}}">{{$application->nickname}}</a></span>
+                                </div>
+                                <div class="col-6 sub-line mt-1 p-1">
+                                    <div class="row">
+                                        <form class="col-md-6" action="/alliance/{{$activePlanet}}/accept/{{$alliance->id}}/{{$application->user_id}}" method="post">
+                                            @csrf
+                                            <button type="submit" class="btn btn-success">Annehmen</button>
+                                        </form>
+                                        <form class="col-md-6" action="/alliance/{{$activePlanet}}/decline/{{$alliance->id}}/{{$application->user_id}}" method="post">
+                                            @csrf
+                                            <button type="submit" class="btn btn-danger">Ablehnen</button>
+                                        </form>
+                                    </div>
+                                </div>
+                                @endforeach
+                            </div>
+
+                        </div>
+                    @endif
+                @endif
+            @else
+                @if(!$userData->alliance_id && $userData->alliance_application == null)
+                    <div class="col-12 sub-line">
+                        <form action="/alliance/{{$activePlanet}}/apply/{{$alliance->id}}" method="post">
+                            @csrf
+                            <button type="submit" class="btn btn-success">Bewerben</button>
+                        </form>
+                    </div>
                 @endif
             @endif
 
