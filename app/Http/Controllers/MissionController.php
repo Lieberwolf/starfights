@@ -206,6 +206,7 @@ class MissionController extends Controller
                     $speedArray = [];
                     $cargo = 0;
                     $fuel = 0;
+                    $attack = 0;
                     foreach($selectedShips as $key => $ship)
                     {
                         $singlefuel = $distance / $ship->speed * ($ship->consumption * ($data["speed"] / 100));
@@ -229,6 +230,8 @@ class MissionController extends Controller
                                 }
                             }
                         }
+
+                        $attack += $ship->attack;
 
                         $cargo += ($ship->cargo * $ship->amount);
                         // check which missions are still allowed
@@ -271,6 +274,14 @@ class MissionController extends Controller
                             if($pos != false) {
                                 unset($allowed_missions[$pos]);
                             }
+                        }
+                    }
+
+                    // if attack value is 0 you cant attack
+                    if($attack == 0) {
+                        $pos = array_search(6, $allowed_missions);
+                        if($pos != false) {
+                            unset($allowed_missions[$pos]);
                         }
                     }
 
@@ -416,6 +427,13 @@ class MissionController extends Controller
                 foreach($selectedShips as $keyB => $selectedShip)
                 {
                     if($shipAtPlanet->ship_id == $selectedShip->id) {
+
+                        // are there enough ships to be sent?
+                        if($ship_types[$key]->amount - $selectedShip->amount < 0)
+                        {
+                            return redirect('/mission/' . $planet_id)->with('status', 'Es stehen nicht genügend Schiffe zur Verfügung.');
+                        }
+
                         $ship_types[$key]->amount -= $selectedShip->amount;
                         $proof = false;
 

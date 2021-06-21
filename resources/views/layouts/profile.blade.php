@@ -38,6 +38,11 @@
         <div class="col-12 col-md-6 offset-md-3 sub-line">
             Accountpunkte: {{number_format($totalPoints, 0, ',', '.')}}
         </div>
+        @if($alliance->id != null)
+        <div class="col-12 col-md-6 offset-md-3 sub-line">
+            Allianz: <a href="/alliance/{{$activePlanet}}/{{$alliance->id}}">{{$alliance->alliance_name}} [{{$alliance->alliance_tag}}]</a>
+        </div>
+        @endif
         @if(!$ownProfile)
             <div class="col-12 col-md-6 offset-md-3 sub-line">
                 <a href="/messages/send/{{$profileData->user_id}}">Nachricht senden</a>

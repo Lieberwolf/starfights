@@ -1,11 +1,28 @@
 <div class="container">
     <div class="row">
+        <div class="col-12 title-line">
+            @if($prevPlanet)
+            <span>
+                <a href="/defense/{{$prevPlanet->id}}"><<</a>
+            </span>
+            @endif
+            <span>Verfügbare Verteidigung auf {{$planetInformation->galaxy}}:{{$planetInformation->system}}:{{$planetInformation->planet}}</span>
+            @if($nextPlanet)
+            <span>
+                <a href="/defense/{{$nextPlanet->id}}">>></a>
+            </span>
+            @endif
+        </div>
         @if($currentTurrets)
             @foreach($currentTurrets->nextTurretIn as $next)
                 @if($next->planet == $activePlanet)
                     <div class="col-8 current-process process-entry">
-                        <span>Aktuell in Bau: {{$currentTurrets->turret_name}} ({{$currentTurrets->amount_left}} Stück) Nächste Anlage fertig in:</span>
+                        <span>Aktuell in Bau: {{$currentTurrets->turret_name}} ({{$currentTurrets->amount_left}} Stück)</span>
+                        <br/>
+                        <span>Nächste Anlage fertig in: </span>
                         <span class="js-add-countdown" data-seconds-to-count="{{$next->seconds}}">{{$next->buildtime != false ? $next->buildtime : ''}}</span>
+                        <br/>
+                        <span>Fertigstellung: {{ date("d.m.Y H:i:s", strtotime($currentTurrets->finished_at)) }}</span>
                     </div>
                     <div class="col-4 process-action">
                         <a href="/defense/{{$activePlanet}}/edit">Abbrechen</a><br/>

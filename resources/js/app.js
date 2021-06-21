@@ -149,7 +149,6 @@ function startTimer(timeRemaining, element) {
         if(timestamp <= 0)
         {
             element.innerText = "-";
-            window.location.href = window.location;
         } else {
             element.innerText = days + hours + minutes + seconds;
         }

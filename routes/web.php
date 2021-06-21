@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AllianceController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -95,6 +96,7 @@ Route::get('/universe/{planet_id}/{galaxy}/{system}', [App\Http\Controllers\Univ
 // search
 Route::get('/search', [App\Http\Controllers\SearchController::class, 'index']);
 Route::get('/search/{planet_id}', [App\Http\Controllers\SearchController::class, 'show']);
+Route::post('/search/{planet_id}/mode', [App\Http\Controllers\SearchController::class, 'mode']);
 
 // techtree
 Route::get('/techtree', [App\Http\Controllers\TechtreeController::class, 'index']);
@@ -123,7 +125,16 @@ Route::get('/settings/{planet_id}', [App\Http\Controllers\SettingsController::cl
 
 // alliance
 Route::get('/alliance', [App\Http\Controllers\AllianceController::class, 'index']);
-Route::get('/alliance/{planet_id}', [App\Http\Controllers\AllianceController::class, 'show']);
+Route::get('/alliance/{planet_id}', [App\Http\Controllers\AllianceController::class, 'redirect']);
+Route::get('/alliance/{planet_id}/found', [App\Http\Controllers\AllianceController::class, 'found']);
+Route::get('/alliance/{planet_id}/memberslist/{alliance_id}', [App\Http\Controllers\AllianceController::class, 'memberslist']);
+Route::post('/alliance/{planet_id}/found', [App\Http\Controllers\AllianceController::class, 'founding']);
+Route::post('/alliance/{planet_id}/option', [App\Http\Controllers\AllianceController::class, 'option']);
+Route::post('/alliance/{planet_id}/send/{alliance_id}', [App\Http\Controllers\AllianceController::class, 'send']);
+Route::post('/alliance/{planet_id}/apply/{alliance_id}', [App\Http\Controllers\AllianceController::class, 'apply']);
+Route::post('/alliance/{planet_id}/accept/{alliance_id}/{user_id}', [App\Http\Controllers\AllianceController::class, 'accept']);
+Route::post('/alliance/{planet_id}/decline/{alliance_id}/{user_id}', [App\Http\Controllers\AllianceController::class, 'decline']);
+Route::get('/alliance/{planet_id}/{alliance_id}', [App\Http\Controllers\AllianceController::class, 'show']);
 
 // profile
 Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'index']);
@@ -138,6 +149,8 @@ Route::get('/details', [App\Http\Controllers\DetailsController::class, 'index'])
 Route::get('/details/{planet_id}', [App\Http\Controllers\DetailsController::class, 'show']);
 Route::post('/details/{planet_id}/name', [App\Http\Controllers\DetailsController::class, 'name']);
 Route::post('/details/{planet_id}/image', [App\Http\Controllers\DetailsController::class, 'image']);
+Route::post('/details/{planet_id}/delete', [App\Http\Controllers\DetailsController::class, 'delete']);
+Route::post('/details/{planet_id}/deleteImage', [App\Http\Controllers\DetailsController::class, 'deleteImage']);
 
 // notice
 Route::get('/notice', [App\Http\Controllers\NoticeController::class, 'index']);

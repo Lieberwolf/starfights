@@ -1,9 +1,26 @@
 <div class="container">
     <div class="row">
+        <div class="col-12 title-line">
+            @if($prevPlanet)
+            <span>
+                <a href="/construction/{{$prevPlanet->id}}"><<</a>
+            </span>
+            @endif
+            <span>Verfügbare Konstruktionen auf {{$planetInformation->galaxy}}:{{$planetInformation->system}}:{{$planetInformation->planet}}</span>
+            @if($nextPlanet)
+            <span>
+                <a href="/construction/{{$nextPlanet->id}}">>></a>
+            </span>
+            @endif
+        </div>
         @if($currentConstruction)
             <div class="col-10 current-process process-entry">
-                <span>Aktuell in Konstruktion: {{$currentConstruction->building_name}} Stufe {{$currentConstruction->infrastructure != null ? $currentConstruction->infrastructure->level + 1 : 1}} Abgeschlossen in:</span>
+                <span>Aktuell in Konstruktion: {{$currentConstruction->building_name}} Stufe {{$currentConstruction->infrastructure != null ? $currentConstruction->infrastructure->level + 1 : 1}}</span>
+                <br/>
+                <span>Abgeschlossen in: </span>
                 <span class="js-add-countdown" data-seconds-to-count="{{strtotime($currentConstruction->finished_at) - now()->timestamp}}">-</span>
+                <br/>
+                <span>Fertigstellung: {{ date("d.m.Y H:i:s", strtotime($currentConstruction->finished_at)) }}</span>
             </div>
             <div class="col-2 process-action">
                 <a class="process-denied" href="/construction/{{$activePlanet}}/edit">Abbrechen</a>

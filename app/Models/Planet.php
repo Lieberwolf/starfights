@@ -77,7 +77,9 @@ class Planet extends Model
     {
         return DB::table('planets')
              ->leftJoin('users AS u', 'u.id', '=', 'user_id')
-             ->select('u.id as user_id', 'u.username as username', 'planets.*')
+             ->leftJoin('profiles as p', 'p.User_id', '=', 'u.id')
+             ->leftJoin('alliances as a', 'p.alliance_id', '=', 'a.id')
+             ->select('u.id as user_id', 'u.username as username', 'planets.*', 'a.id as alliance_id', 'a.alliance_tag')
              ->where('planets.galaxy', '=', $galaxy)
              ->where('planets.system', '=', $system)
              ->get();
@@ -490,5 +492,39 @@ class Planet extends Model
                      'p.*',
                      'u.username'
                  ]);
+    }
+
+    public static function deletePlanet($planet_id)
+    {
+        DB::table('infrastructures')->where('planet_id', '=', $planet_id)->delete();
+        DB::table('fleets')->where('planet_id', '=', $planet_id)->delete();
+        DB::table('ships_process')->where('planet_id', '=', $planet_id)->delete();
+        DB::table('turrets_process')->where('planet_id', '=', $planet_id)->delete();
+        DB::table('building_process')->where('planet_id', '=', $planet_id)->delete();
+        DB::table('research_process')->where('planet_id', '=', $planet_id)->delete();
+        DB::table('defenses')->where('planet_id', '=', $planet_id)->delete();
+        DB::table('planets')->where('id', '=', $planet_id)->update([
+            'user_id' => null,
+            'planet_name' => null,
+            'image' => null,
+            'fe' => null,
+            'lut' => null,
+            'cry' => null,
+            'h2o' => null,
+            'h2' => null,
+            'rate_fe' => null,
+            'rate_lut' => null,
+            'rate_cry' => null,
+            'rate_h2o' => null,
+            'rate_h2' => null,
+
+        ]);
+    }
+
+    public static function deletePlanetImage($planet_id)
+    {
+        DB::table('planets')->where('id', '=', $planet_id)->update([
+            'image' => null,
+        ]);
     }
 }

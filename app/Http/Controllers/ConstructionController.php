@@ -78,6 +78,30 @@ class ConstructionController extends Controller
             }
         }
 
+        $prevPlanet = false;
+        foreach($allUserPlanets as $key => $planet)
+        {
+            if($planet->id == $planet_id)
+            {
+                if(!empty($allUserPlanets[$key-1]))
+                {
+                    $prevPlanet = $allUserPlanets[$key-1];
+                }
+            }
+        }
+
+        $nextPlanet = false;
+        foreach($allUserPlanets as $key => $planet)
+        {
+            if($planet->id == $planet_id)
+            {
+                if(!empty($allUserPlanets[$key+1]))
+                {
+                    $nextPlanet = $allUserPlanets[$key+1];
+                }
+            }
+        }
+
         if(count($planetaryResources)>0)
         {
             return view('construction.show', [
@@ -88,7 +112,10 @@ class ConstructionController extends Controller
                 'activePlanet' => $planet_id,
                 'planetInformation' => $planetInformation,
                 'availableBuildings' => $buildingList,
-                'currentConstruction' => $currentConstruction
+                'currentConstruction' => $currentConstruction,
+                'prevPlanet' => $prevPlanet,
+                'nextPlanet' => $nextPlanet,
+
             ]);
         } else {
             return view('error.index');

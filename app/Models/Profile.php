@@ -21,4 +21,9 @@ class Profile extends Model
     {
         return DB::table('profiles')->where('user_id', $id)->get('start_planet');
     }
+
+    public static function getUsersProfileById($user_id)
+    {
+        return Profile::where('user_id', $user_id)->first();
+    }
 }
