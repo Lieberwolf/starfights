@@ -8,6 +8,8 @@
             <div class="col-6 sub-line" style="margin-top: 1px;">{{$alliance->members}} (<a href="/alliance/{{$activePlanet}}/memberslist/{{$alliance->alliance_id}}">Liste</a>)</div>
             <div class="col-6 sub-line" style="margin-top: 1px;">Gründer</div>
             <div class="col-6 sub-line" style="margin-top: 1px;"><a href="/profile/{{$alliance->founder_id}}">{{$alliance->nickname}}</a></div>
+            <div class="col-6 sub-line" style="margin-top: 1px;">Kampfstatistik</div>
+            <div class="col-6 sub-line" style="margin-top: 1px;"><a href="/statistics/{{$activePlanet}}/ally/{{$alliance->alliance_id}}">ansehen</a></div>
             <div class="col-12 title-line" style="margin-top: 1px;">Allianzlogo</div>
             <div class="col-12 sub-line" style="margin-top: 1px;">
                 @if($alliance->alliance_logo != null)

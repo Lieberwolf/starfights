@@ -75,554 +75,593 @@ class Statistics extends Model
             }
         }
 
-        // add values to all statistics (care about order)
-        // get the ship loss of the attacker -> destroyed by defender
-        $attackerShipLoss = [];
-        foreach($attacker["ship"] as $key => $ship)
+        $attackerShipStats = [];
+        $defenderShipStats = [];
+        if($defender["ship"] != null)
         {
-            $temp = new \stdClass();
-            $temp->ship_id = $ship->ship_id;
-            $temp->ship_name = $ship->ship_name;
-            $temp->lost = $ship->amount - $ship->newAmount;
-            array_push($attackerShipLoss, $temp);
-        }
-        // just needed for first run
-        $attackerTurretLoss = false;
-        if($defender["turrets"])
-        {
-            $attackerTurretLoss = [];
-            foreach($defender["turrets"] as $key => $turret)
+            foreach($attacker["ship"] as $shipAtt)
             {
-                $temp = new \stdClass();
-                $temp->turret_id = $turret->turret_id;
-                $temp->turret_name = $turret->turret_name;
-                $temp->lost = 0;
-                array_push($attackerTurretLoss, $temp);
+                foreach($defender["ship"] as $shipDef)
+                {
+                    if($shipDef->ship_id == $shipAtt->ship_id)
+                    {
+                        // step 1 fill attackers raw ship stat
+                        $tempAtt = new \stdClass();
+                        $tempAtt->ship_id = $shipAtt->ship_id;
+                        $tempAtt->ship_name = $shipAtt->ship_name;
+                        $tempAtt->lost = $shipAtt->amount - $shipAtt->newAmount;
+                        $tempAtt->destroyed = $shipDef->amount - $shipDef->newAmount;
+                        array_push($attackerShipStats, $tempAtt);
+
+                        // step 2 fill defenders raw ship stat
+                        $tempDef = new \stdClass();
+                        $tempDef->ship_id = $shipDef->ship_id;
+                        $tempDef->ship_name = $shipDef->ship_name;
+                        $tempDef->lost = $tempAtt->destroyed;
+                        $tempDef->destroyed = $tempAtt->lost;
+                        array_push($defenderShipStats, $tempDef);
+                    }
+                }
+            }
+        } else {
+            $attackerShipStats = null;
+            $defenderShipStats = null;
+        }
+
+
+        $attackerTurretStats = [];
+        $defenderTurretStats = [];
+        if(gettype($defender) == "array")
+        {
+            if(array_key_exists("turrets", $defender))
+            {
+                foreach($defender["turrets"] as $turretDef)
+                {
+                    // step 1 fill attackers raw ship stat
+                    $tempAtt = new \stdClass();
+                    $tempAtt->turret_id = $turretDef->turret_id;
+                    $tempAtt->turret_name = $turretDef->turret_name;
+                    $tempAtt->lost = 0;
+                    $tempAtt->destroyed = $turretDef->amount - $turretDef->newAmount;
+                    array_push($attackerTurretStats, $tempAtt);
+
+                    // step 2 fill defenders raw ship stat
+                    $tempDef = new \stdClass();
+                    $tempDef->turret_id = $turretDef->turret_id;
+                    $tempDef->turret_name = $turretDef->turret_name;
+                    $tempDef->lost = $tempAtt->destroyed;
+                    $tempDef->destroyed = $tempAtt->lost;
+                    array_push($defenderTurretStats, $tempDef);
+                }
+            } else {
+                $attackerTurretStats = null;
+                $defenderTurretStats = null;
+            }
+        } else {
+            if($defender["turrets"] != null)
+            {
+                foreach($defender["turrets"] as $turretDef)
+                {
+                    // step 1 fill attackers raw ship stat
+                    $tempAtt = new \stdClass();
+                    $tempAtt->turret_id = $turretDef->turret_id;
+                    $tempAtt->turret_name = $turretDef->turret_name;
+                    $tempAtt->lost = 0;
+                    $tempAtt->destroyed = $turretDef->amount - $turretDef->newAmount;
+                    array_push($attackerTurretStats, $tempAtt);
+
+                    // step 2 fill defenders raw ship stat
+                    $tempDef = new \stdClass();
+                    $tempDef->turret_id = $turretDef->turret_id;
+                    $tempDef->turret_name = $turretDef->turret_name;
+                    $tempDef->lost = $tempAtt->destroyed;
+                    $tempDef->destroyed = $tempAtt->lost;
+                    array_push($defenderTurretStats, $tempDef);
+                }
+            } else {
+                $attackerTurretStats = null;
+                $defenderTurretStats = null;
             }
         }
 
-        // get the ship loss of the defender -> destroyed by attacker
-        $defenderShipLoss = [];
-        foreach($defender["ship"] as $key => $ship)
+
+        $attackerResourceStats = [];
+        $defenderResourceStats = [];
+        if($cargo && $cargo != "null")
         {
-            $temp = new \stdClass();
-            $temp->ship_id = $ship->ship_id;
-            $temp->ship_name = $ship->ship_name;
-            $temp->lost = $ship->amount - $ship->newAmount;
-            array_push($defenderShipLoss, $temp);
-        }
-        // get the turret loss of the defender -> destroyed by attacker
-        $defenderTurretLoss = false;
-        if($defender["turrets"])
-        {
-            $defenderTurretLoss = [];
-            foreach($defender["turrets"] as $key => $turret)
+            foreach(json_decode($cargo) as $res => $amount)
             {
-                $temp = new \stdClass();
-                $temp->turret_id = $turret->turret_id;
-                $temp->turret_name = $turret->turret_name;
-                $temp->lost = $turret->amount - $turret->newAmount;
-                array_push($defenderTurretLoss, $temp);
+                // step 1 fill attackers raw ship stat
+                $tempAtt = new \stdClass();
+                $tempAtt->res_id = $res;
+                $tempAtt->lost = 0;
+                $tempAtt->caught = $amount;
+                array_push($attackerResourceStats, $tempAtt);
+
+                // step 2 fill defenders raw ship stat
+                $tempDef = new \stdClass();
+                $tempDef->res_id = $res;
+                $tempDef->lost = $tempAtt->caught;
+                $tempDef->caught = $tempAtt->lost;
+                array_push($defenderResourceStats, $tempDef);
             }
+        } else {
+            $attackerResourceStats = null;
+            $defenderResourceStats = null;
         }
 
-
-        // get the stolen resources from the defender -> by attacker
-        $cargo = json_decode($cargo);
-
-
-        // apply on users stats
-        // attacker first
+        // update attacker stats
         if($attackerStat->ship_types == null)
         {
-            // first run through so add the destroyed field
-            foreach($attackerShipLoss as $shipAtt)
+            // first ever entry
+            if($attackerShipStats)
             {
-                $shipAtt->destroyed = 0;
-                // second run through so add destroyed amount
-                foreach($defenderShipLoss as $shipDef)
-                {
-                    if($shipAtt->ship_id == $shipDef->ship_id)
-                    {
-                        $shipAtt->destroyed = $shipDef->lost;
-                    }
-                }
+                $attackerStat->ship_types = json_encode($attackerShipStats);
+            } else {
+                $attackerStat->ship_types = null;
             }
-
-            // now add to stats
-            $attackerStat->ship_types = json_encode($attackerShipLoss);
         }
         else {
-            $oldShipStats = json_decode($attackerStat->ship_types);
-
-                foreach($attackerShipLoss as $shipAtt)
+            if($attackerShipStats)
+            {
+                // run through existing stats
+                $oldShipsValues = json_decode($attackerStat->ship_types);
+                if($oldShipsValues)
                 {
-                    $shipAtt->destroyed = 0;
-                    // second run through so add destroyed amount
-                    foreach($defenderShipLoss as $shipDef)
+                    foreach($oldShipsValues as $oldShipValues)
                     {
-                        foreach($oldShipStats as $oldShipStat)
+                        // run through new values
+                        foreach($attackerShipStats as $newShipValues)
                         {
-                        if($shipAtt->ship_id == $shipDef->ship_id && $shipAtt->ship_id == $oldShipStat->ship_id)
-                        {
-                            // new value        =   Defender loss + OldStatistic
-                            $shipAtt->destroyed = $shipDef->lost + $oldShipStat->destroyed;
-                            $shipAtt->lost += $oldShipStat->lost;
-                        }
-                    }
-                }
-            }
-
-            // now add to stats
-            $attackerStat->ship_types = json_encode($attackerShipLoss);
-        }
-
-        // write turrets to stats
-        if($attackerTurretLoss) {
-            if ($attackerStat->turret_types == null) {
-                // first run through so add the destroyed field
-                if ($attackerTurretLoss) {
-                    foreach ($attackerTurretLoss as $turretAtt) {
-                        $turretAtt->destroyed = 0;
-                        // second run through so add destroyed amount
-                        foreach ($defenderTurretLoss as $turretDef) {
-                            if ($turretAtt->turret_id == $turretDef->turret_id) {
-                                $turretAtt->destroyed = $turretDef->lost;
+                            // compare ids
+                            if($oldShipValues->ship_id == $newShipValues->ship_id)
+                            {
+                                $oldShipValues->lost += $newShipValues->lost;
+                                $oldShipValues->destroyed += $newShipValues->destroyed;
                             }
                         }
+
                     }
+                    // save updated stats
+                    $attackerStat->ship_types = json_encode($oldShipsValues);
                 }
 
-                // now add to stats
-                $attackerStat->turret_types = json_encode($attackerTurretLoss);
             }
-            else {
-                $oldTurretStats = json_decode($attackerStat->turret_types);
 
-                foreach ($attackerTurretLoss as $turretAtt) {
-                    $turretAtt->destroyed = 0;
-                    // second run through so add destroyed amount
-                    foreach ($defenderTurretLoss as $turretDef) {
-                        foreach ($oldTurretStats as $oldTurretStat) {
-                            if ($turretAtt->turret_id == $turretDef->turret_id && $turretAtt->turret_id == $oldTurretStat->turret_id) {
-                                // new value        =   Defender loss + OldStatistic
-                                $turretAtt->destroyed = $turretDef->lost + $oldTurretStat->destroyed;
-                            }
-                        }
-                    }
-                }
-
-
-                // now add to stats
-                $attackerStat->turret_types = json_encode($attackerTurretLoss);
+        }
+        if($attackerStat->turret_types == null)
+        {
+            // first ever entry
+            if($attackerTurretStats)
+            {
+                $attackerStat->turret_types = json_encode($attackerTurretStats);
+            } else {
+                $attackerStat->turret_types = null;
             }
         }
+        else {
+            if($attackerTurretStats)
+            {
+                // run through existing stats
+                $oldTurretsValues = json_decode($attackerStat->turret_types);
+                if($oldTurretsValues)
+                {
+                    foreach($oldTurretsValues as $oldTurretValues)
+                    {
+                        // run through new values
+                        foreach($attackerTurretStats as $newTurretValues)
+                        {
+                            // compare ids
+                            if($oldTurretValues->turret_id == $newTurretValues->turret_id)
+                            {
+                                $oldTurretValues->lost += $newTurretValues->lost;
+                                $oldTurretValues->destroyed += $newTurretValues->destroyed;
+                            }
+                        }
 
-        // write resource stats
+                    }
+                    // save updated stats
+                    $attackerStat->turret_types = json_encode($oldTurretsValues);
+                }
+
+            }
+
+        }
         if($attackerStat->resources_types == null)
         {
-            $attackerCargoStats = [];
-            foreach($cargo as $key => $res)
+            // first ever entry
+            if($attackerResourceStats)
             {
-                $temp = new \stdClass();
-                $temp->id = $key;
-                $temp->caught = $res;
-                $temp->lost = 0;
-                array_push($attackerCargoStats, $temp);
+                $attackerStat->resources_types = json_encode($attackerResourceStats);
+            } else {
+                $attackerStat->resources_types = null;
             }
-            $attackerStat->resources_types = json_encode($attackerCargoStats);
         }
         else {
-            $oldRes = json_decode($attackerStat->resources_types);
-            foreach($oldRes as $key => $res)
+            if($attackerResourceStats)
             {
-                foreach($cargo as $keyC => $resC)
+                // run through existing stats
+                $oldResourcesValues = json_decode($attackerStat->resources_types);
+                if($oldResourcesValues)
                 {
-                    if($res->id == $keyC)
+                    foreach($oldResourcesValues as $oldResourceValues)
                     {
-                        $res->caught += $resC;
+                        // run through new values
+                        foreach($attackerResourceStats as $newResourceValues)
+                        {
+                            // compare ids
+                            if($oldResourceValues->res_id == $newResourceValues->res_id)
+                            {
+                                $oldResourceValues->lost += $newResourceValues->lost;
+                                $oldResourceValues->caught += $newResourceValues->caught;
+                            }
+                        }
+
                     }
+                    // save updated stats
+                    $attackerStat->resources_types = json_encode($oldResourcesValues);
                 }
+
             }
-            $attackerStat->resources_types = json_encode($oldRes);
+
         }
 
-
-        // defender part
+        // update defender stats
         if($defenderStat->ship_types == null)
         {
-            // first run through so add the destroyed field
-            foreach($defenderShipLoss as $shipDef)
+            // first ever entry
+            if($defenderShipStats)
             {
-                $shipDef->destroyed = 0;
-                // second run through so add destroyed amount
-                foreach($attackerShipLoss as $shipAtt)
-                {
-                    if($shipAtt->ship_id == $shipDef->ship_id)
-                    {
-                        $shipDef->destroyed = $shipAtt->lost;
-                    }
-                }
+                $defenderStat->ship_types = json_encode($defenderShipStats);
+            } else {
+                $defenderStat->ship_types = null;
             }
-
-            // now add to stats
-            $defenderStat->ship_types = json_encode($defenderShipLoss);
         }
         else {
-            $oldShipStats = json_decode($defenderStat->ship_types);
-            foreach($oldShipStats as $oldShipStat)
+            // run through existing stats
+            $oldShipsValues = json_decode($defenderStat->ship_types);
+            foreach($oldShipsValues as $oldShipValues)
             {
-                foreach($defenderShipLoss as $shipDef)
+                // run through new values
+                foreach($defenderShipStats as $newShipValues)
                 {
-                    $shipDef->lost = $oldShipStat->lost;
-                    // second run through so add destroyed amount
-                    foreach($attackerShipLoss as $shipAtt)
+                    // compare ids
+                    if($oldShipValues->ship_id == $newShipValues->ship_id)
                     {
-
-                        if($shipDef->ship_id == $shipAtt->ship_id && $shipDef->ship_id == $oldShipStat->ship_id)
-                        {
-                            // new value        =   Defender loss + OldStatistic
-                            $shipDef->lost += $shipAtt->destroyed;
-                            $shipDef->destroyed = $shipAtt->lost + $oldShipStat->destroyed;
-                        }
+                        $oldShipValues->lost += $newShipValues->lost;
+                        $oldShipValues->destroyed += $newShipValues->destroyed;
                     }
                 }
-            }
 
-            // now add to stats
-            $defenderStat->ship_types = json_encode($defenderShipLoss);
+            }
+            // save updated stats
+            $defenderStat->ship_types = json_encode($oldShipsValues);
         }
-        // write turrets to stats
-        if($defenderTurretLoss)
+        if($defenderStat->turret_types == null)
         {
-            if($defenderStat->turret_types == null)
+            // first ever entry
+            if($defenderTurretStats)
             {
-                // first run through so add the destroyed field
-                foreach($defenderTurretLoss as $turretDef)
-                {
-                    $turretDef->destroyed = 0;
-                    // second run through so add destroyed amount
-                    foreach($attackerTurretLoss as $turretAtt)
-                    {
-                        if($turretAtt->turret_id == $turretDef->turret_id)
-                        {
-                            $turretDef->destroyed = $turretAtt->lost;
-                        }
-                    }
-                }
-
-                // now add to stats
-                $defenderStat->turret_types = json_encode($defenderTurretLoss);
+                $defenderStat->turret_types = json_encode($defenderTurretStats);
+            } else {
+                $defenderStat->turret_types = null;
             }
-            else {
-                $oldTurretStats = json_decode($defenderStat->turret_types);
-                foreach ($oldTurretStats as $oldTurretStat) {
-                    foreach ($defenderTurretLoss as $turretDef) {
-                        if($turretDef->turret_id == $oldTurretStat->turret_id)
+        }
+        else {
+            if($defenderTurretStats)
+            {
+                // run through existing stats
+                $oldTurretsValues = json_decode($defenderStat->turret_types);
+                if($oldTurretsValues)
+                {
+                    foreach($oldTurretsValues as $oldTurretValues)
+                    {
+                        // run through new values
+                        foreach($defenderTurretStats as $newTurretValues)
                         {
-                            $turretDef->lost = $oldTurretStat->lost;
-                        }
-                        // second run through so add destroyed amount
-                        foreach ($attackerTurretLoss as $turretAtt) {
-
-                            if ($turretDef->turret_id == $turretAtt->turret_id && $turretDef->turret_id == $oldTurretStat->turret_id) {
-                                // new value        =   Attacker destroyed + OldStatistic
-                                dd($turretAtt->destroyed);
-
-                                $turretDef->lost += $turretAtt->destroyed;
+                            // compare ids
+                            if($oldTurretValues->turret_id == $newTurretValues->turret_id)
+                            {
+                                $oldTurretValues->lost += $newTurretValues->lost;
+                                $oldTurretValues->destroyed += $newTurretValues->destroyed;
                             }
                         }
+
                     }
+                    // save updated stats
+                    $defenderStat->turret_types = json_encode($oldTurretsValues);
                 }
 
-
-                // now add to stats
-                $defenderStat->turret_types = json_encode($defenderTurretLoss);
             }
 
         }
-        // write resource stats
         if($defenderStat->resources_types == null)
         {
-            $defenderCargoStats = [];
-            foreach($cargo as $key => $res)
+            // first ever entry
+            if($defenderResourceStats)
             {
-                $temp = new \stdClass();
-                $temp->id = $key;
-                $temp->caught = 0;
-                $temp->lost = $res;
-                array_push($defenderCargoStats, $temp);
+                $defenderStat->resources_types = json_encode($defenderResourceStats);
+            } else {
+                $defenderStat->resources_types = null;
             }
-            $defenderStat->resources_types = json_encode($defenderCargoStats);
+
         }
         else {
-            $oldRes = json_decode($defenderStat->resources_types);
-            foreach($oldRes as $key => $res)
+            if($defenderResourceStats)
             {
-                foreach($cargo as $keyC => $resC)
+                // run through existing stats
+                $oldResourcesValues = json_decode($defenderStat->resources_types);
+                if($oldResourcesValues)
                 {
-                    if($res->id == $keyC)
+                    foreach($oldResourcesValues as $oldResourceValues)
                     {
-                        $res->lost += $resC;
+                        // run through new values
+                        foreach($defenderResourceStats as $newResourceValues)
+                        {
+                            // compare ids
+                            if($oldResourceValues->res_id == $newResourceValues->res_id)
+                            {
+                                $oldResourceValues->lost += $newResourceValues->lost;
+                                $oldResourceValues->caught += $newResourceValues->caught;
+                            }
+                        }
+
                     }
+                    // save updated stats
+                    $defenderStat->resources_types = json_encode($oldResourcesValues);
                 }
+
             }
-            $defenderStat->resources_types = json_encode($oldRes);
+
         }
 
-        // apply on alliances stats (if)
+        // update attacker ally stats | if
         if($attackerAllyStat)
         {
-            // attacker first
             if($attackerAllyStat->ship_types == null)
             {
-                // first run through so add the destroyed field
-                foreach($attackerShipLoss as $shipAtt)
+                // first ever entry
+                if($attackerShipStats)
                 {
-                    $shipAtt->destroyed = 0;
-                    // second run through so add destroyed amount
-                    foreach($defenderShipLoss as $shipDef)
-                    {
-                        if($shipAtt->ship_id == $shipDef->ship_id)
-                        {
-                            $shipAtt->destroyed = $shipDef->lost;
-                        }
-                    }
+                    $attackerAllyStat->ship_types = json_encode($attackerShipStats);
+                } else {
+                    $attackerAllyStat->ship_types = null;
                 }
-
-                // now add to stats
-                $attackerAllyStat->ship_types = json_encode($attackerShipLoss);
             }
             else {
-                $oldShipStats = json_decode($attackerAllyStat->ship_types);
-                foreach($oldShipStats as $oldShipStat)
+                if($attackerShipStats)
                 {
-                    foreach($attackerShipLoss as $shipAtt)
+                    // run through existing stats
+                    $oldShipsValues = json_decode($attackerAllyStat->ship_types);
+                    if($oldShipsValues)
                     {
-                        if($shipAtt->ship_id == $oldShipStat->ship_id)
+                        foreach($oldShipsValues as $oldShipValues)
                         {
-                            $shipAtt->destroyed = $oldShipStat->destroyed;
-                        }
-                        // second run through so add destroyed amount
-                        foreach($defenderShipLoss as $shipDef)
-                        {
-
-                            if($shipAtt->ship_id == $shipDef->ship_id && $shipAtt->ship_id == $oldShipStat->ship_id)
+                            // run through new values
+                            foreach($attackerShipStats as $newShipValues)
                             {
-                                // new value        =   Defender loss + OldStatistic
-                                $shipAtt->destroyed += $shipDef->lost;
-                                $shipAtt->lost = $shipDef->destroyed + $oldShipStat->lost;
-                            }
-                        }
-                    }
-                }
-
-                // now add to stats
-                $attackerAllyStat->ship_types = json_encode($attackerShipLoss);
-            }
-            // write turrets to stats
-            if($attackerTurretLoss) {
-                if ($attackerAllyStat->turret_types == null) {
-                    // first run through so add the destroyed field
-                    foreach ($attackerTurretLoss as $turretAtt) {
-                        $turretAtt->destroyed = 0;
-                        // second run through so add destroyed amount
-                        foreach ($defenderTurretLoss as $turretDef) {
-                            if ($turretAtt->turret_id == $turretDef->turret_id) {
-                                $turretAtt->destroyed = $turretDef->lost;
-                            }
-                        }
-                    }
-
-                    // now add to stats
-                    $attackerAllyStat->turret_types = json_encode($attackerTurretLoss);
-                }
-                else {
-                    $oldTurretStats = json_decode($attackerAllyStat->turret_types);
-                    foreach ($oldTurretStats as $oldTurretStat) {
-                        foreach ($attackerTurretLoss as $turretAtt) {
-                            if($turretAtt->turret_id == $oldTurretStat->turret_id)
-                            {
-                                $turretAtt->destroyed = $oldTurretStat->destroyed;
-                            }
-                            // second run through so add destroyed amount
-                            foreach ($defenderTurretLoss as $turretDef) {
-
-                                if ($turretAtt->turret_id == $turretDef->turret_id && $turretAtt->turret_id == $oldTurretStat->turret_id) {
-                                    // new value        =   Defender loss + OldStatistic
-                                    $turretAtt->destroyed += $turretDef->lost;
+                                // compare ids
+                                if($oldShipValues->ship_id == $newShipValues->ship_id)
+                                {
+                                    $oldShipValues->lost += $newShipValues->lost;
+                                    $oldShipValues->destroyed += $newShipValues->destroyed;
                                 }
                             }
+
                         }
+                        // save updated stats
+                        $attackerAllyStat->ship_types = json_encode($oldShipsValues);
                     }
 
+                }
 
-                    // now add to stats
-                    $attackerAllyStat->turret_types = json_encode($attackerTurretLoss);
-                }
             }
-            // write resource stats
-            if($attackerAllyStat->resources_types == null)
+            if($attackerAllyStat->turret_types == null)
             {
-                $attackerCargoStats = [];
-                foreach($cargo as $key => $res)
+                // first ever entry
+                if($attackerTurretStats)
                 {
-                    $temp = new \stdClass();
-                    $temp->id = $key;
-                    $temp->caught = $res;
-                    $temp->lost = 0;
-                    array_push($attackerCargoStats, $temp);
+                    $attackerAllyStat->turret_types = json_encode($attackerTurretStats);
+                } else {
+                    $attackerAllyStat->turret_types = null;
                 }
-                $attackerAllyStat->resources_types = json_encode($attackerCargoStats);
             }
             else {
-                $oldRes = json_decode($attackerAllyStat->resources_types);
-                foreach($oldRes as $key => $res)
+                if($attackerTurretStats)
                 {
-                    foreach($cargo as $keyC => $resC)
+                    // run through existing stats
+                    $oldTurretsValues = json_decode($attackerAllyStat->turret_types);
+                    if($oldTurretsValues)
                     {
-                        if($res->id == $keyC)
+                        foreach($oldTurretsValues as $oldTurretValues)
                         {
-                            $res->caught += $resC;
+                            // run through new values
+                            foreach($attackerTurretStats as $newTurretValues)
+                            {
+                                // compare ids
+                                if($oldTurretValues->turret_id == $newTurretValues->turret_id)
+                                {
+                                    $oldTurretValues->lost += $newTurretValues->lost;
+                                    $oldTurretValues->destroyed += $newTurretValues->destroyed;
+                                }
+                            }
+
                         }
+                        // save updated stats
+                        $attackerAllyStat->turret_types = json_encode($oldTurretsValues);
                     }
+
                 }
-                $attackerAllyStat->resources_types = json_encode($oldRes);
+
             }
+            if($attackerAllyStat->resources_types == null)
+            {
+                // first ever entry
+                if($attackerResourceStats)
+                {
+                    $attackerAllyStat->resources_types = json_encode($attackerResourceStats);
+                } else {
+                    $attackerAllyStat->resources_types = null;
+                }
+            }
+            else {
+                if($attackerResourceStats)
+                {
+                    // run through existing stats
+                    $oldResourcesValues = json_decode($attackerAllyStat->resources_types);
+                    if($oldResourcesValues)
+                    {
+                        foreach($oldResourcesValues as $oldResourceValues)
+                        {
+                            // run through new values
+                            foreach($attackerResourceStats as $newResourceValues)
+                            {
+                                // compare ids
+                                if($oldResourceValues->res_id == $newResourceValues->res_id)
+                                {
+                                    $oldResourceValues->lost += $newResourceValues->lost;
+                                    $oldResourceValues->caught += $newResourceValues->caught;
+                                }
+                            }
 
-            // finally save
-            $attackerAllyStat->save();
+                        }
+                        // save updated stats
+                        $attackerAllyStat->resources_types = json_encode($oldResourcesValues);
+                    }
+
+                }
+
+            }
         }
-        $attackerStat->save();
 
-        // defender part
-        dd($defenderStat);
+
+        // update defender ally stats | if
         if($defenderAllyStat)
         {
             if($defenderAllyStat->ship_types == null)
             {
-                // first run through so add the destroyed field
-                foreach($defenderShipLoss as $shipDef)
+                // first ever entry
+                if($defenderShipStats)
                 {
-                    $shipDef->destroyed = 0;
-                    // second run through so add destroyed amount
-                    foreach($attackerShipLoss as $shipAtt)
-                    {
-                        if($shipAtt->ship_id == $shipDef->ship_id)
-                        {
-                            $shipDef->destroyed = $shipAtt->lost;
-                        }
-                    }
+                    $defenderAllyStat->ship_types = json_encode($defenderShipStats);
+                } else {
+                    $defenderAllyStat->ship_types = null;
                 }
-
-                // now add to stats
-                $defenderAllyStat->ship_types = json_encode($defenderShipLoss);
             }
             else {
-                $oldShipStats = json_decode($defenderAllyStat->ship_types);
-                foreach($oldShipStats as $oldShipStat)
+                // run through existing stats
+                $oldShipsValues = json_decode($defenderAllyStat->ship_types);
+                foreach($oldShipsValues as $oldShipValues)
                 {
-                    foreach($defenderShipLoss as $shipDef)
+                    // run through new values
+                    foreach($defenderShipStats as $newShipValues)
                     {
-                        if($shipDef->ship_id == $oldShipStat->ship_id)
+                        // compare ids
+                        if($oldShipValues->ship_id == $newShipValues->ship_id)
                         {
-                            $shipDef->lost = $oldShipStat->lost;
-                        }
-                        // second run through so add destroyed amount
-                        foreach($attackerShipLoss as $shipAtt)
-                        {
-                            if($shipDef->ship_id == $shipAtt->ship_id && $shipDef->ship_id == $oldShipStat->ship_id)
-                            {
-                                // new value        =   Defender loss + OldStatistic
-                                $shipDef->lost += $shipAtt->destroyed;
-                                $shipDef->destroyed = $shipAtt->lost + $oldShipStat->destroyed;
-                            }
+                            $oldShipValues->lost += $newShipValues->lost;
+                            $oldShipValues->destroyed += $newShipValues->destroyed;
                         }
                     }
-                }
 
-                // now add to stats
-                $defenderAllyStat->ship_types = json_encode($defenderShipLoss);
+                }
+                // save updated stats
+                $defenderAllyStat->ship_types = json_encode($oldShipsValues);
             }
-            // write turrets to stats
-            if($defenderTurretLoss)
+            if($defenderAllyStat->turret_types == null)
             {
-                if($defenderAllyStat->turret_types == null)
-            {
-                // first run through so add the destroyed field
-                foreach($defenderTurretLoss as $turretDef)
+                // first ever entry
+                if($defenderTurretStats)
                 {
-                    $turretDef->destroyed = 0;
-                    // second run through so add destroyed amount
-                    foreach($attackerTurretLoss as $turretAtt)
-                    {
-                        if($turretAtt->turret_id == $turretDef->turret_id)
-                        {
-                            $turretDef->destroyed = $turretAtt->lost;
-                        }
-                    }
+                    $defenderAllyStat->turret_types = json_encode($defenderTurretStats);
+                } else {
+                    $defenderAllyStat->turret_types = null;
                 }
-
-                // now add to stats
-                $defenderAllyStat->turret_types = json_encode($defenderTurretLoss);
             }
-                else {
-                    $oldTurretStats = json_decode($defenderAllyStat->turret_types);
-                    foreach ($oldTurretStats as $oldTurretStat) {
-                        foreach ($defenderTurretLoss as $turretDef) {
-                            if($turretDef->ship_id == $oldTurretStat->ship_id)
+            else {
+                if($defenderTurretStats)
+                {
+                    // run through existing stats
+                    $oldTurretsValues = json_decode($defenderAllyStat->turret_types);
+                    if($oldTurretsValues)
+                    {
+                        foreach($oldTurretsValues as $oldTurretValues)
+                        {
+                            // run through new values
+                            foreach($defenderTurretStats as $newTurretValues)
                             {
-                                $turretDef->lost = $oldTurretStat->lost;
-                            }
-                            // second run through so add destroyed amount
-                            foreach ($attackerTurretLoss as $turretAtt) {
-                                if ($turretDef->turret_id == $turretAtt->turret_id && $turretDef->turret_id == $oldTurretStat->turret_id) {
-                                    // new value        =   Attacker destroyed + OldStatistic
-                                    $turretDef->lost += $turretAtt->destroyed;
+                                // compare ids
+                                if($oldTurretValues->turret_id == $newTurretValues->turret_id)
+                                {
+                                    $oldTurretValues->lost += $newTurretValues->lost;
+                                    $oldTurretValues->destroyed += $newTurretValues->destroyed;
                                 }
                             }
+
                         }
+                        // save updated stats
+                        $defenderAllyStat->turret_types = json_encode($oldTurretsValues);
                     }
 
-
-                    // now add to stats
-                    $defenderAllyStat->turret_types = json_encode($defenderTurretLoss);
                 }
+
             }
-            // write resource stats
             if($defenderAllyStat->resources_types == null)
             {
-                $defenderCargoStats = [];
-                foreach($cargo as $key => $res)
+                // first ever entry
+                if($defenderResourceStats)
                 {
-                    $temp = new \stdClass();
-                    $temp->id = $key;
-                    $temp->caught = 0;
-                    $temp->lost = $res;
-                    array_push($defenderCargoStats, $temp);
+                    $defenderAllyStat->resources_types = json_encode($defenderResourceStats);
+                } else {
+                    $defenderAllyStat->resources_types = null;
                 }
-                $defenderAllyStat->resources_types = json_encode($defenderCargoStats);
+
             }
             else {
-                $oldRes = json_decode($defenderAllyStat->resources_types);
-                foreach($oldRes as $key => $res)
+                if($defenderResourceStats)
                 {
-                    foreach($cargo as $keyC => $resC)
+                    // run through existing stats
+                    $oldResourcesValues = json_decode($defenderAllyStat->resources_types);
+                    if($oldResourcesValues)
                     {
-                        if($res->id == $keyC)
+                        foreach($oldResourcesValues as $oldResourceValues)
                         {
-                            $res->lost += $resC;
-                        }
-                    }
-                }
-                $attackerStat->resources_types = json_encode($oldRes);
-            }
+                            // run through new values
+                            foreach($defenderResourceStats as $newResourceValues)
+                            {
+                                // compare ids
+                                if($oldResourceValues->res_id == $newResourceValues->res_id)
+                                {
+                                    $oldResourceValues->lost += $newResourceValues->lost;
+                                    $oldResourceValues->caught += $newResourceValues->caught;
+                                }
+                            }
 
-            // finally save
+                        }
+                        // save updated stats
+                        $defenderAllyStat->resources_types = json_encode($oldResourcesValues);
+                    }
+
+                }
+
+            }
+        }
+
+
+        $attackerStat->attacks += 1;
+        $attackerStat->save();
+        $defenderStat->defends += 1;
+        $defenderStat->save();
+        if($attackerAllyStat)
+        {
+            $attackerAllyStat->attacks += 1;
+            $attackerAllyStat->save();
+        }
+        if($defenderAllyStat)
+        {
+            $defenderAllyStat->defends += 1;
             $defenderAllyStat->save();
         }
-        dd($defenderStat);
-        $defenderStat->save();
 
     }
 }

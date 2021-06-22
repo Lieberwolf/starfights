@@ -17,7 +17,7 @@ class CreateStatisticsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id')->nullable();
             $table->unsignedBigInteger('alliance_id')->nullable();
-            $table->boolean('public')->default(false);
+            $table->boolean('public')->default(true);
             $table->json('ship_types')->nullable();
             $table->json('turret_types')->nullable();
             $table->json('resources_types')->nullable();

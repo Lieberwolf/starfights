@@ -43,6 +43,9 @@
             Allianz: <a href="/alliance/{{$activePlanet}}/{{$alliance->id}}">{{$alliance->alliance_name}} [{{$alliance->alliance_tag}}]</a>
         </div>
         @endif
+        <div class="col-12 col-md-6 offset-md-3 sub-line">
+            <a href="/statistics/{{$activePlanet}}/user/{{$profileData->user_id}}">Kampfstatistik</a>
+        </div>
         @if(!$ownProfile)
             <div class="col-12 col-md-6 offset-md-3 sub-line">
                 <a href="/messages/send/{{$profileData->user_id}}">Nachricht senden</a>

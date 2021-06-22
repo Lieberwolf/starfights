@@ -17,7 +17,7 @@
                     <a href="/notice/{{$activePlanet}}">Notizblock</a>
                 </div>
                 <div class="col-6 col-md-2">
-                    <a href="">Kampfstatistik</a>
+                    <a href="/statistics/{{$activePlanet}}/user/{{$planetInformation->user_id}}">Kampfstatistik</a>
                 </div>
                 <div class="col-6 col-md-2">
                     <a href="">Handel</a>

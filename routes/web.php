@@ -157,6 +157,11 @@ Route::get('/notice', [App\Http\Controllers\NoticeController::class, 'index']);
 Route::get('/notice/{planet_id}', [App\Http\Controllers\NoticeController::class, 'show']);
 Route::post('/notice/{planet_id}/edit', [App\Http\Controllers\NoticeController::class, 'edit']);
 
+// statistics
+Route::get('/statistics', [App\Http\Controllers\StatisticsController::class, 'index']);
+Route::get('/statistics/{planet_id}/user/{users_id}', [App\Http\Controllers\StatisticsController::class, 'showUser']);
+Route::get('/statistics/{planet_id}/ally/{ally_id}', [App\Http\Controllers\StatisticsController::class, 'showAlly']);
+
 /**
  * Admin
  */

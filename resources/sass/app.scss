@@ -197,7 +197,7 @@ body {
 #chat-opener {
     position: fixed;
     bottom: 20px;
-    right: 20px;
+    left: 20px;
     padding: 20px;
     background-color: #213f5d;
     line-height: 1;
@@ -216,7 +216,7 @@ body {
         max-width: 50%;
     }
     bottom: 20px;
-    right: 20px;
+    left: 20px;
     background-color: #001e3b;
     .chat-list {
         margin: 0;
