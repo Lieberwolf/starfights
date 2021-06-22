@@ -22,10 +22,10 @@ class MessagesController extends Controller
         return redirect('messages/new/');
     }
 
-    public function show()
+    public function show($planet_id)
     {
         // update session with new planet id
-        $planet_id = session('default_planet');
+        session(['default_planet' => $planet_id]);
         $user_id = Auth::id();
         $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
         $allUserPlanets = Controller::getAllUserPlanets($user_id);
@@ -47,10 +47,10 @@ class MessagesController extends Controller
         }
     }
 
-    public function inbox()
+    public function inbox($planet_id)
     {
         // update session with new planet id
-        $planet_id = session('default_planet');
+        session(['default_planet' => $planet_id]);
 
         $user_id = Auth::id();
 
@@ -77,10 +77,10 @@ class MessagesController extends Controller
         }
     }
 
-    public function outbox()
+    public function outbox($planet_id)
     {
         // update session with new planet id
-        $planet_id = session('default_planet');
+        session(['default_planet' => $planet_id]);
 
         $user_id = Auth::id();
 

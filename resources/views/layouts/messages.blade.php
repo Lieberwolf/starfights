@@ -3,13 +3,13 @@
         <div class="col-12 title-line">
             <div class="row">
                 <div class="col-12 col-md-4">
-                    <a href="/messages/new">Neue Nachrichten</a>
+                    <a href="/messages/new/{{$activePlanet}}">Neue Nachrichten</a>
                 </div>
                 <div class="col-12 col-md-4">
-                    <a href="/messages/inbox">Posteingang</a>
+                    <a href="/messages/inbox/{{$activePlanet}}">Posteingang</a>
                 </div>
                 <div class="col-12 col-md-4">
-                    <a href="/messages/outbox">Postausgang</a>
+                    <a href="/messages/outbox/{{$activePlanet}}">Postausgang</a>
                 </div>
             </div>
         </div>

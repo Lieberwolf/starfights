@@ -47,6 +47,8 @@ class ResearchController extends Controller
                 if(!empty($allUserPlanets[$key-1]))
                 {
                     $prevPlanet = $allUserPlanets[$key-1];
+                } else {
+                    $prevPlanet = $allUserPlanets[count($allUserPlanets)-1];
                 }
             }
         }
@@ -59,6 +61,8 @@ class ResearchController extends Controller
                 if(!empty($allUserPlanets[$key+1]))
                 {
                     $nextPlanet = $allUserPlanets[$key+1];
+                } else {
+                    $nextPlanet = $allUserPlanets[0];
                 }
             }
         }
@@ -209,27 +213,36 @@ class ResearchController extends Controller
             if($selectedResearch)
             {
                 // check if selected building can be built (resources)
-
                 if($planetaryResources[0][0]->fe >= $selectedResearch->fe && $planetaryResources[0][0]->lut >= $selectedResearch->lut && $planetaryResources[0][0]->cry >= $selectedResearch->cry && $planetaryResources[0][0]->h2o >= $selectedResearch->h2o && $planetaryResources[0][0]->h2 >= $selectedResearch->h2)
                 {
-                    // get requirements (research)
-                    // get requirements (buildings)
-
-                    //start the build
-                    $started = Research::startResearch($selectedResearch, $planet_id);
-                    if($started)
+                    $needle = $researchList->filter(function($value, $key) use ($research_id) {
+                        if($value->id == $research_id)
+                        {
+                            return $value->buildable;
+                        }
+                    });
+                    if(count($needle) > 0)
                     {
-                        // calculate new resources
-                        $planetaryResources[0][0]->fe -= $selectedResearch->fe;
-                        $planetaryResources[0][0]->lut -= $selectedResearch->lut;
-                        $planetaryResources[0][0]->cry -= $selectedResearch->cry;
-                        $planetaryResources[0][0]->h2o -= $selectedResearch->h2o;
-                        $planetaryResources[0][0]->h2 -= $selectedResearch->h2;
-                        Planet::setResourcesForPlanetById($planet_id, $planetaryResources[0]);
+                        //start the build
+                        $started = Research::startResearch($selectedResearch, $planet_id);
+                        if($started)
+                        {
+                            // calculate new resources
+                            $planetaryResources[0][0]->fe -= $selectedResearch->fe;
+                            $planetaryResources[0][0]->lut -= $selectedResearch->lut;
+                            $planetaryResources[0][0]->cry -= $selectedResearch->cry;
+                            $planetaryResources[0][0]->h2o -= $selectedResearch->h2o;
+                            $planetaryResources[0][0]->h2 -= $selectedResearch->h2;
+                            Planet::setResourcesForPlanetById($planet_id, $planetaryResources[0]);
 
-                        return redirect('research/' . $planet_id);
+                            return redirect('research/' . $planet_id);
+                        }
+                    } else {
+                        return redirect('/research/' . $planet_id);
                     }
 
+                } else {
+                    return redirect('/research/' . $planet_id);
                 }
             } else {
                 // provide an error

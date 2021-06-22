@@ -45,6 +45,8 @@ class ShipyardController extends Controller
                 if(!empty($allUserPlanets[$key-1]))
                 {
                     $prevPlanet = $allUserPlanets[$key-1];
+                } else {
+                    $prevPlanet = $allUserPlanets[count($allUserPlanets)-1];
                 }
             }
         }
@@ -57,6 +59,8 @@ class ShipyardController extends Controller
                 if(!empty($allUserPlanets[$key+1]))
                 {
                     $nextPlanet = $allUserPlanets[$key+1];
+                } else {
+                    $nextPlanet = $allUserPlanets[0];
                 }
             }
         }

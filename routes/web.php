@@ -80,11 +80,11 @@ Route::get('/resources/{planet_id}', [App\Http\Controllers\ResourcesController::
 
 // messages
 Route::get('/messages', [App\Http\Controllers\MessagesController::class, 'index']);
-Route::get('/messages/new', [App\Http\Controllers\MessagesController::class, 'show']);
+Route::get('/messages/new/{planet_id}', [App\Http\Controllers\MessagesController::class, 'show']);
 Route::get('/messages/send/{receiver_id}', [App\Http\Controllers\MessagesController::class, 'send']);
 Route::post('/messages/sending', [App\Http\Controllers\MessagesController::class, 'sending']);
-Route::get('/messages/inbox', [App\Http\Controllers\MessagesController::class, 'inbox']);
-Route::get('/messages/outbox', [App\Http\Controllers\MessagesController::class, 'outbox']);
+Route::get('/messages/inbox/{planet_id}', [App\Http\Controllers\MessagesController::class, 'inbox']);
+Route::get('/messages/outbox/{planet_id}', [App\Http\Controllers\MessagesController::class, 'outbox']);
 Route::post('/messages/edit/inbox', [App\Http\Controllers\MessagesController::class, 'editInbox']);
 Route::post('/messages/edit/outbox', [App\Http\Controllers\MessagesController::class, 'editOutbox']);
 

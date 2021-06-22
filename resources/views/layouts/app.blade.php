@@ -26,6 +26,7 @@
         </main>
     </div>
     @if(Auth::user())
+    <!--
     <div id="chat-opener" class="chat js-show-chat">
         <i class="bi bi-chat-left-dots"></i>
     </div>
@@ -48,6 +49,7 @@
             </div>
         </div>
     </div>
+    -->
     @endif
     @if(Auth::user() && Auth::user()->isAdmin != 0)
     <!-- Todo: only admin -->

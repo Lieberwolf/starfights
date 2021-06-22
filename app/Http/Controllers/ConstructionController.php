@@ -56,21 +56,34 @@ class ConstructionController extends Controller
                 // check if selected building can be built (resources)
                 if($planetaryResources[0][0]->fe >= $selectedBuilding->fe && $planetaryResources[0][0]->lut >= $selectedBuilding->lut && $planetaryResources[0][0]->cry >= $selectedBuilding->cry && $planetaryResources[0][0]->h2o >= $selectedBuilding->h2o && $planetaryResources[0][0]->h2 >= $selectedBuilding->h2)
                 {
-                    //start the build
-                    $started = Building::startBuilding($selectedBuilding, $planet_id);
-                    if($started)
+                    $needle = $buildingListRaw->filter(function($value, $key) use ($building_id) {
+                        if($value->id == $building_id)
+                        {
+                            return $value->buildable;
+                        }
+                    });
+
+                    if(count($needle) > 0)
                     {
-                        // calculate new resources
-                        $planetaryResources[0][0]->fe -= $selectedBuilding->fe;
-                        $planetaryResources[0][0]->lut -= $selectedBuilding->lut;
-                        $planetaryResources[0][0]->cry -= $selectedBuilding->cry;
-                        $planetaryResources[0][0]->h2o -= $selectedBuilding->h2o;
-                        $planetaryResources[0][0]->h2 -= $selectedBuilding->h2;
-                        Planet::setResourcesForPlanetById($planet_id, $planetaryResources[0]);
+                        //start the build
+                        $started = Building::startBuilding($selectedBuilding, $planet_id);
+                        if($started)
+                        {
+                            // calculate new resources
+                            $planetaryResources[0][0]->fe -= $selectedBuilding->fe;
+                            $planetaryResources[0][0]->lut -= $selectedBuilding->lut;
+                            $planetaryResources[0][0]->cry -= $selectedBuilding->cry;
+                            $planetaryResources[0][0]->h2o -= $selectedBuilding->h2o;
+                            $planetaryResources[0][0]->h2 -= $selectedBuilding->h2;
+                            Planet::setResourcesForPlanetById($planet_id, $planetaryResources[0]);
 
-                        return redirect('construction/' . $planet_id);
+                            return redirect('construction/' . $planet_id);
+                        }
+                    } else {
+                        return redirect('/construction/' . $planet_id);
                     }
-
+                } else {
+                    return redirect('/construction/' . $planet_id);
                 }
             } else {
                 // provide an error
@@ -86,6 +99,8 @@ class ConstructionController extends Controller
                 if(!empty($allUserPlanets[$key-1]))
                 {
                     $prevPlanet = $allUserPlanets[$key-1];
+                } else {
+                    $prevPlanet = $allUserPlanets[count($allUserPlanets)-1];
                 }
             }
         }
@@ -98,6 +113,8 @@ class ConstructionController extends Controller
                 if(!empty($allUserPlanets[$key+1]))
                 {
                     $nextPlanet = $allUserPlanets[$key+1];
+                } else {
+                    $nextPlanet = $allUserPlanets[0];
                 }
             }
         }

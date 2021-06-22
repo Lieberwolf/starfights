@@ -16,7 +16,7 @@
                 <form class="form-group">
                     <select data-url="" id="planet-select" class="form-control js-planet-select" name="planet-select" onchange="window.location.href=document.getElementById('planet-select').value;">
                         @foreach($allUserPlanets as $planet)
-                            <option {{$planet->id == $activePlanet ? 'selected' : ''}} value="{{$planet->id}}">{{$planet->galaxy}}:{{$planet->system}}:{{$planet->planet}}</option>
+                        <option {{$planet->id == $activePlanet ? 'selected' : ''}} value="{{$planet->id}}">{{$planet->galaxy}}:{{$planet->system}}:{{$planet->planet}}</option>
                         @endforeach
                     </select>
                     <div class="row planet-triggers">
@@ -33,11 +33,11 @@
     </ul>
     <ul>
         <li class="heading">Information</li>
-        <li><a href="/messages/new">Nachrichten</a></li>
+        <li><a href="/messages/new/{{$activePlanet}}">Nachrichten</a></li>
         @foreach($allUserPlanets as $planet)
-            @if($planet->id == $activePlanet)
-            <li><a href="/universe/{{$planet->id . '/' . $planet->galaxy . '/' .$planet->system}}">Universum</a></li>
-            @endif
+        @if($planet->id == $activePlanet)
+        <li><a href="/universe/{{$planet->id . '/' . $planet->galaxy . '/' .$planet->system}}">Universum</a></li>
+        @endif
         @endforeach
         <li><a href="/search/{{$defaultPlanet}}">Suche</a></li>
         <li><a href="/techtree/{{$defaultPlanet}}">Technik</a></li>
