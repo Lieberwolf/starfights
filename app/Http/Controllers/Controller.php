@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Profile;
 use App\Models\Report;
+use App\Models\Statistics;
 use App\Models\Turret;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
@@ -2026,11 +2027,15 @@ class Controller extends BaseController
             $temp->cargo = null;
         }
 
+
         $return = new \stdClass();
         $return->fleet = $fleet;
         $return->temp = $temp;
         $return->attacker = $attacker;
         $return->defender = $defender;
+
+        // report to statistics
+        Statistics::addValues($attacker, $defender, $fleet->cargo);
 
         return $return;
     }

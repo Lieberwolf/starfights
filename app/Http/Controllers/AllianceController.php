@@ -182,8 +182,8 @@ class AllianceController extends Controller
     public function founding($planet_id)
     {
         $data = request()->validate([
-            'name' => 'required|max:24|min:3',
-            'tag' => 'required|max:5|min:3'
+            'name' => 'required|max:24|min:3|unique:alliances',
+            'tag' => 'required|max:5|min:3|unique:alliances'
         ]);
 
         $founded = Alliance::foundAlliance($data, Auth::id());
