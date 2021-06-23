@@ -492,31 +492,31 @@ class MissionController extends Controller
             // resources to be transported? check if enough is present
             if($resourceJson)
             {
-                if($resourceJson["fe"] > floor($planet->fe))
+                if($resourceJson["fe"] > floor($planet->fe) || $resourceJson["fe"] < 0)
                 {
                     return redirect('/mission/' . $planet_id)->with('status', 'Nicht genügend Eisen');
                 } else {
                     $planet->fe -= $resourceJson["fe"];
                 }
-                if($resourceJson["lut"] > floor($planet->lut))
+                if($resourceJson["lut"] > floor($planet->lut) || $resourceJson["lut"] < 0)
                 {
                     return redirect('/mission/' . $planet_id)->with('status', 'Nicht genügend Lutinum');
                 } else {
                     $planet->lut -= $resourceJson["lut"];
                 }
-                if($resourceJson["cry"] > floor($planet->cry))
+                if($resourceJson["cry"] > floor($planet->cry) || $resourceJson["cry"] < 0)
                 {
                     return redirect('/mission/' . $planet_id)->with('status', 'Nicht genügend Kristalle');
                 } else {
                     $planet->cry -= $resourceJson["cry"];
                 }
-                if($resourceJson["h2o"] > floor($planet->h2o))
+                if($resourceJson["h2o"] > floor($planet->h2o) || $resourceJson["h2o"] < 0)
                 {
                     return redirect('/mission/' . $planet_id)->with('status', 'Nicht genügend Wasser');
                 } else {
                     $planet->h2o -= $resourceJson["h2o"];
                 }
-                if($resourceJson["h2"] > floor(($planet->h2 - $data["fuel"])))
+                if($resourceJson["h2"] > floor(($planet->h2 - $data["fuel"])) || $resourceJson["h2"] < 0)
                 {
                     return redirect('/mission/' . $planet_id)->with('status', 'Nicht genügend Wasserstoff');
                 } else {
