@@ -2148,6 +2148,7 @@ class Controller extends BaseController
 
     public static function checkAllProcesses($planet_ids)
     {
+        Planet::getAllPlanetaryResourcesByUserId(Auth::id());
         self::checkBuildingProcesses($planet_ids);
         self::checkResearchProcesses($planet_ids);
         self::checkShipProcesses($planet_ids);

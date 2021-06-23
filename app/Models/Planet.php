@@ -380,12 +380,12 @@ class Planet extends Model
                      ->first();
     }
 
-    public static function getPlanetaryResourcesByIds($planet_ids)
+    public static function getAllPlanetaryResourcesByUserId($user_id)
     {
-        $planets = [];
-        foreach($planet_ids as $planet_id)
+        $planets = self::getAllUserPlanets($user_id);
+        foreach($planets as $planet)
         {
-            $planets[] = self::getOneById($planet_id->id);
+            self::getPlanetaryResourcesByPlanetId($planet->id, $user_id);
         }
 
     }
