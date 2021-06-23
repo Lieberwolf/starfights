@@ -89,11 +89,6 @@
                     <div class="col-6">Rückkehr:</div>
                     <div class="col-6">{{date('d.m.Y H:i:s', $return)}}</div>
                 </div>
-                <input type="hidden" name="duration" value="{{$durationInSec}}"/>
-                <input type="hidden" name="fuel" value="{{$fuel}}"/>
-                <input type="hidden" name="target" value="{{json_encode($target)}}"/>
-                <input type="hidden" name="selectedShips" value="{{json_encode($selectedShips)}}"/>
-                <input type="hidden" name="cargo" value="{{($cargo-$fuel)}}"/>
                 <input type="submit" />
             </form>
         </div>

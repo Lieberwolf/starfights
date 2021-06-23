@@ -327,6 +327,14 @@ class MissionController extends Controller
 
                     $flugzeit = $days . $hours . $minutes . $seconds;
 
+                    //session(['key' => 'value']);
+                    session(['duration' => $timestamp]);
+                    session(['fuel' => $fuel]);
+                    session(['target' => $target]);
+                    session(['selectedShips' => $selectedShips]);
+                    session(['cargo' => $cargo]);
+                    session(['allowedMissions' => $allowed_missions]);
+
                     if(count($planetaryResources)>0)
                     {
                         return view('mission.start', [
@@ -362,20 +370,32 @@ class MissionController extends Controller
         $user_id = Auth::id();
         Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
         $data = request()->validate([
-            'mission' => '',
-            'duration' => '',
-            'fuel' => '',
-            'target' => '',
-            'selectedShips' => '',
-            'cargo' => ''
+            'mission' => ''
         ]);
+
+        $data['duration'] = session('duration');
+        $data['fuel'] = session('fuel');
+        $data['target'] = session('target');
+        $data['selectedShips'] = session('selectedShips');
+        $data['cargo'] = session('cargo');
+
+        if(!in_array($data["mission"], session('allowedMissions')))
+        {
+            session(['duration' => null]);
+            session(['fuel' => null]);
+            session(['target' => null]);
+            session(['selectedShips' => null]);
+            session(['cargo' => null]);
+            session(['allowedMissions' => null]);
+            return redirect('/mission/' . $planet_id)->with('status', 'Missionswahl unzulässig');
+        }
 
         if(!array_key_exists('mission', $data))
         {
             return redirect('/mission/' . $planet_id);
         } else {
-            $target = json_decode($data["target"]);
-            $selectedShips = json_decode($data["selectedShips"]);
+            $target = $data["target"];
+            $selectedShips = $data["selectedShips"];
             if(is_array($data["mission"]))
             {
                 $mission = array_key_first($data["mission"]);
@@ -424,67 +444,84 @@ class MissionController extends Controller
             foreach($ship_types as $key => $shipAtPlanet)
             {
                 //dd($shipAtPlanet->ship_id);
-                foreach($selectedShips as $keyB => $selectedShip)
+                if($selectedShips)
                 {
-                    if($shipAtPlanet->ship_id == $selectedShip->id) {
+                    foreach($selectedShips as $keyB => $selectedShip)
+                    {
+                        if($shipAtPlanet->ship_id == $selectedShip->id) {
 
-                        // are there enough ships to be sent?
-                        if($ship_types[$key]->amount - $selectedShip->amount < 0 || $selectedShip->amount < 0)
-                        {
-                            return redirect('/mission/' . $planet_id)->with('status', 'Es stehen nicht genügend Schiffe zur Verfügung.');
-                        }
-
-                        $ship_types[$key]->amount -= $selectedShip->amount;
-                        $proof = false;
-
-                        foreach($newFleet as $keyC => $existingShip)
-                        {
-                            if($existingShip->ship_id == $selectedShip->id)
+                            // are there enough ships to be sent?
+                            if($ship_types[$key]->amount - $selectedShip->amount < 0 || $selectedShip->amount < 0)
                             {
-                                $proof = true;
-                                $existingKey = $keyC;
+                                session(['duration' => null]);
+                                session(['fuel' => null]);
+                                session(['target' => null]);
+                                session(['selectedShips' => null]);
+                                session(['cargo' => null]);
+                                session(['allowedMissions' => null]);
+                                return redirect('/mission/' . $planet_id)->with('status', 'Es stehen nicht genügend Schiffe zur Verfügung.');
                             }
-                        }
-                        if(!$proof)
-                        {
-                            $temp = new \stdClass();
-                            $temp->ship_id = $selectedShip->id;
-                            $temp->ship_name = $selectedShip->ship_name;
-                            $temp->amount = $selectedShip->amount;
-                            $newFleet[] = $temp;
-                        } else {
-                            if($existingKey > 0)
-                            {
-                                $newFleet[$existingKey]->amount = $selectedShip->amount;
-                            }
-                        }
-                    } else {
-                        if(count($newFleet) == 0)
-                        {
-                            $temp = new \stdClass();
-                            $temp->ship_id = $shipAtPlanet->ship_id;
-                            $temp->ship_name = $shipAtPlanet->ship_name;
-                            $temp->amount = 0;
-                            $newFleet[] = $temp;
-                        } else {
+
+                            $ship_types[$key]->amount -= $selectedShip->amount;
                             $proof = false;
+
                             foreach($newFleet as $keyC => $existingShip)
                             {
-                                if($existingShip->ship_id == $shipAtPlanet->ship_id)
+                                if($existingShip->ship_id == $selectedShip->id)
                                 {
                                     $proof = true;
+                                    $existingKey = $keyC;
                                 }
                             }
                             if(!$proof)
+                            {
+                                $temp = new \stdClass();
+                                $temp->ship_id = $selectedShip->id;
+                                $temp->ship_name = $selectedShip->ship_name;
+                                $temp->amount = $selectedShip->amount;
+                                $newFleet[] = $temp;
+                            } else {
+                                if($existingKey > 0)
+                                {
+                                    $newFleet[$existingKey]->amount = $selectedShip->amount;
+                                }
+                            }
+                        } else {
+                            if(count($newFleet) == 0)
                             {
                                 $temp = new \stdClass();
                                 $temp->ship_id = $shipAtPlanet->ship_id;
                                 $temp->ship_name = $shipAtPlanet->ship_name;
                                 $temp->amount = 0;
                                 $newFleet[] = $temp;
+                            } else {
+                                $proof = false;
+                                foreach($newFleet as $keyC => $existingShip)
+                                {
+                                    if($existingShip->ship_id == $shipAtPlanet->ship_id)
+                                    {
+                                        $proof = true;
+                                    }
+                                }
+                                if(!$proof)
+                                {
+                                    $temp = new \stdClass();
+                                    $temp->ship_id = $shipAtPlanet->ship_id;
+                                    $temp->ship_name = $shipAtPlanet->ship_name;
+                                    $temp->amount = 0;
+                                    $newFleet[] = $temp;
+                                }
                             }
                         }
                     }
+                } else {
+                    session(['duration' => null]);
+                    session(['fuel' => null]);
+                    session(['target' => null]);
+                    session(['selectedShips' => null]);
+                    session(['cargo' => null]);
+                    session(['allowedMissions' => null]);
+                    return redirect('/mission/' . $planet_id)->with('status', 'Fehler');
                 }
             }
             $planet = Planet::getOneById($planet_id);
@@ -494,30 +531,60 @@ class MissionController extends Controller
             {
                 if($resourceJson["fe"] > floor($planet->fe) || $resourceJson["fe"] < 0)
                 {
+                    session(['duration' => null]);
+                    session(['fuel' => null]);
+                    session(['target' => null]);
+                    session(['selectedShips' => null]);
+                    session(['cargo' => null]);
+                    session(['allowedMissions' => null]);
                     return redirect('/mission/' . $planet_id)->with('status', 'Nicht genügend Eisen');
                 } else {
                     $planet->fe -= $resourceJson["fe"];
                 }
                 if($resourceJson["lut"] > floor($planet->lut) || $resourceJson["lut"] < 0)
                 {
+                    session(['duration' => null]);
+                    session(['fuel' => null]);
+                    session(['target' => null]);
+                    session(['selectedShips' => null]);
+                    session(['cargo' => null]);
+                    session(['allowedMissions' => null]);
                     return redirect('/mission/' . $planet_id)->with('status', 'Nicht genügend Lutinum');
                 } else {
                     $planet->lut -= $resourceJson["lut"];
                 }
                 if($resourceJson["cry"] > floor($planet->cry) || $resourceJson["cry"] < 0)
                 {
+                    session(['duration' => null]);
+                    session(['fuel' => null]);
+                    session(['target' => null]);
+                    session(['selectedShips' => null]);
+                    session(['cargo' => null]);
+                    session(['allowedMissions' => null]);
                     return redirect('/mission/' . $planet_id)->with('status', 'Nicht genügend Kristalle');
                 } else {
                     $planet->cry -= $resourceJson["cry"];
                 }
                 if($resourceJson["h2o"] > floor($planet->h2o) || $resourceJson["h2o"] < 0)
                 {
+                    session(['duration' => null]);
+                    session(['fuel' => null]);
+                    session(['target' => null]);
+                    session(['selectedShips' => null]);
+                    session(['cargo' => null]);
+                    session(['allowedMissions' => null]);
                     return redirect('/mission/' . $planet_id)->with('status', 'Nicht genügend Wasser');
                 } else {
                     $planet->h2o -= $resourceJson["h2o"];
                 }
                 if($resourceJson["h2"] > floor(($planet->h2 - $data["fuel"])) || $resourceJson["h2"] < 0)
                 {
+                    session(['duration' => null]);
+                    session(['fuel' => null]);
+                    session(['target' => null]);
+                    session(['selectedShips' => null]);
+                    session(['cargo' => null]);
+                    session(['allowedMissions' => null]);
                     return redirect('/mission/' . $planet_id)->with('status', 'Nicht genügend Wasserstoff');
                 } else {
                     $planet->h2 -= $resourceJson["h2"];
@@ -531,6 +598,12 @@ class MissionController extends Controller
 
                 if($proof > $data["cargo"])
                 {
+                    session(['duration' => null]);
+                    session(['fuel' => null]);
+                    session(['target' => null]);
+                    session(['selectedShips' => null]);
+                    session(['cargo' => null]);
+                    session(['allowedMissions' => null]);
                     return redirect('/mission/' . $planet_id)->with('status', 'Die Flotte hat keine ausreichende Ladekapazität.');
                 }
 
@@ -551,6 +624,13 @@ class MissionController extends Controller
                 'ship_types' => json_encode($newFleet),
                 'cargo' => json_encode($resourceJson)
             ]);
+
+            session(['duration' => null]);
+            session(['fuel' => null]);
+            session(['target' => null]);
+            session(['selectedShips' => null]);
+            session(['cargo' => null]);
+            session(['allowedMissions' => null]);
 
             return redirect('/overview/' . $planet_id);
         }
