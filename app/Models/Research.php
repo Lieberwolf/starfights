@@ -201,7 +201,10 @@ class Research extends Model
     {
         return DB::table('research')->where(function ($query) {
             $query->where('increase_ship_attack', '>', 0)->orWhere('increase_ship_defense', '>', 0)->orWhere('increase_shield_defense', '>', 0);
-        })->get();
+        })->get([
+            '*',
+            'id as research_id'
+        ]);
     }
 
     public static function getUsersKnowledge($user_id)

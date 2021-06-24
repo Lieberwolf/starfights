@@ -551,7 +551,7 @@ class Controller extends BaseController
                         if($targetPlanet && $targetPlanet->user_id != null)
                         {
                            $planet_ids = Planet::getAllUserPlanets($targetPlanet->user_id);
-                            self::checkShipProcesses($planet_ids); 
+                            self::checkShipProcesses($planet_ids);
                             self::checkTurretProcesses($planet_ids);
                         }
                         // ships are at target
@@ -1685,20 +1685,23 @@ class Controller extends BaseController
                 $cargo += $ship->amount * $attackerList[$key]->cargo;
             }
         }
-        /*
-										foreach($allResearchForFight as $research)
-										{
-											foreach($attacker["research"] as $key => $attackerResearch)
-											{
-												if($research->id == $attackerResearch->research_id)
-												{
-													$attacker["research"][$key] = $research;
-													$attacker["research"][$key]->level = $attackerResearch->level;
-												}
-											}
-										}
-		*/
-        $attacker["research"] = [];
+        foreach($allResearchForFight as $research)
+        {
+            foreach($attacker["research"] as $key => $attackerResearch)
+            {
+                if($attackerResearch->research_id != null)
+                {
+                    if($research->research_id == $attackerResearch->research_id)
+                    {
+                        $attacker["research"][$key] = $research;
+                        $attacker["research"][$key]->level = $attackerResearch->level;
+                    }
+                }
+
+
+            }
+        }
+        //$attacker["research"] = [];
         // calc final values for attack
         if(count($attacker["research"]) > 0)
         {
@@ -1766,7 +1769,7 @@ class Controller extends BaseController
         {
             foreach($defender["research"] as $key => $defenderResearch)
             {
-                if($research->id == $defenderResearch->research_id)
+                if($research->research_id == $defenderResearch->research_id)
                 {
 
                     $temp = $research;
