@@ -34,7 +34,7 @@ class ApiController extends Controller
             case 'getPlayersPlanetList':
                 if($param1 != false)
                 {
-                    return DB::table('planets')->where('user_id', $param1)->get([
+                    $planetIds = DB::table('planets')->where('user_id', $param1)->get([
                         'id',
                         'galaxy',
                         'system',
@@ -45,6 +45,17 @@ class ApiController extends Controller
                         'h2o',
                         'h2',
                     ]);
+
+                    foreach($planetIds as $key => $planetId)
+                    {
+                        $planetIds[$key]->current_research = DB::table('research_process')->where('planet_id', $planetId->id)->first();
+                        $planetIds[$key]->current_building = DB::table('building_process')->where('planet_id', $planetId->id)->first();
+                        $planetIds[$key]->ships_building = DB::table('ships_process')->where('planet_id', $planetId->id)->first();
+                        $planetIds[$key]->turrets_building = DB::table('turrets_process')->where('planet_id', $planetId->id)->first();
+                    }
+
+                    return $planetIds;
+
                 } else {
                     // required param not send
                     return [
