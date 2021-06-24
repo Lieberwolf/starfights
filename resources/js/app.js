@@ -25,7 +25,7 @@ $planetNext.on('click touch', function() {
 
 $addToField.on('click touch', function() {
     var targetId = $(this).parent().attr('for'),
-        targetVal = $(this).find('span').text(),
+        targetVal = $(this).find('span').text().replace('.',''),
         $target = $('#' + targetId);
 
     $target.val(targetVal);

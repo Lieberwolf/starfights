@@ -9,7 +9,7 @@
                             <div class="col-4">
                                 <div class="form-group">
                                     <label for="galaxy">Galaxie</label>
-                                    <input value="{{$target ? $target[0] : ''}}" type="number" name="galaxy" id="galaxy" class="form-control" placeholder="Galaxie" step="1" min="1"/>
+                                    <input value="{{$target ? $target[0] : $koords->galaxy}}" type="number" name="galaxy" id="galaxy" class="form-control" placeholder="Galaxie" step="1" min="1"/>
                                     @error('galaxy')
                                     <span class="ui-state-error" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -20,7 +20,7 @@
                             <div class="col-4">
                                 <div class="form-group">
                                     <label for="system">System</label>
-                                    <input value="{{$target ? $target[1] : ''}}"  type="number" name="system" id="system" class="form-control" placeholder="System" step="1" min="1"/>
+                                    <input value="{{$target ? $target[1] : $koords->system}}"  type="number" name="system" id="system" class="form-control" placeholder="System" step="1" min="1"/>
                                     @error('system')
                                     <span class="ui-state-error" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -31,7 +31,7 @@
                             <div class="col-4">
                                 <div class="form-group">
                                     <label for="planet">Planet</label>
-                                    <input value="{{$target ? $target[2] : ''}}"  type="number" name="planet" id="planet" class="form-control" placeholder="Planet" step="1" min="1"/>
+                                    <input value="{{$target ? $target[2] : $koords->planet}}"  type="number" name="planet" id="planet" class="form-control" placeholder="Planet" step="1" min="1"/>
                                     @error('planet')
                                     <span class="ui-state-error" role="alert">
                                         <strong>{{ $message }}</strong>

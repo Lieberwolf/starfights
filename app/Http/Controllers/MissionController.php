@@ -37,10 +37,11 @@ class MissionController extends Controller
         $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
         $shipsAtPlanet = Fleet::getShipsAtPlanet($planet_id);
         $target = session('target');
+        $koords = Planet::getOneById($planet_id);
 
         if($target)
         {
-            $request->session()->forget('target');
+            session(['target' => null]);
         }
 
         if($shipsAtPlanet) {
@@ -59,6 +60,7 @@ class MissionController extends Controller
                 'activePlanet' => $planet_id,
                 'shipsAtPlanet' => $shipsAtPlanet,
                 'target' => $target,
+                'koords' => $koords,
             ]);
         } else {
             return view('error.index');

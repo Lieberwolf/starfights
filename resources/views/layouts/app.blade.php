@@ -64,5 +64,8 @@
         <a href="/researchdashboard" title="{{ __('Research Dashboard') }}">{{ __('Research Dashboard') }}</a>
     </div>
     @endif
+<div class="">
+    This page took {{ (microtime(true) - LARAVEL_START) }} seconds to render
+</div>
 </body>
 </html>
