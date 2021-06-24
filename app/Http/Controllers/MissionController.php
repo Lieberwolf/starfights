@@ -379,7 +379,7 @@ class MissionController extends Controller
         $data['selectedShips'] = session('selectedShips');
         $data['cargo'] = session('cargo');
 
-        if(!in_array($data["mission"], session('allowedMissions')))
+        if(!in_array($data["mission"], session('allowedMissions')) && !in_array(array_keys($data["mission"])[0], session('allowedMissions')))
         {
             session(['duration' => null]);
             session(['fuel' => null]);
