@@ -100,11 +100,11 @@ Route::post('/search/{planet_id}/mode', [App\Http\Controllers\SearchController::
 
 // techtree
 Route::get('/techtree', [App\Http\Controllers\TechtreeController::class, 'index']);
+Route::get('/techtree/buildings/{planet_id}', [App\Http\Controllers\TechtreeController::class, 'buildings']);
+Route::get('/techtree/research/{planet_id}', [App\Http\Controllers\TechtreeController::class, 'research']);
+Route::get('/techtree/ships/{planet_id}', [App\Http\Controllers\TechtreeController::class, 'ships']);
+Route::get('/techtree/turrets/{planet_id}', [App\Http\Controllers\TechtreeController::class, 'turrets']);
 Route::get('/techtree/{planet_id}', [App\Http\Controllers\TechtreeController::class, 'show']);
-Route::get('/techtree/{planet_id}/buildings', [App\Http\Controllers\TechtreeController::class, 'buildings']);
-Route::get('/techtree/{planet_id}/research', [App\Http\Controllers\TechtreeController::class, 'research']);
-Route::get('/techtree/{planet_id}/ships', [App\Http\Controllers\TechtreeController::class, 'ships']);
-Route::get('/techtree/{planet_id}/turrets', [App\Http\Controllers\TechtreeController::class, 'turrets']);
 
 // database
 Route::get('/database', [App\Http\Controllers\DatabaseController::class, 'index']);

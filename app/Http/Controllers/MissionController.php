@@ -379,15 +379,29 @@ class MissionController extends Controller
         $data['selectedShips'] = session('selectedShips');
         $data['cargo'] = session('cargo');
 
-        if(!in_array($data["mission"], session('allowedMissions')) && !in_array(array_keys($data["mission"])[0], session('allowedMissions')))
+        if(is_array($data["mission"]))
         {
-            session(['duration' => null]);
-            session(['fuel' => null]);
-            session(['target' => null]);
-            session(['selectedShips' => null]);
-            session(['cargo' => null]);
-            session(['allowedMissions' => null]);
-            return redirect('/mission/' . $planet_id)->with('status', 'Missionswahl unzulässig');
+            if(!in_array(array_keys($data["mission"])[0], session('allowedMissions')))
+            {
+                session(['duration' => null]);
+                session(['fuel' => null]);
+                session(['target' => null]);
+                session(['selectedShips' => null]);
+                session(['cargo' => null]);
+                session(['allowedMissions' => null]);
+                return redirect('/mission/' . $planet_id)->with('status', 'Missionswahl unzulässig');
+            }
+        } else {
+            if(!in_array($data["mission"], session('allowedMissions')))
+            {
+                session(['duration' => null]);
+                session(['fuel' => null]);
+                session(['target' => null]);
+                session(['selectedShips' => null]);
+                session(['cargo' => null]);
+                session(['allowedMissions' => null]);
+                return redirect('/mission/' . $planet_id)->with('status', 'Missionswahl unzulässig');
+            }
         }
 
         if(!array_key_exists('mission', $data))
