@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 use App\Models\Fleet as Fleet;
@@ -380,12 +381,11 @@ class Planet extends Model
                      ->first();
     }
 
-    public static function getAllPlanetaryResourcesByUserId($user_id)
+    public static function getAllPlanetaryResourcesByIds($planet_ids)
     {
-        $planets = self::getAllUserPlanets($user_id);
-        foreach($planets as $planet)
+        foreach($planet_ids as $planet)
         {
-            self::getPlanetaryResourcesByPlanetId($planet->id, $user_id);
+            self::getPlanetaryResourcesByPlanetId($planet->id, Auth::id());
         }
 
     }
