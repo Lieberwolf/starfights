@@ -5,8 +5,8 @@
             <form action="/alliance/{{$activePlanet}}/found" method="post">
                 @csrf
                 <div class="form-group row">
-                    <label class="col-6" for="name">Allianzname</label>
-                    <input type="text" name="name" class="col-6 form-control" id="name"/>
+                    <label class="col-6" for="alliance_name">Allianzname</label>
+                    <input type="text" name="alliance_name" class="col-6 form-control" id="alliance_name"/>
                     @error('name')
                     <span class="ui-state-error" role="alert">
                         <strong>{{ $message }}</strong>
@@ -14,8 +14,8 @@
                     @enderror
                 </div>
                 <div class="form-group row">
-                    <label class="col-6" for="name">Allianz Tag</label>
-                    <input type="text" name="tag" class="col-6 form-control" id="name" minlength="1" maxlength="5"/>
+                    <label class="col-6" for="alliance_tag">Allianz Tag</label>
+                    <input type="text" name="alliance_tag" class="col-6 form-control" id="alliance_tag" minlength="1" maxlength="5"/>
                     @error('tag')
                     <span class="ui-state-error" role="alert">
                         <strong>{{ $message }}</strong>

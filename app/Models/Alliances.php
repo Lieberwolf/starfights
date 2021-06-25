@@ -50,8 +50,8 @@ class Alliances extends Model
     public static function foundAlliance($data, $user_id)
     {
         return DB::table('alliances')->insert([
-            'alliance_name' => $data["name"],
-            'alliance_tag' => $data["tag"],
+            'alliance_name' => $data["alliance_name"],
+            'alliance_tag' => $data["alliance_tag"],
             'founder_id' => $user_id,
             'created_at' => now()
         ]);
