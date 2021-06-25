@@ -1544,8 +1544,30 @@ class Controller extends BaseController
                 $buildingList[$key]->readableBuildtime = $days . $hours . $minutes . $seconds;
             }
 
-            // calc resource cost
-            if($building->infrastructure != null)
+            $isStorage = false;
+            if($building->store_fe > 0)
+            {
+                $isStorage = true;
+            }
+            if($building->store_lut > 0)
+            {
+                $isStorage = true;
+            }
+            if($building->store_cry > 0)
+            {
+                $isStorage = true;
+            }
+            if($building->store_h2o > 0)
+            {
+                $isStorage = true;
+            }
+            if($building->store_h2 > 0)
+            {
+                $isStorage = true;
+            }
+
+            // calc resource cost EXCEPT storages
+            if($building->infrastructure != null && !$isStorage)
             {
                 $f1 = $building->fe_factor_1 > 0 ? $building->fe_factor_1 : 0.0001;
                 $f2 = $building->fe_factor_2 > 0 ? $building->fe_factor_2 : 0.0001;
