@@ -2,32 +2,32 @@
     <div class="row">
         <div class="col-2">
             <a href="/overview/{{$defaultPlanet}}" class="btn btn-secondary">
-                <i class="bi bi-house"></i>
+                <i class="fas fa-home"></i>
             </a>
         </div>
         <div class="col-2">
             <a href="/construction/{{$defaultPlanet}}" class="btn btn-secondary">
-                <i class="bi bi-tools"></i>
+                <i class="fas fa-tools"></i>
             </a>
         </div>
         <div class="col-2">
             <a href="/research/{{$defaultPlanet}}" class="btn btn-secondary">
-                <i class="bi bi-binoculars"></i>
+                <i class="fas fa-binoculars"></i>
             </a>
         </div>
         <div class="col-2">
             <a href="/shipyard/{{$defaultPlanet}}" class="btn btn-secondary">
-                <i class="bi bi-wrench"></i>
+                <i class="fas fa-rocket"></i>
             </a>
         </div>
         <div class="col-2">
             <a href="/defense/{{$defaultPlanet}}" class="btn btn-secondary">
-                <i class="bi bi-shield"></i>
+                <i class="fas fa-shield-alt"></i>
             </a>
         </div>
         <div class="col-2">
             <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#mobileMenuModal">
-                <i class="bi bi-menu-app"></i>
+                <i class="fas fa-ellipsis-h"></i>
             </button>
         </div>
     </div>
@@ -91,12 +91,12 @@
     <div class="row">
         <div class="col-6 text-left">
             <button type="button" class="btn btn-secondary js-trigger-before">
-                <i class="bi bi-arrow-left"></i>
+                <i class="fas fa-arrow-left"></i>
             </button>
         </div>
         <div class="col-6 text-right">
             <button type="button" class="btn btn-secondary js-trigger-next">
-                <i class="bi bi-arrow-right"></i>
+                <i class="fas fa-arrow-right"></i>
             </button>
         </div>
     </div>

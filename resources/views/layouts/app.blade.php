@@ -18,6 +18,7 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}?t={{now()->timestamp}}" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/c0e80dded8.js" crossorigin="anonymous"></script>
 </head>
 <body>
     <div id="app" class="pb-5">

@@ -734,11 +734,11 @@ class Controller extends BaseController
                                     $defenderResources = $defenderResourcesRaw[0];
 
                                     $resourceJson = [
-                                        "fe" => ceil($defenderResources[0]->fe),
-                                        "lut" => ceil($defenderResources[0]->lut),
-                                        "cry" => ceil($defenderResources[0]->cry),
-                                        "h2o" => ceil($defenderResources[0]->h2o),
-                                        "h2" => ceil($defenderResources[0]->h2),
+                                        "fe" => ceil($defenderResources->fe),
+                                        "lut" => ceil($defenderResources->lut),
+                                        "cry" => ceil($defenderResources->cry),
+                                        "h2o" => ceil($defenderResources->h2o),
+                                        "h2" => ceil($defenderResources->h2),
                                     ];
 
                                     // create report
@@ -907,11 +907,11 @@ class Controller extends BaseController
                                         $defenderResources = $defenderResourcesRaw[0];
 
                                         $resourceJson = [
-                                            "fe" => ceil($defenderResources[0]->fe),
-                                            "lut" => ceil($defenderResources[0]->lut),
-                                            "cry" => ceil($defenderResources[0]->cry),
-                                            "h2o" => ceil($defenderResources[0]->h2o),
-                                            "h2" => ceil($defenderResources[0]->h2),
+                                            "fe" => ceil($defenderResources->fe),
+                                            "lut" => ceil($defenderResources->lut),
+                                            "cry" => ceil($defenderResources->cry),
+                                            "h2o" => ceil($defenderResources->h2o),
+                                            "h2" => ceil($defenderResources->h2),
                                         ];
 
                                         $planetInfo = Planet::getOneById($fleet->target);
