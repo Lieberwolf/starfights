@@ -10,7 +10,7 @@
                     <div class="col-6">Ziel:</div>
                     <div class="col-6">{{$target->galaxy < 10 ? '0' . $target->galaxy : $target->galaxy}}:{{$target->system < 10 ? '0' . $target->system : $target->system}}:{{$target->planet < 10 ? '0' . $target->planet : $target->planet}}</div>
                     <div class="col-6">Besitzer:</div>
-                    <div class="col-6">{{$target->username != null ? $target->username : 'niemand'}}</div>
+                    <div class="col-6">{{$target->username != null ? $target->username : 'niemand'}} {{$targetProtection ? '(Raidschutz aktiv)': ''}}</div>
                     <div class="col-6">Verfügbare Mission:</div>
                     <div class="col-6" id="parent">
                         @foreach($allowedMissions as $key => $mission)

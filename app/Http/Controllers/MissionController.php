@@ -81,6 +81,37 @@ class MissionController extends Controller
 
         $source = Planet::getOneById($planet_id);
         $target = Planet::getPlanetByCoordinates($data["galaxy"], $data["system"], $data["planet"]);
+        // check if target can be attacked (raid protection)
+        $targetProtection = false;
+
+        $allUserPlanetPoints = Planet::getAllPlanetaryPointsByIds($allUserPlanets);
+        $allUserResearchPoints = Research::getAllUserResearchPointsByUserId($user_id);
+        $userPoints = $allUserPlanetPoints + $allUserResearchPoints;
+
+        if($target->user_id != null)
+        {
+            $allTargetPlanetPoints = Planet::getAllPlanetaryPointsByIds(Controller::getAllUserPlanets($target->user_id));
+            $allTargetResearchPoints = Research::getAllUserResearchPointsByUserId($target->user_id);
+            $targetPoints = $allTargetPlanetPoints + $allTargetResearchPoints;
+
+            if($targetPoints < 500 || $userPoints < 500)
+            {
+                $targetProtection = true;
+            }
+
+            if($userPoints / 3 > $targetPoints)
+            {
+                $targetProtection = true;
+            }
+
+            if($userPoints * 3 < $targetPoints)
+            {
+                $targetProtection = true;
+            }
+        }
+
+
+
         $knowledge = Research::getAllAvailableResearches($user_id, $planet_id);
         $maxPlanets = 10;
         $planetCount = count($allUserPlanets);
@@ -268,7 +299,7 @@ class MissionController extends Controller
                     // it is not allowed to conquer main planets
                     if($targetProfile)
                     {
-                        if($targetProfile->start_planet == $target->id)
+                        if($targetProfile->start_planet == $target->id || $targetProtection)
                         {
                             $pos = array_search(7, $allowed_missions);
                             if($pos != false) {
@@ -278,7 +309,7 @@ class MissionController extends Controller
                     }
 
                     // if attack value is 0 you cant attack
-                    if($attack == 0) {
+                    if($attack == 0 || $targetProtection) {
                         $pos = array_search(6, $allowed_missions);
                         if($pos != false) {
                             unset($allowed_missions[$pos]);
@@ -354,6 +385,7 @@ class MissionController extends Controller
                             'cargo' => $cargo,
                             'fuel' => $fuel,
                             'selectedShips' => $selectedShips,
+                            'targetProtection' => $targetProtection,
                         ]);
                     } else {
                         return view('error.index');
