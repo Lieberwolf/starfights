@@ -18,7 +18,7 @@ class Messages extends Model
 
     public static function getAllUnreadMessages($receiver_id)
     {
-        $postbox = Messages::where('receiver_id', $receiver_id)->where('read', 0)->orderBy('created_at', 'DESC')->get();
+        $postbox = Messages::where('receiver_id', $receiver_id)->where('read', 0)->orderBy('created_at', 'DESC')->take(100)->get();
         foreach($postbox as $key => $message)
         {
 
@@ -35,7 +35,7 @@ class Messages extends Model
 
     public static function getAllReadMessages($receiver_id)
     {
-        $postbox = Messages::where('receiver_id', $receiver_id)->where('read', 1)->where('receiver_deleted', 0)->orderBy('created_at', 'DESC')->get();
+        $postbox = Messages::where('receiver_id', $receiver_id)->where('read', 1)->where('receiver_deleted', 0)->orderBy('created_at', 'DESC')->take(100)->get();
         foreach($postbox as $key => $message)
         {
             if($message->user_id != 0)
@@ -49,7 +49,7 @@ class Messages extends Model
 
     public static function getAllSendMessages($user_id)
     {
-        $postbox = Messages::where('user_id', $user_id)->where('sender_deleted', 0)->get();
+        $postbox = Messages::where('user_id', $user_id)->where('sender_deleted', 0)->take(100)->get();
         foreach($postbox as $key => $message)
         {
             $receiver = User::where('id', $message->receiver_id)->first();

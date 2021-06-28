@@ -48,18 +48,9 @@ body {
     background-color: #b8860b;
 }
 
-.event-log {
-    div[class^="col-"] {
-        margin-top: 1px;
-    }
-}
-
 .single-message {
     width: 100%;
-    background-color: #213f5d;
-    margin: 5px 0;
     text-align: left;
-    padding: 5px;
     table {
         width: 100%;
     }
@@ -73,16 +64,18 @@ body {
 
 .title-line {
     background-color: #001e3b;
+    margin-bottom: 1px;
 }
 
 .sub-line {
     background-color: #213f5d;
+    margin-bottom: 1px;
 }
 
 .process-entry,
 .process-action {
     background-color: #213f5d;
-    margin-bottom: 2px;
+    margin-bottom: 1px;
     padding: 15px;
 }
 

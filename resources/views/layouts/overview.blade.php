@@ -1,4 +1,4 @@
-<div class="container-fluid event-log">
+<div class="container-fluid">
     <div class="row">
         <div class="col-12 title-line">
             Planet "{{$planetInformation->planet_name != null ? $planetInformation->planet_name : 'Unbenannter Planet'}}"
@@ -64,47 +64,47 @@
         @foreach($planetaryProcesses as $process)
             @if($process)
                 @if($process->type == 'building')
-                    <div class="col-3 text-right" style="background-color:#BD5C03;"><span class="js-add-countdown" data-seconds-to-count="{{strtotime($process->finished_at) - now()->timestamp}}"></span> - [{{date('H:i:s', strtotime($process->finished_at))}}]</div>
-                    <div class="col-9" style="background-color:#BD5C03;">
+                    <div class="col-3 text-right sub-line" style="background-color:#BD5C03;"><span class="js-add-countdown" data-seconds-to-count="{{strtotime($process->finished_at) - now()->timestamp}}"></span> - [{{date('H:i:s', strtotime($process->finished_at))}}]</div>
+                    <div class="col-9 sub-line" style="background-color:#BD5C03;">
                         <span>Konstruktion von {{$process->building_name}} Stufe {{$process->level != null ? $process->level + 1 : 1}} auf {{$process->galaxy}}:{{$process->system}}:{{$process->planet}}</span>
                     </div>
                 @endif
                 @if($process->type == 'research')
-                    <div class="col-3 text-right" style="background-color:#067D06;"><span class="js-add-countdown" data-seconds-to-count="{{strtotime($process->finished_at) - now()->timestamp}}"></span> - [{{date('H:i:s', strtotime($process->finished_at))}}]</div>
-                    <div class="col-9" style="background-color:#067D06;">
+                    <div class="col-3 text-right sub-line" style="background-color:#067D06;"><span class="js-add-countdown" data-seconds-to-count="{{strtotime($process->finished_at) - now()->timestamp}}"></span> - [{{date('H:i:s', strtotime($process->finished_at))}}]</div>
+                    <div class="col-9 sub-line" style="background-color:#067D06;">
                         <span>Forschung von {{$process->research_name}} Stufe {{$process->level != null ? $process->level + 1 : 1}} auf {{$process->galaxy}}:{{$process->system}}:{{$process->planet}}</span>
                     </div>
                 @endif
                 @if($process->type == 'foreignFleet' && $process->mission != 0)
-                    <div class="col-3 text-right {{($process->mission == 2 ? 'transport' : ($process->mission == 3 ? 'espionage' : ($process->mission == 4 ? 'espionage' : ($process->mission == 6 ? 'attack' : ($process->mission == 7 ? 'invasion' : '')))))}}">
+                    <div class="col-3 text-right sub-line {{($process->mission == 2 ? 'transport' : ($process->mission == 3 ? 'espionage' : ($process->mission == 4 ? 'espionage' : ($process->mission == 6 ? 'attack' : ($process->mission == 7 ? 'invasion' : '')))))}}">
                         <span class="js-add-countdown" data-seconds-to-count="{{strtotime($process->arrival) - now()->timestamp}}"></span> - [{{date('H:i:s', strtotime($process->arrival))}}]
                     </div>
-                    <div class="col-9 {{($process->mission == 2 ? 'transport' : ($process->mission == 3 ? 'espionage' : ($process->mission == 4 ? 'espionage' : ($process->mission == 6 ? 'attack' : ($process->mission == 7 ? 'invasion' : '')))))}}">
+                    <div class="col-9 sub-line {{($process->mission == 2 ? 'transport' : ($process->mission == 3 ? 'espionage' : ($process->mission == 4 ? 'espionage' : ($process->mission == 6 ? 'attack' : ($process->mission == 7 ? 'invasion' : '')))))}}">
                         <span>Flotte von {{$process->galaxy}}:{{$process->system}}:{{$process->planet}} erreicht {{$process->targetPlanet->galaxy}}:{{$process->targetPlanet->system}}:{{$process->targetPlanet->planet}} ({{$process->mission == 1 ? 'Stationierung' : ($process->mission == 2 ? 'Transport' : ($process->mission == 3 ? 'Spionage' : ($process->mission == 4 ? 'Delta Scan' : ($process->mission == 5 ? 'Kolonisierung' : ($process->mission == 6 ? 'Angriff' : ($process->mission == 7 ? 'Invasion' : ''))))))}})</span>
                     </div>
                 @endif
                 @if($process->type == 'fleet')
                     @if(strtotime($process->arrival) > now()->timestamp && $process->aborted == null)
-                    <div class="col-3 text-right" style="background-color:#102f4c;">
+                    <div class="col-3 text-right sub-line" style="background-color:#102f4c;">
                         <span class="js-add-countdown" data-seconds-to-count="{{strtotime($process->arrival) - now()->timestamp}}"></span> - [{{date('H:i:s', strtotime($process->arrival))}}]
                     </div>
-                    <div class="col-9" style="background-color:#102f4c;">
+                    <div class="col-9 sub-line" style="background-color:#102f4c;">
                         <span>Flotte von {{$process->readableSource->galaxy}}:{{$process->readableSource->system}}:{{$process->readableSource->planet}} erreicht {{$process->readableTarget->galaxy}}:{{$process->readableTarget->system}}:{{$process->readableTarget->planet}} ({{$process->mission == 1 ? 'Stationierung' : ($process->mission == 2 ? 'Transport' : ($process->mission == 3 ? 'Spionage' : ($process->mission == 4 ? 'Delta Scan' : ($process->mission == 5 ? 'Kolonisierung' : ($process->mission == 6 ? 'Angriff' : ($process->mission == 7 ? 'Invasion' : ''))))))}})</span>
                     </div>
                     @endif
                     @if($process->mission == 0)
-                    <div class="col-3 text-right" style="background-color:#001e3b;">
+                    <div class="col-3 text-right sub-line" style="background-color:#001e3b;">
                         <span class="js-add-countdown" data-seconds-to-count="{{strtotime($process->arrival) + (strtotime($process->arrival) - strtotime($process->departure)) - now()->timestamp}}"></span> - [{{date('H:i:s', strtotime($process->arrival) + (strtotime($process->arrival) - strtotime($process->departure)))}}]
                     </div>
-                    <div class="col-9" style="background-color:#001e3b;">
+                    <div class="col-9 sub-line" style="background-color:#001e3b;">
                         <span>Flotte von {{$process->readableSource->galaxy}}:{{$process->readableSource->system}}:{{$process->readableSource->planet}} kehrt zurück [Mission abgebrochen]</span>
                     </div>
                     @else
                     @if($process->aborted == 1)
-                    <div class="col-3 text-right" style="background-color:#001e3b;">
+                    <div class="col-3 text-right sub-line" style="background-color:#001e3b;">
                         <span class="js-add-countdown" data-seconds-to-count="{{strtotime($process->arrival) + (strtotime($process->arrival) - strtotime($process->departure)) - now()->timestamp}}"></span> - [{{date('H:i:s', strtotime($process->arrival) + (strtotime($process->arrival) - strtotime($process->departure)))}}]
                     </div>
-                    <div class="col-9" style="background-color:#001e3b;">
+                    <div class="col-9 sub-line" style="background-color:#001e3b;">
                         <span>Flotte von {{$process->readableSource->galaxy}}:{{$process->readableSource->system}}:{{$process->readableSource->planet}} erreicht {{$process->readableTarget->galaxy}}:{{$process->readableTarget->system}}:{{$process->readableTarget->planet}} ({{$process->mission == 1 ? 'Stationierung' : ($process->mission == 2 ? 'Transport' : ($process->mission == 3 ? 'Spionage' : ($process->mission == 4 ? 'Delta Scan' : ($process->mission == 5 ? 'Kolonisierung' : ($process->mission == 6 ? 'Angriff' : ($process->mission == 7 ? 'Invasion' : ''))))))}}) [Rückkehr]</span>
                     </div>
                     @endif
