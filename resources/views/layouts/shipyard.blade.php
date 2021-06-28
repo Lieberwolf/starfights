@@ -34,8 +34,10 @@
             @foreach($shipList as $key => $ship)
                 @if($ship->buildable)
                     <div class="col-8 process-entry">
-                        <span>{{$ship->ship_name}}</span>
-                        <span>{{$ship->description}}</span>
+                        <span>{{$ship->ship_name}} <a data-toggle="collapse" href="#collapse{{$ship->id}}" aria-expanded="false" aria-controls="collapse{{$ship->id}}">[Info]</a></span>
+                        <div class="collapse" id="collapse{{$ship->id}}">
+                            <span>{{$ship->description ?? $ship->ship_name}}</span>
+                        </div>
                         <span>Baukosten:</span>
                         <span>
                             @if($ship->fe > 0)

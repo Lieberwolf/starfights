@@ -35,8 +35,10 @@
             @foreach($availableResearches as $key => $research)
             @if($research->buildable)
             <div class="col-10 process-entry">
-                <span>{{$research->research_name}} {{$research->knowledge != null ? '(Stufe ' . $research->knowledge->level . ')' : ''}}</span>
-                <span>{{$research->description}}</span>
+                <span>{{$research->research_name}} {{$research->knowledge != null ? '(Stufe ' . $research->knowledge->level . ')' : ''}} <a data-toggle="collapse" href="#collapse{{$research->id}}" aria-expanded="false" aria-controls="collapse{{$research->id}}">[Info]</a></span>
+                <div class="collapse" id="collapse{{$research->id}}">
+                    <span>{{$research->description}}</span>
+                </div>
                 <span>Forschung auf Stufe {{$research->knowledge != null ? $research->knowledge->level + 1 : 1}}:</span>
                 <span>
                     @if($research->fe > 0)

@@ -30,8 +30,10 @@
         @foreach($availableBuildings as $building)
             @if($building->buildable)
                 <div class="col-10 process-entry">
-                    <span>{{$building->building_name}} {{$building->infrastructure != null ? '(Stufe ' . $building->infrastructure->level . ')' : ''}}</span>
-                    <span>{{$building->description}}</span>
+                    <span>{{$building->building_name}} {{$building->infrastructure != null ? '(Stufe ' . $building->infrastructure->level . ')' : ''}} <a data-toggle="collapse" href="#collapse{{$building->id}}" aria-expanded="false" aria-controls="collapse{{$building->id}}">[Info]</a></span>
+                    <div class="collapse" id="collapse{{$building->id}}">
+                        <span>{{$building->description}}</span>
+                    </div>
                     <span>Ausbau auf Stufe {{$building->infrastructure != null ? $building->infrastructure->level + 1 : 1}}:</span>
                     <span>
                         @if($building->fe > 0)

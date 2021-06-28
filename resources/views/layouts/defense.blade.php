@@ -34,8 +34,10 @@
             @foreach($turretList as $key => $turret)
                 @if($turret->buildable)
                     <div class="col-8 process-entry">
-                        <span>{{$turret->turret_name}}</span>
-                        <span>{{$turret->description}}</span>
+                        <span>{{$turret->turret_name}} <a data-toggle="collapse" href="#collapse{{$turret->id}}" aria-expanded="false" aria-controls="collapse{{$turret->id}}">[Info]</a></span>
+                        <div class="collapse" id="collapse{{$turret->id}}">
+                            <span>{{$turret->description ?? $turret->turret_name}}</span>
+                        </div>
                         <span>Baukosten:</span>
                         <span>
                             @if($turret->fe > 0)
