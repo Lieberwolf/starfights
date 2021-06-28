@@ -12,7 +12,7 @@
         </div>
         <div class="col-2">
             <a href="/research/{{$defaultPlanet}}" class="btn btn-secondary">
-                <i class="fas fa-binoculars"></i>
+                <i class="fas fa-microscope"></i>
             </a>
         </div>
         <div class="col-2">

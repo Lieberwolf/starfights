@@ -40,6 +40,42 @@ class ReportController extends Controller
         $report->defender_knowledge = json_decode($report->defender_knowledge);
 
 
+        if($report->defender_fleet)
+        {
+            $fleetCheck = false;
+            foreach($report->defender_fleet as $ship)
+            {
+                if($ship->amount > 0)
+                {
+                    $fleetCheck = true;
+                }
+            }
+
+            if(!$fleetCheck)
+            {
+                $report->defender_fleet = false;
+            }
+        }
+
+        if($report->defender_defense)
+        {
+            $defenseCheck = false;
+            foreach($report->defender_defense as $turret)
+            {
+                if($turret->amount > 0)
+                {
+                    $defenseCheck = true;
+                }
+            }
+
+            if(!$defenseCheck)
+            {
+                $report->defender_defense = false;
+            }
+        }
+
+
+
         return view('report.show', [
             'defaultPlanet' => session('default_planet'),
             'planetaryResources' => $planetaryResources[0],

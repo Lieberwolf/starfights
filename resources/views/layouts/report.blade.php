@@ -245,6 +245,9 @@
                                 @endforeach
                             @endif
                         @else
+                            <div class="col-4 sub-line">Schiffstyp</div>
+                            <div class="col-4 sub-line">Eingesetzt</div>
+                            <div class="col-4 sub-line">Verbleibend</div>
                             <div class="col-12 sub-line">- keine -</div>
                         @endif
                     </div>
@@ -267,6 +270,9 @@
                             @endforeach
                         @endif
                     @else
+                        <div class="col-4 sub-line">Verteidigung</div>
+                        <div class="col-4 sub-line">Eingesetzt</div>
+                        <div class="col-4 sub-line">Verbleibend</div>
                         <div class="col-12 sub-line">- keine -</div>
                     @endif
                 </div>
@@ -354,6 +360,9 @@
                                 @endforeach
                             @endif
                         @else
+                            <div class="col-4 sub-line">Schiffstyp</div>
+                            <div class="col-4 sub-line">Eingesetzt</div>
+                            <div class="col-4 sub-line">Verbleibend</div>
                             <div class="col-12 sub-line">- keine -</div>
                         @endif
                     </div>
@@ -375,7 +384,10 @@
                                     @endif
                                 @endforeach
                             @endif
-                        @else
+                            @else
+                            <div class="col-4 sub-line">Verteidigung</div>
+                            <div class="col-4 sub-line">Eingesetzt</div>
+                            <div class="col-4 sub-line">Verbleibend</div>
                             <div class="col-12 sub-line">- keine -</div>
                         @endif
                     </div>
