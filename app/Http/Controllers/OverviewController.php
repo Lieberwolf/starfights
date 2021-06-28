@@ -52,9 +52,42 @@ class OverviewController extends Controller
         $shipsAtPlanet = Fleet::getShipsAtPlanet($planet_id);
         $turretsAtPlanet = Defense::getTurretsAtPlanet($planet_id);
         $fleetsOnMission = Fleet::getFleetsOnMission($allUserPlanets);
-
         $knowledge = Research::getAllAvailableResearches($user_id, $planet_id);
         $maxPlanets = 10;
+
+        if($shipsAtPlanet)
+        {
+            $fleetCheck = false;
+            foreach(json_decode($shipsAtPlanet->ship_types) as $ship)
+            {
+                if($ship->amount > 0)
+                {
+                    $fleetCheck = true;
+                }
+            }
+
+            if(!$fleetCheck)
+            {
+                $shipsAtPlanet = false;
+            }
+        }
+
+        if($turretsAtPlanet)
+        {
+            $turretCheck = false;
+            foreach(json_decode($turretsAtPlanet->turret_types) as $turret)
+            {
+                if($turret->amount > 0)
+                {
+                    $turretCheck = true;
+                }
+            }
+
+            if(!$turretCheck)
+            {
+                $turretsAtPlanet = false;
+            }
+        }
 
         foreach($knowledge as $research)
         {

@@ -40,7 +40,7 @@
                     <div class="col-6 sub-line">{{number_format($ship->amount, 0, ',', '.')}}</div>
                 @endif
             @endforeach
-            @else
+        @else
             <div class="col-12 sub-line">- keine -</div>
         @endif
         <div class="col-12 title-line mt-3">Verteidigungsanlagen</div>
