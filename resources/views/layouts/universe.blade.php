@@ -17,7 +17,7 @@
                         <a href="/universe/{{$defaultPlanet}}/{{request()->galaxy}}/{{request()->system - 1 < 1 ? 1 : request()->system - 1 }}">&lt;&lt;</a><input type="number" name="system" id="system" value="{{request()->system}}" min="1"/><a href="/universe/{{$defaultPlanet}}/{{request()->galaxy}}/{{request()->system + 1 > 300 ? 300 : request()->system + 1 }}">&gt;&gt;</a>
                     </div>
                     <div class="col-12">
-                        <button type="button" id="showSystem" class="btn btn-primary" onclick="window.location.href='/universe/{{$defaultPlanet}}/'+document.getElementById('galaxy').value+'/'+document.getElementById('system').value">Anzeigen</button>
+                        <button type="button" id="showSystem" class="btn btn-secondary" onclick="window.location.href='/universe/{{$defaultPlanet}}/'+document.getElementById('galaxy').value+'/'+document.getElementById('system').value">Anzeigen</button>
                     </div>
                 </div>
             </form>

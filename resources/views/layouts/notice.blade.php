@@ -10,7 +10,7 @@
                     </div>
                 </div>
                 <div class="col-12 title-line">
-                    <input type="submit" value="Speichern" class="btn btn-primary"/>
+                    <input type="submit" value="Speichern" class="btn btn-secondary"/>
                 </div>
             </div>
         </form>

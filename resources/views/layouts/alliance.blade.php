@@ -54,7 +54,7 @@
                                 <strong>{{ $message }}</strong>
                             </span><br/>
                             @enderror
-                            <button type="submit" class="btn btn-primary">Absenden</button>
+                            <button type="submit" class="btn btn-secondary">Absenden</button>
                         </div>
                     </form>
                 </div>
@@ -62,7 +62,7 @@
                     <div class="col-6 sub-line p-1" style="margin-top: 1px;">Bewerbungen:</div>
                     <div class="col-6 sub-line p-1" style="margin-top: 1px;">
                         @if(count($applications) > 0)
-                            <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#applicationCollapse" aria-expanded="false" aria-controls="applicationCollapse">({{count($applications)}}) Anzeigen</button>
+                            <button class="btn btn-secondary" type="button" data-toggle="collapse" data-target="#applicationCollapse" aria-expanded="false" aria-controls="applicationCollapse">({{count($applications)}}) Anzeigen</button>
                         @else
                             <span>- keine -</span>
                         @endif
@@ -116,7 +116,7 @@
                         <input class="form-check-input" type="radio" name="target" id="targetRadios2" value="search">
                         <label class="form-check-label" for="targetRadios2">Allianz suchen</label>
                     </div>
-                    <button type="submit" class="btn btn-primary">Weiter</button>
+                    <button type="submit" class="btn btn-secondary">Weiter</button>
                 </form>
             </div>
         @endif

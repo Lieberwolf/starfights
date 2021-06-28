@@ -131,7 +131,7 @@
                     </div>
                 @endforeach
                 <div class="col-12">
-                    <input type="submit" value="Simulieren" class="btn btn-primary">
+                    <input type="submit" value="Simulieren" class="btn btn-secondary">
                 </div>
             </div>
         </div>

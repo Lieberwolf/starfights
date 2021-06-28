@@ -22,7 +22,7 @@
                     </span>
                     @enderror
                 </div>
-                <button type="submit" class="btn btn-primary">Gründen!</button>
+                <button type="submit" class="btn btn-secondary">Gründen!</button>
             </form>
         </div>
     </div>

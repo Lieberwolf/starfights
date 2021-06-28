@@ -296,7 +296,7 @@
                     @enderror
                 </div>
 
-                <input class="btn btn-primary" type="submit" value="Submit"/>
+                <input class="btn btn-secondary" type="submit" value="Submit"/>
             </form>
         </div>
         <div class="col-12 col-md-3">
@@ -465,7 +465,7 @@
                     </span>
                     @enderror
                 </div>
-                <input type="submit" class="btn btn-primary" value="save"/>
+                <input type="submit" class="btn btn-secondary" value="save"/>
             </form>
         </div>
         <div class="col-12 col-md-6">

@@ -64,7 +64,7 @@
                                     <label for="{{$turret->turret_name}}">{{$turret->turret_name}} <a class="js-add-to-field">(max. <span>{{number_format($turret->max_amount,0, ',', '.')}}</span>)</a></label>
                                     <input class="form-control" id="{{$turret->turret_name}}" type="number" min="1" max="{{$turret->max_amount}}" step="1" name="turret[{{$turret->turret_name}}]"/>
                                 </div>
-                                <input type="submit" class="btn btn-block btn-primary" value="Bauen"/>
+                                <input type="submit" class="btn btn-block btn-secondary" value="Bauen"/>
                             </form>
                         </div>
                     @else

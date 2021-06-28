@@ -32,7 +32,7 @@
                     @enderror
                 </div>
                 <div class="col-12 sub-line p-2">
-                    <button type="submit" class="btn btn-primary">Suchen</button>
+                    <button type="submit" class="btn btn-secondary">Suchen</button>
                 </div>
             </form>
         </div>

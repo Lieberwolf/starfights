@@ -64,7 +64,7 @@
                                     <label for="{{$ship->ship_name}}">{{$ship->ship_name}} <a class="js-add-to-field">(max. <span>{{number_format($ship->max_amount,0, ',', '.')}}</span>)</a></label>
                                     <input class="form-control" id="{{$ship->ship_name}}" type="number" min="1" max="{{$ship->max_amount}}" step="1" name="ship[{{$ship->ship_name}}]"/>
                                 </div>
-                                <input type="submit" class="btn btn-block btn-primary" value="Bauen"/>
+                                <input type="submit" class="btn btn-block btn-secondary" value="Bauen"/>
                             </form>
                         </div>
                     @else

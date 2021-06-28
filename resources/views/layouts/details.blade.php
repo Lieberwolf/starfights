@@ -47,7 +47,7 @@
             <form action="/details/{{$activePlanet}}/name" method="post">
                 @csrf
                 <input type="text" value="{{$planetInfo->planet_name}}" class="form-control" name="planet_name"/>
-                <input type="submit" class="btn btn-primary" value="Speichern"/>
+                <input type="submit" class="btn btn-secondary" value="Speichern"/>
             </form>
         </div>
 
@@ -59,13 +59,13 @@
             <form action="/details/{{$activePlanet}}/image" method="post">
                 @csrf
                 <input type="text" value="{{$planetInfo->image}}" class="form-control" name="image"/>
-                <input type="submit" class="btn btn-primary" value="Speichern"/>
+                <input type="submit" class="btn btn-secondary" value="Speichern"/>
             </form>
             @else
             <form action="/details/{{$activePlanet}}/image" method="post">
                 @csrf
                 <input type="text" value="{{$planetInfo->image}}" class="form-control" name="image"/>
-                <input type="submit" class="btn btn-primary" value="Speichern"/>
+                <input type="submit" class="btn btn-secondary" value="Speichern"/>
             </form>
             <form action="/details/{{$activePlanet}}/deleteImage" method="post">
                 @csrf
