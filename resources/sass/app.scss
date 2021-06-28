@@ -11,6 +11,7 @@
 // Modules
 @import 'helpers/helpers';
 @import 'ingame/menu/menu';
+@import 'ingame/menu/resources';
 
 body {
     max-width: 1920px;
@@ -76,23 +77,6 @@ body {
 
 .sub-line {
     background-color: #213f5d;
-}
-
-.resources {
-    @media (max-width: 767px) {
-        padding: 0;
-    }
-    .resources-holder {
-        border: 1px solid #000;
-        margin-bottom: 30px;
-        span {
-            display: block;
-            padding: 5px;
-        }
-        .resources-title {
-            border-bottom: 1px solid #000;
-        }
-    }
 }
 
 .process-entry,
