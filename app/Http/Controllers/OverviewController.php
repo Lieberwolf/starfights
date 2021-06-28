@@ -11,6 +11,7 @@ use App\Models\Messages as Messages;
 use App\Models\Fleet as Fleet;
 use App\Models\Defense as Defense;
 use Illuminate\Support\Arr;
+use Symfony\Component\Process\Process;
 
 class OverviewController extends Controller
 {
@@ -81,15 +82,38 @@ class OverviewController extends Controller
                 $planetaryProcesses[] = $process;
             }
         }
+        if($fleetsOnMission)
+        {
+            foreach($fleetsOnMission[0] as $process)
+            {
+                if($process)
+                {
+                    $process->type = 'fleet';
+                    if($process->mission == 0)
+                    {
+                        $process->finished_at = date("Y-m-d H:i:s", strtotime($process->arrival) + (strtotime($process->arrival) - strtotime($process->departure)));
+                    } else {
+                        $process->finished_at = $process->arrival;
+                    }
 
-        $planetaryProcesses = array_values(Arr::sort($planetaryProcesses, function($value) {
-            return $value->finished_at;
-        }));
-
-        $checkForNotifications = Messages::getUnreadMessagesById($user_id);
-
-        $allPlanetPoints = Planet::getAllPlanetaryPointsByIds($allUserPlanets);
-        $allResearchPoints = Research::getAllUserResearchPointsByUserId($user_id);
+                    $planetaryProcesses[] = $process;
+                    // create extra return entry for return entry
+                    if($process->mission != 0 && $process->mission != 1 && $process->mission != 3 && $process->mission != 5)
+                    {
+                        $processReturn = new \stdClass();
+                        $processReturn->type = $process->type;
+                        $processReturn->arrival = $process->arrival;
+                        $processReturn->departure = $process->departure;
+                        $processReturn->readableSource = $process->readableSource;
+                        $processReturn->readableTarget = $process->readableTarget;
+                        $processReturn->aborted = 1;
+                        $processReturn->mission = $process->mission;
+                        $processReturn->finished_at = date("Y-m-d H:i:s", strtotime($process->arrival) + (strtotime($process->arrival) - strtotime($process->departure)));
+                        $planetaryProcesses[] = $processReturn;
+                    }
+                }
+            }
+        }
 
         // incoming spy, scan, attack or invasion?
         $incomingFleets = Fleet::getFleetsOnMissionToPlayer($user_id, $allUserPlanets);
@@ -108,6 +132,9 @@ class OverviewController extends Controller
                         $attackAlert = true;
                     }
                 }
+                $arriving_fleet->finished_at = date("Y-m-d H:i:s", strtotime($arriving_fleet->arrival));
+                $arriving_fleet->type = 'foreignFleet';
+                $planetaryProcesses[] = $arriving_fleet;
 
                 // foreign fleet has arrived
                 if(strtotime($arriving_fleet->arrival) < now()->timestamp)
@@ -121,6 +148,15 @@ class OverviewController extends Controller
             }
         }
 
+        $planetaryProcesses = array_values(Arr::sort($planetaryProcesses, function($value) {
+            return strtotime($value->finished_at);
+        }));
+
+        $checkForNotifications = Messages::getUnreadMessagesById($user_id);
+
+        $allPlanetPoints = Planet::getAllPlanetaryPointsByIds($allUserPlanets);
+        $allResearchPoints = Research::getAllUserResearchPointsByUserId($user_id);
+
         if(count($planetaryResources)>0)
         {
             return view('overview.show', [
@@ -132,8 +168,6 @@ class OverviewController extends Controller
                 'planetInformation' => $planetInformation,
                 'planetaryBuildingProcesses' => $planetaryBuildingProcesses,
                 'planetaryResearchProcesses' => $planetaryResearchProcesses,
-                'fleetsOnMission' => $fleetsOnMission,
-                'foreignFleets' => $incomingFleets,
                 'planetaryProcesses' => $planetaryProcesses,
                 'notifications' => $checkForNotifications,
                 'allPlanetPoints' => $allPlanetPoints,
