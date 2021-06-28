@@ -10,22 +10,44 @@
     <title>{{ config('app.name', 'Starfights') }}</title>
 
     <!-- Scripts -->
-    <script src="{{ asset('js/app.js') }}" defer></script>
+    <script src="{{ asset('js/app.js') }}?t={{now()->timestamp}}" defer></script>
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
 
     <!-- Styles -->
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/app.css') }}?t={{now()->timestamp}}" rel="stylesheet">
 </head>
 <body>
-    <div id="app">
+    <div id="app" class="pb-5">
+        @if(!Auth::user())
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <a class="navbar-brand" href="/">Starfights</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/login">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/register">Registrierung</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://discord.gg/qEQw2YQjKh" target="_blank">Discord</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        @endif
         <main class="py-4">
             @yield('content')
         </main>
     </div>
-    @if(Auth::user())
+    @if(!Auth::user())
     <!--
     <div id="chat-opener" class="chat js-show-chat">
         <i class="bi bi-chat-left-dots"></i>

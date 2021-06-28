@@ -55,7 +55,7 @@
             <div class="col-12 sub-line">- keine -</div>
         @endif
         <div class="col-12 title-line mt-3">Ereignisse</div>
-        @if(count($planetaryProcesses) > 0 || $fleetsOnMission)
+        @if(count($planetaryProcesses) > 0)
             <div class="col-3 text-right sub-line">Restzeit - [Uhrzeit]</div>
             <div class="col-9 sub-line">Ereignis</div>
         @else

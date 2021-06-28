@@ -115,7 +115,7 @@ class MessagesController extends Controller
 
         if(!array_key_exists('toBeDeleted', $request))
         {
-            return redirect('messages/inbox');
+            return redirect('messages/inbox/' . session('default_planet'));
         }
 
         foreach($request['toBeDeleted'] as $key => $index)
@@ -129,7 +129,7 @@ class MessagesController extends Controller
             }
         }
 
-        return redirect('messages/inbox');
+        return redirect('messages/inbox/' . session('default_planet'));
     }
 
     public function editOutbox()
@@ -140,7 +140,7 @@ class MessagesController extends Controller
 
         if(!array_key_exists('toBeDeleted', $request))
         {
-            return redirect('messages/outbox');
+            return redirect('messages/outbox/' . session('default_planet'));
         }
 
         foreach($request['toBeDeleted'] as $key => $index)
@@ -154,7 +154,7 @@ class MessagesController extends Controller
             }
         }
 
-        return redirect('messages/outbox');
+        return redirect('messages/outbox/' . session('default_planet'));
     }
 
     public function send($receiver_id)

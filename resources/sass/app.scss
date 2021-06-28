@@ -8,6 +8,10 @@
 @import '~bootstrap/scss/bootstrap';
 @import '~bootstrap-icons/font/bootstrap-icons.css';
 
+// Modules
+@import 'helpers/helpers';
+@import 'ingame/menu/menu';
+
 body {
     background-color: #0b101b;
     color: #f2f2f2;
@@ -30,36 +34,6 @@ body {
         font-size: 16px;
         text-transform: uppercase;
         margin-top: 1px;
-    }
-}
-
-.menu {
-    text-align: center;
-    ul {
-        list-style: none;
-        padding: 0;
-        border: 1px solid #000;
-        .heading {
-            background-color: #001e3b;
-            font-size: 15px;
-            font-weight: bold;
-            padding: 5px;
-            border-bottom: 1px solid #000;
-        }
-        li {
-            padding: 5px;
-            background-color: #213f5d;
-        }
-        &.planet-selector {
-            li {
-                padding: 2rem 0;
-                background: url('https://i.pinimg.com/originals/b7/8e/31/b78e312d9ca9152233d995d2803e1b8d.jpg');
-                background-size: cover;
-                form {
-                    margin: 0 25px;
-                }
-            }
-        }
     }
 }
 
@@ -103,6 +77,9 @@ body {
 }
 
 .resources {
+    @media (max-width: 767px) {
+        padding: 0;
+    }
     .resources-holder {
         border: 1px solid #000;
         margin-bottom: 30px;
@@ -228,4 +205,8 @@ body {
             padding: 0 10px;
         }
     }
+}
+
+.modal-content {
+    background-color: #001e3b;
 }

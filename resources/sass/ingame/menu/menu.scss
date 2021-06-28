@@ -1,0 +1,33 @@
+.menu {
+    text-align: center;
+    ul {
+        list-style: none;
+        padding: 0;
+        border: 1px solid #000;
+        .heading {
+            background-color: #001e3b;
+            font-size: 15px;
+            font-weight: bold;
+            padding: 5px;
+            border-bottom: 1px solid #000;
+        }
+        li {
+            padding: 5px;
+            background-color: #213f5d;
+        }
+        &.planet-selector {
+            li {
+                padding: 2rem 0;
+                background: url('https://i.pinimg.com/originals/b7/8e/31/b78e312d9ca9152233d995d2803e1b8d.jpg');
+                background-size: cover;
+                form {
+                    margin: 0 25px;
+                }
+            }
+        }
+    }
+
+    &.mobile {
+        background-color: rgba(0, 30, 59, .7);
+    }
+}

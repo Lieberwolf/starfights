@@ -1,0 +1,35 @@
+.pos {
+    &-f {
+        position: fixed;
+        z-index: 1;
+    }
+}
+
+// bottom position
+.b {
+    &-0 {
+        bottom: 0;
+    }
+}
+
+// font helpers
+.f {
+    // sizes
+    &-s {
+        &-2 {
+            font-size: 2rem;
+        }
+    }
+}
+
+// screen positions
+.s {
+    &-middle {
+        top: 40%;
+        left: 0;
+    }
+    &-bottom {
+        bottom: 0;
+        left: 0;
+    }
+}
