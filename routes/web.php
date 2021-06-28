@@ -108,6 +108,10 @@ Route::get('/techtree/{planet_id}', [App\Http\Controllers\TechtreeController::cl
 
 // database
 Route::get('/database', [App\Http\Controllers\DatabaseController::class, 'index']);
+Route::get('/database/buildings/{planet_id}', [App\Http\Controllers\DatabaseController::class, 'buildings']);
+Route::get('/database/research/{planet_id}', [App\Http\Controllers\DatabaseController::class, 'research']);
+Route::get('/database/ships/{planet_id}', [App\Http\Controllers\DatabaseController::class, 'ships']);
+Route::get('/database/turrets/{planet_id}', [App\Http\Controllers\DatabaseController::class, 'turrets']);
 Route::get('/database/{planet_id}', [App\Http\Controllers\DatabaseController::class, 'show']);
 
 // simulation

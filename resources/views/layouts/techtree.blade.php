@@ -1,6 +1,9 @@
 <div class="container-fluid">
     <div class="row">
-        <div class="col-12 col-md-4 offset-md-4">
+        <div class="col-12 title-line">
+            <span>Technik</span>
+        </div>
+        <div class="col-12 sub-line">
             <form id="treeTarget">
                 <div class="form-check">
                     <input class="form-check-input" type="radio" name="target" id="targetRadios1" value="/techtree/buildings/{{$activePlanet}}">
@@ -18,7 +21,9 @@
                     <input class="form-check-input" type="radio" name="target" id="targetRadios4" value="/techtree/turrets/{{$activePlanet}}">
                     <label class="form-check-label" for="targetRadios4">Verteidigung</label>
                 </div>
-                <input type="button" class="btn btn-secondary" value="Anzeigen" onclick="window.location.href=document.querySelector('#treeTarget input[type=radio]:checked').value"/>
+                <div class="col-12 sub-line p-1">
+                    <input type="button" class="btn btn-secondary" value="Anzeigen" onclick="window.location.href=document.querySelector('#treeTarget input[type=radio]:checked').value"/>
+                </div>
             </form>
         </div>
     </div>

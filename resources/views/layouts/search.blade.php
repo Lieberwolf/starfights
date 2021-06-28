@@ -3,7 +3,7 @@
         <div class="col-12 title-line">
             <span>Suche</span>
         </div>
-        <div class="col-12 sub-line mt-1">
+        <div class="col-12 sub-line">
             <form action="/search/{{$activePlanet}}/mode" method="post">
                 @csrf
                 <div class="form-check">
@@ -31,7 +31,7 @@
                     </div>
                     @enderror
                 </div>
-                <div class="col-12 sub-line p-2">
+                <div class="col-12 sub-line p-1">
                     <button type="submit" class="btn btn-secondary">Suchen</button>
                 </div>
             </form>
@@ -43,34 +43,36 @@
             @if($searchResult->result)
                 @if($searchResult->mode == 'p')
                     @foreach($searchResult->result as $key => $result)
-                        <div class="col-2 sub-line mt-1">
+                        <div class="col-2 sub-line">
                             <span>{{$key+1}}.</span>
                         </div>
-                        <div class="col-10 sub-line mt-1">
+                        <div class="col-10 sub-line">
                             <a href="/profile/{{$result->user_id}}">{{$result->nickname}}</a>
                         </div>
                     @endforeach
                 @endif
                 @if($searchResult->mode == 'n')
                     @foreach($searchResult->result as $key => $result)
-                    <div class="col-2 sub-line mt-1">
+                    <div class="col-2 sub-line">
                         <span>{{$key+1}}.</span>
                     </div>
-                    <div class="col-10 sub-line mt-1">
+                    <div class="col-10 sub-line">
                         <a href="/universe/{{$activePlanet}}/{{$result->galaxy}}/{{$result->system}}">{{$result->planet_name}}</a>
                     </div>
                     @endforeach
                 @endif
                 @if($searchResult->mode == 'a' || $searchResult->mode == 't')
                     @foreach($searchResult->result as $key => $result)
-                    <div class="col-2 sub-line mt-1">
+                    <div class="col-2 sub-line">
                         <span>{{$key+1}}.</span>
                     </div>
-                    <div class="col-10 sub-line mt-1">
+                    <div class="col-10 sub-line">
                         <a href="/alliance/{{$activePlanet}}/{{$result->id}}">{{$result->alliance_name}}</a>
                     </div>
                     @endforeach
                 @endif
+            @else
+                <div class="col-12 sub-line"><span>- keine -</span></div>
             @endif
         @endif
     </div>

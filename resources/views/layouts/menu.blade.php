@@ -21,8 +21,8 @@
             </a>
         </div>
         <div class="col-2">
-            <a href="/defense/{{$defaultPlanet}}" class="btn btn-secondary">
-                <i class="fas fa-shield-alt"></i>
+            <a href="/mission/{{$defaultPlanet}}" class="btn btn-secondary">
+                <i class="fas fa-file-signature"></i>
             </a>
         </div>
         <div class="col-2">
