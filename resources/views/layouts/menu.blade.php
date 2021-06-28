@@ -70,7 +70,7 @@
                     </ul>
                     <ul>
                         <li class="heading">Account</li>
-                        <li><a href="/settings/{{$defaultPlanet}}">Einstellungen</a></li>
+                        <li><a href="/settings/{{$defaultPlanet}}">{{__('settings.settings')}}</a></li>
                         <li><a href="/alliance/{{$defaultPlanet}}">Meine Allianz</a></li>
                         <li><a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">{{ __('Logout') }} </a>
                             <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
