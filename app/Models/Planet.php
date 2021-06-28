@@ -91,10 +91,10 @@ class Planet extends Model
         return DB::table('planets')->where('user_id', $user_id)->get(['id', 'galaxy', 'system', 'planet']);
     }
 
-    public static function getPlanetaryResourcesByPlanetId($planet_id, $user_id)
+    public static function getPlanetaryResourcesByPlanetId($planet_id, $user_id, $buildings = false)
     {
         $lastStand = Planet::find($planet_id);
-        $buildingsList = Building::getAllAvailableBuildings($planet_id, $user_id);
+        $buildingsList = Building::getAllAvailableBuildings($planet_id, $user_id, $buildings);
 
         $storage = new \stdClass();
         $storage->fe = 10000;
@@ -224,8 +224,7 @@ class Planet extends Model
         }
 
         $lastStand->save();
-
-        $return[0] = DB::table('planets')->where('id', $planet_id)->where('user_id', $user_id)->get(['fe', 'lut', 'cry', 'h2o', 'h2', 'rate_fe', 'rate_lut', 'rate_cry', 'rate_h2o', 'rate_h2']);
+        $return[0] = $lastStand;
         $return[1] = $storage;
 
         return $return;
@@ -234,11 +233,11 @@ class Planet extends Model
     public static function setResourcesForPlanetById($planet_id, $resourceArray)
     {
         $planet = Planet::find($planet_id);
-        $planet->fe = $resourceArray[0]->fe;
-        $planet->lut = $resourceArray[0]->lut;
-        $planet->cry = $resourceArray[0]->cry;
-        $planet->h2o = $resourceArray[0]->h2o;
-        $planet->h2 = $resourceArray[0]->h2;
+        $planet->fe = $resourceArray->fe;
+        $planet->lut = $resourceArray->lut;
+        $planet->cry = $resourceArray->cry;
+        $planet->h2o = $resourceArray->h2o;
+        $planet->h2 = $resourceArray->h2;
 
         return $planet->save();
     }
@@ -383,9 +382,10 @@ class Planet extends Model
 
     public static function getAllPlanetaryResourcesByIds($planet_ids)
     {
+        $buildings = Building::all();
         foreach($planet_ids as $planet)
         {
-            self::getPlanetaryResourcesByPlanetId($planet->id, Auth::id());
+            self::getPlanetaryResourcesByPlanetId($planet->id, Auth::id(), $buildings);
         }
 
     }
@@ -436,12 +436,12 @@ class Planet extends Model
                      ]);
 
         $shipAmount = $process->amount_left;
-        $resourceArray[0] = new \stdClass();
-        $resourceArray[0]->fe = $process->fe + ($shipAmount * $process->ship_fe);
-        $resourceArray[0]->lut = $process->lut + ($shipAmount * $process->ship_lut);
-        $resourceArray[0]->cry = $process->cry + ($shipAmount * $process->ship_cry);
-        $resourceArray[0]->h2o = $process->h2o + ($shipAmount * $process->ship_h2o);
-        $resourceArray[0]->h2 = $process->h2 + ($shipAmount * $process->ship_h2);
+        $resourceArray = new \stdClass();
+        $resourceArray->fe = $process->fe + ($shipAmount * $process->ship_fe);
+        $resourceArray->lut = $process->lut + ($shipAmount * $process->ship_lut);
+        $resourceArray->cry = $process->cry + ($shipAmount * $process->ship_cry);
+        $resourceArray->h2o = $process->h2o + ($shipAmount * $process->ship_h2o);
+        $resourceArray->h2 = $process->h2 + ($shipAmount * $process->ship_h2);
 
         $planet = new \stdClass();
         $planet->id = $planet_id;
@@ -467,12 +467,12 @@ class Planet extends Model
             ]);
 
         $shipAmount = $process->amount_left;
-        $resourceArray[0] = new \stdClass();
-        $resourceArray[0]->fe = $process->fe + ($shipAmount * $process->turret_fe);
-        $resourceArray[0]->lut = $process->lut + ($shipAmount * $process->turret_lut);
-        $resourceArray[0]->cry = $process->cry + ($shipAmount * $process->turret_cry);
-        $resourceArray[0]->h2o = $process->h2o + ($shipAmount * $process->turret_h2o);
-        $resourceArray[0]->h2 = $process->h2 + ($shipAmount * $process->turret_h2);
+        $resourceArray = new \stdClass();
+        $resourceArray->fe = $process->fe + ($shipAmount * $process->turret_fe);
+        $resourceArray->lut = $process->lut + ($shipAmount * $process->turret_lut);
+        $resourceArray->cry = $process->cry + ($shipAmount * $process->turret_cry);
+        $resourceArray->h2o = $process->h2o + ($shipAmount * $process->turret_h2o);
+        $resourceArray->h2 = $process->h2 + ($shipAmount * $process->turret_h2);
 
         $planet = new \stdClass();
         $planet->id = $planet_id;

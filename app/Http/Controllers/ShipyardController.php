@@ -84,23 +84,23 @@ class ShipyardController extends Controller
 
             if($ship->fe > 0)
             {
-                $maxWithFe = floor($planetaryResources[0][0]->fe / $ship->fe);
+                $maxWithFe = floor($planetaryResources[0]->fe / $ship->fe);
             }
             if($ship->lut > 0)
             {
-                $maxWithLut = floor($planetaryResources[0][0]->lut / $ship->lut);
+                $maxWithLut = floor($planetaryResources[0]->lut / $ship->lut);
             }
             if($ship->cry > 0)
             {
-                $maxWithCry = floor($planetaryResources[0][0]->cry / $ship->cry);
+                $maxWithCry = floor($planetaryResources[0]->cry / $ship->cry);
             }
             if($ship->h2o > 0)
             {
-                $maxWithH2o = floor($planetaryResources[0][0]->h2o / $ship->h2o);
+                $maxWithH2o = floor($planetaryResources[0]->h2o / $ship->h2o);
             }
             if($ship->h2 > 0)
             {
-                $maxWithH2 = floor($planetaryResources[0][0]->h2 / $ship->h2);
+                $maxWithH2 = floor($planetaryResources[0]->h2 / $ship->h2);
             }
 
             $maxBuildable = min($maxWithFe, $maxWithLut, $maxWithCry, $maxWithH2o, $maxWithH2);
@@ -111,7 +111,7 @@ class ShipyardController extends Controller
         {
             return view('shipyard.show', [
                 'defaultPlanet' => session('default_planet'),
-                'planetaryResources' => $planetaryResources[0][0],
+                'planetaryResources' => $planetaryResources[0],
                 'planetaryStorage' => $planetaryResources[1],
                 'allUserPlanets' => $allUserPlanets,
                 'activePlanet' => $planet_id,
@@ -155,23 +155,23 @@ class ShipyardController extends Controller
 
                         if($available_ship->fe > 0)
                         {
-                            $maxWithFe = floor($availableResources[0][0]->fe / $available_ship->fe);
+                            $maxWithFe = floor($availableResources[0]->fe / $available_ship->fe);
                         }
                         if($available_ship->lut > 0)
                         {
-                            $maxWithLut = floor($availableResources[0][0]->lut / $available_ship->lut);
+                            $maxWithLut = floor($availableResources[0]->lut / $available_ship->lut);
                         }
                         if($available_ship->cry > 0)
                         {
-                            $maxWithCry = floor($availableResources[0][0]->cry / $available_ship->cry);
+                            $maxWithCry = floor($availableResources[0]->cry / $available_ship->cry);
                         }
                         if($available_ship->h2o > 0)
                         {
-                            $maxWithH2o = floor($availableResources[0][0]->h2o / $available_ship->h2o);
+                            $maxWithH2o = floor($availableResources[0]->h2o / $available_ship->h2o);
                         }
                         if($available_ship->h2 > 0)
                         {
-                            $maxWithH2 = floor($availableResources[0][0]->h2 / $available_ship->h2);
+                            $maxWithH2 = floor($availableResources[0]->h2 / $available_ship->h2);
                         }
 
                         $maxBuildable = min($maxWithFe, $maxWithLut, $maxWithCry, $maxWithH2o, $maxWithH2);
@@ -188,12 +188,12 @@ class ShipyardController extends Controller
                             return redirect('/shipyard/' . $planet_id);
                         }
 
-                        $resourceArray[0] = new \stdClass();
-                        $resourceArray[0]->fe = $availableResources[0][0]->fe - ($shipAmount * $available_ship->fe);
-                        $resourceArray[0]->lut = $availableResources[0][0]->lut - ($shipAmount * $available_ship->lut);
-                        $resourceArray[0]->cry = $availableResources[0][0]->cry - ($shipAmount * $available_ship->cry);
-                        $resourceArray[0]->h2o = $availableResources[0][0]->h2o - ($shipAmount * $available_ship->h2o);
-                        $resourceArray[0]->h2 = $availableResources[0][0]->h2 - ($shipAmount * $available_ship->h2);
+                        $resourceArray = new \stdClass();
+                        $resourceArray->fe = $availableResources[0]->fe - ($shipAmount * $available_ship->fe);
+                        $resourceArray->lut = $availableResources[0]->lut - ($shipAmount * $available_ship->lut);
+                        $resourceArray->cry = $availableResources[0]->cry - ($shipAmount * $available_ship->cry);
+                        $resourceArray->h2o = $availableResources[0]->h2o - ($shipAmount * $available_ship->h2o);
+                        $resourceArray->h2 = $availableResources[0]->h2 - ($shipAmount * $available_ship->h2);
 
                         $updateResources = Planet::setResourcesForPlanetById($planet_id, $resourceArray);
                         if($updateResources)

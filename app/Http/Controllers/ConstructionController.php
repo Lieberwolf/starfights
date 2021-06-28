@@ -54,7 +54,7 @@ class ConstructionController extends Controller
             if($selectedBuilding)
             {
                 // check if selected building can be built (resources)
-                if($planetaryResources[0][0]->fe >= $selectedBuilding->fe && $planetaryResources[0][0]->lut >= $selectedBuilding->lut && $planetaryResources[0][0]->cry >= $selectedBuilding->cry && $planetaryResources[0][0]->h2o >= $selectedBuilding->h2o && $planetaryResources[0][0]->h2 >= $selectedBuilding->h2)
+                if($planetaryResources[0]->fe >= $selectedBuilding->fe && $planetaryResources[0]->lut >= $selectedBuilding->lut && $planetaryResources[0]->cry >= $selectedBuilding->cry && $planetaryResources[0]->h2o >= $selectedBuilding->h2o && $planetaryResources[0]->h2 >= $selectedBuilding->h2)
                 {
                     $needle = $buildingListRaw->filter(function($value, $key) use ($building_id) {
                         if($value->id == $building_id)
@@ -70,11 +70,11 @@ class ConstructionController extends Controller
                         if($started)
                         {
                             // calculate new resources
-                            $planetaryResources[0][0]->fe -= $selectedBuilding->fe;
-                            $planetaryResources[0][0]->lut -= $selectedBuilding->lut;
-                            $planetaryResources[0][0]->cry -= $selectedBuilding->cry;
-                            $planetaryResources[0][0]->h2o -= $selectedBuilding->h2o;
-                            $planetaryResources[0][0]->h2 -= $selectedBuilding->h2;
+                            $planetaryResources[0]->fe -= $selectedBuilding->fe;
+                            $planetaryResources[0]->lut -= $selectedBuilding->lut;
+                            $planetaryResources[0]->cry -= $selectedBuilding->cry;
+                            $planetaryResources[0]->h2o -= $selectedBuilding->h2o;
+                            $planetaryResources[0]->h2 -= $selectedBuilding->h2;
                             Planet::setResourcesForPlanetById($planet_id, $planetaryResources[0]);
 
                             return redirect('construction/' . $planet_id);
@@ -123,7 +123,7 @@ class ConstructionController extends Controller
         {
             return view('construction.show', [
                 'defaultPlanet' => session('default_planet'),
-                'planetaryResources' => $planetaryResources[0][0],
+                'planetaryResources' => $planetaryResources[0],
                 'planetaryStorage' => $planetaryResources[1],
                 'allUserPlanets' => $allUserPlanets,
                 'activePlanet' => $planet_id,
@@ -153,11 +153,11 @@ class ConstructionController extends Controller
 
         // calculate new resources
         // todo: higher levels => higher cost, it only calculates level 1 costs
-        $planetaryResources[0][0]->fe += $levelResources->fe;
-        $planetaryResources[0][0]->lut += $levelResources->lut;
-        $planetaryResources[0][0]->cry += $levelResources->cry;
-        $planetaryResources[0][0]->h2o += $levelResources->h2o;
-        $planetaryResources[0][0]->h2 += $levelResources->h2;
+        $planetaryResources[0]->fe += $levelResources->fe;
+        $planetaryResources[0]->lut += $levelResources->lut;
+        $planetaryResources[0]->cry += $levelResources->cry;
+        $planetaryResources[0]->h2o += $levelResources->h2o;
+        $planetaryResources[0]->h2 += $levelResources->h2;
         Planet::setResourcesForPlanetById($planet_id, $planetaryResources[0]);
 
         $canceled = Building::cancelBuilding($planet_id);

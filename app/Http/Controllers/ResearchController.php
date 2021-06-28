@@ -213,7 +213,7 @@ class ResearchController extends Controller
             if($selectedResearch)
             {
                 // check if selected building can be built (resources)
-                if($planetaryResources[0][0]->fe >= $selectedResearch->fe && $planetaryResources[0][0]->lut >= $selectedResearch->lut && $planetaryResources[0][0]->cry >= $selectedResearch->cry && $planetaryResources[0][0]->h2o >= $selectedResearch->h2o && $planetaryResources[0][0]->h2 >= $selectedResearch->h2)
+                if($planetaryResources[0]->fe >= $selectedResearch->fe && $planetaryResources[0]->lut >= $selectedResearch->lut && $planetaryResources[0]->cry >= $selectedResearch->cry && $planetaryResources[0]->h2o >= $selectedResearch->h2o && $planetaryResources[0]->h2 >= $selectedResearch->h2)
                 {
                     $needle = $researchList->filter(function($value, $key) use ($research_id) {
                         if($value->id == $research_id)
@@ -228,11 +228,11 @@ class ResearchController extends Controller
                         if($started)
                         {
                             // calculate new resources
-                            $planetaryResources[0][0]->fe -= $selectedResearch->fe;
-                            $planetaryResources[0][0]->lut -= $selectedResearch->lut;
-                            $planetaryResources[0][0]->cry -= $selectedResearch->cry;
-                            $planetaryResources[0][0]->h2o -= $selectedResearch->h2o;
-                            $planetaryResources[0][0]->h2 -= $selectedResearch->h2;
+                            $planetaryResources[0]->fe -= $selectedResearch->fe;
+                            $planetaryResources[0]->lut -= $selectedResearch->lut;
+                            $planetaryResources[0]->cry -= $selectedResearch->cry;
+                            $planetaryResources[0]->h2o -= $selectedResearch->h2o;
+                            $planetaryResources[0]->h2 -= $selectedResearch->h2;
                             Planet::setResourcesForPlanetById($planet_id, $planetaryResources[0]);
 
                             return redirect('research/' . $planet_id);
@@ -258,7 +258,7 @@ class ResearchController extends Controller
         {
             return view('research.show', [
                 'defaultPlanet' => session('default_planet'),
-                'planetaryResources' => $planetaryResources[0][0],
+                'planetaryResources' => $planetaryResources[0],
                 'planetaryStorage' => $planetaryResources[1],
                 'allUserPlanets' => $allUserPlanets,
                 'activePlanet' => $planet_id,
@@ -282,11 +282,11 @@ class ResearchController extends Controller
         $selectedResearch = $researchList->firstWhere('id', $currentResearch->research_id);
 
         // calculate new resources
-        $planetaryResources[0][0]->fe += $selectedResearch->fe;
-        $planetaryResources[0][0]->lut += $selectedResearch->lut;
-        $planetaryResources[0][0]->cry += $selectedResearch->cry;
-        $planetaryResources[0][0]->h2o += $selectedResearch->h2o;
-        $planetaryResources[0][0]->h2 += $selectedResearch->h2;
+        $planetaryResources[0]->fe += $selectedResearch->fe;
+        $planetaryResources[0]->lut += $selectedResearch->lut;
+        $planetaryResources[0]->cry += $selectedResearch->cry;
+        $planetaryResources[0]->h2o += $selectedResearch->h2o;
+        $planetaryResources[0]->h2 += $selectedResearch->h2;
         Planet::setResourcesForPlanetById($planet_id, $planetaryResources[0]);
 
         $canceled = Research::cancelResearch($planet_id);

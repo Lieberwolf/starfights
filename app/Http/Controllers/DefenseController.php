@@ -84,23 +84,23 @@ class DefenseController extends Controller
 
             if($turret->fe > 0)
             {
-                $maxWithFe = floor($planetaryResources[0][0]->fe / $turret->fe);
+                $maxWithFe = floor($planetaryResources[0]->fe / $turret->fe);
             }
             if($turret->lut > 0)
             {
-                $maxWithLut = floor($planetaryResources[0][0]->lut / $turret->lut);
+                $maxWithLut = floor($planetaryResources[0]->lut / $turret->lut);
             }
             if($turret->cry > 0)
             {
-                $maxWithCry = floor($planetaryResources[0][0]->cry / $turret->cry);
+                $maxWithCry = floor($planetaryResources[0]->cry / $turret->cry);
             }
             if($turret->h2o > 0)
             {
-                $maxWithH2o = floor($planetaryResources[0][0]->h2o / $turret->h2o);
+                $maxWithH2o = floor($planetaryResources[0]->h2o / $turret->h2o);
             }
             if($turret->h2 > 0)
             {
-                $maxWithH2 = floor($planetaryResources[0][0]->h2 / $turret->h2);
+                $maxWithH2 = floor($planetaryResources[0]->h2 / $turret->h2);
             }
 
             $maxBuildable = min($maxWithFe, $maxWithLut, $maxWithCry, $maxWithH2o, $maxWithH2);
@@ -111,7 +111,7 @@ class DefenseController extends Controller
         {
             return view('defense.show', [
                 'defaultPlanet' => session('default_planet'),
-                'planetaryResources' => $planetaryResources[0][0],
+                'planetaryResources' => $planetaryResources[0],
                 'planetaryStorage' => $planetaryResources[1],
                 'allUserPlanets' => $allUserPlanets,
                 'activePlanet' => $planet_id,
@@ -155,23 +155,23 @@ class DefenseController extends Controller
 
                         if($available_turret->fe > 0)
                         {
-                            $maxWithFe = floor($availableResources[0][0]->fe / $available_turret->fe);
+                            $maxWithFe = floor($availableResources[0]->fe / $available_turret->fe);
                         }
                         if($available_turret->lut > 0)
                         {
-                            $maxWithLut = floor($availableResources[0][0]->lut / $available_turret->lut);
+                            $maxWithLut = floor($availableResources[0]->lut / $available_turret->lut);
                         }
                         if($available_turret->cry > 0)
                         {
-                            $maxWithCry = floor($availableResources[0][0]->cry / $available_turret->cry);
+                            $maxWithCry = floor($availableResources[0]->cry / $available_turret->cry);
                         }
                         if($available_turret->h2o > 0)
                         {
-                            $maxWithH2o = floor($availableResources[0][0]->h2o / $available_turret->h2o);
+                            $maxWithH2o = floor($availableResources[0]->h2o / $available_turret->h2o);
                         }
                         if($available_turret->h2 > 0)
                         {
-                            $maxWithH2 = floor($availableResources[0][0]->h2 / $available_turret->h2);
+                            $maxWithH2 = floor($availableResources[0]->h2 / $available_turret->h2);
                         }
 
                         $maxBuildable = min($maxWithFe, $maxWithLut, $maxWithCry, $maxWithH2o, $maxWithH2);
@@ -188,12 +188,12 @@ class DefenseController extends Controller
                             return redirect('/defense/' . $planet_id);
                         }
 
-                        $resourceArray[0] = new \stdClass();
-                        $resourceArray[0]->fe = $availableResources[0][0]->fe - ($turretAmount * $available_turret->fe);
-                        $resourceArray[0]->lut = $availableResources[0][0]->lut - ($turretAmount * $available_turret->lut);
-                        $resourceArray[0]->cry = $availableResources[0][0]->cry - ($turretAmount * $available_turret->cry);
-                        $resourceArray[0]->h2o = $availableResources[0][0]->h2o - ($turretAmount * $available_turret->h2o);
-                        $resourceArray[0]->h2 = $availableResources[0][0]->h2 - ($turretAmount * $available_turret->h2);
+                        $resourceArray = new \stdClass();
+                        $resourceArray->fe = $availableResources[0]->fe - ($turretAmount * $available_turret->fe);
+                        $resourceArray->lut = $availableResources[0]->lut - ($turretAmount * $available_turret->lut);
+                        $resourceArray->cry = $availableResources[0]->cry - ($turretAmount * $available_turret->cry);
+                        $resourceArray->h2o = $availableResources[0]->h2o - ($turretAmount * $available_turret->h2o);
+                        $resourceArray->h2 = $availableResources[0]->h2 - ($turretAmount * $available_turret->h2);
 
                         $updateResources = Planet::setResourcesForPlanetById($planet_id, $resourceArray);
                         if($updateResources)

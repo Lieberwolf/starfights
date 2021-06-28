@@ -117,34 +117,38 @@ class Building extends Model
         return Building::where('building_name', $name)->first();
     }
 
-    public static function getAllAvailableBuildings($planet_id, $user_id)
+    public static function getAllAvailableBuildings($planet_id, $user_id, $buildings = false)
     {
         // get all buildings
-        $buildings = DB::table('buildings AS b')
-                       ->orderBy('b.id')
-                       ->leftJoin('buildtimefactors AS btf','btf.building_id','=','b.id')
-                       ->leftJoin('resourcefactors AS rf', 'rf.building_id','=', 'b.id')
-                       ->get([
-                           'b.*',
-                           'btf.factor_1',
-                           'btf.factor_2',
-                           'btf.factor_3',
-                           'rf.fe_factor_1',
-                           'rf.fe_factor_2',
-                           'rf.fe_factor_3',
-                           'rf.lut_factor_1',
-                           'rf.lut_factor_2',
-                           'rf.lut_factor_3',
-                           'rf.cry_factor_1',
-                           'rf.cry_factor_2',
-                           'rf.cry_factor_3',
-                           'rf.h2o_factor_1',
-                           'rf.h2o_factor_2',
-                           'rf.h2o_factor_3',
-                           'rf.h2_factor_1',
-                           'rf.h2_factor_2',
-                           'rf.h2_factor_3',
-                       ]);
+        if(!$buildings)
+        {
+            $buildings = DB::table('buildings AS b')
+                ->orderBy('b.id')
+                ->leftJoin('buildtimefactors AS btf','btf.building_id','=','b.id')
+                ->leftJoin('resourcefactors AS rf', 'rf.building_id','=', 'b.id')
+                ->get([
+                    'b.*',
+                    'btf.factor_1',
+                    'btf.factor_2',
+                    'btf.factor_3',
+                    'rf.fe_factor_1',
+                    'rf.fe_factor_2',
+                    'rf.fe_factor_3',
+                    'rf.lut_factor_1',
+                    'rf.lut_factor_2',
+                    'rf.lut_factor_3',
+                    'rf.cry_factor_1',
+                    'rf.cry_factor_2',
+                    'rf.cry_factor_3',
+                    'rf.h2o_factor_1',
+                    'rf.h2o_factor_2',
+                    'rf.h2o_factor_3',
+                    'rf.h2_factor_1',
+                    'rf.h2_factor_2',
+                    'rf.h2_factor_3',
+                ]);
+        }
+
         // get all researches
         $researches = DB::table('research')->get();
 
