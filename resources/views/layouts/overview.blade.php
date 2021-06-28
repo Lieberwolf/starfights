@@ -1,4 +1,4 @@
-<div class="container event-log">
+<div class="container-fluid event-log">
     <div class="row">
         <div class="col-12 title-line">
             Planet "{{$planetInformation->planet_name != null ? $planetInformation->planet_name : 'Unbenannter Planet'}}"

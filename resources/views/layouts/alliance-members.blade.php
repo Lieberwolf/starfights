@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container-fluid">
     <div class="row">
         <div class="col-12 title-line">Mitglieder von "{{$allianceData->alliance_name}}"</div>
         <table style="width: 100%;margin-top: 1px;">

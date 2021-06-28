@@ -1,5 +1,5 @@
 @if($stats)
-<div class="container">
+<div class="container-fluid">
     <div class="row">
         <div class="col-12 title-line">
             <span>Kampfstatistik von {{$mode == 'u' ? $stats->nickname : $stats->alliance_name}}</span>

@@ -1,4 +1,4 @@
-<div class="">
+<div class="container-fluid">
     <h4>Nachricht an "{{$receiver->username}}"</h4>
     <form action="/messages/sending" method="post">
         @csrf

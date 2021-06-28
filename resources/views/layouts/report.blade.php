@@ -1,5 +1,5 @@
 @if($report)
-    <div class="container report">
+    <div class="container-fluid report">
         <div class="row">
         @if($report->report_type == 0)
             <div class="col-12 alert-danger">

@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container-fluid">
     <div class="row">
         <div class="col-12 title-line mb-1"><span>Mission starten</span></div>
         <div class="col-12">
@@ -63,7 +63,7 @@
                         @foreach($shipsAtPlanet->ship_types as $key => $ship)
                             @if($ship->amount > 0)
                                 <div class="col-12 col-md-6 offset-md-6 sub-line">
-                                    <div class="form-group row">
+                                    <div class="form-group row p-1">
                                         <label class="col-6 col-form-label" for="fleet-{{$ship->ship_id}}">{{$ship->ship_name}} <a class="js-add-to-field">(max.: <span>{{$ship->amount}}</span>)</a></label>
                                         <input data-ship-id="{{$ship->ship_id}}" data-ship-name="{{$ship->ship_name}}" id="fleet-{{$ship->ship_id}}" name="fleet[{{$ship->ship_id}}]" type="number" min="0" step="1" max="{{$ship->amount}}" class="col-6 form-control" placeholder="{{$ship->ship_name}}"/>
                                     </div>

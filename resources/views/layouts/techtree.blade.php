@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container-fluid">
     <div class="row">
         <div class="col-12 col-md-4 offset-md-4">
             <form id="treeTarget">

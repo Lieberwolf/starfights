@@ -1,4 +1,4 @@
-<div class="container" style="overflow-x: scroll;">
+<div class="container-fluid" style="overflow-x: scroll;">
     <div class="row">
         <div class="col-12 title-line">Schiffsübersicht</div>
         <table style="width: 100%;">

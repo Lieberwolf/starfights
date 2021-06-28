@@ -13,6 +13,8 @@
 @import 'ingame/menu/menu';
 
 body {
+    max-width: 1920px;
+    margin: 0 auto;
     background-color: #0b101b;
     color: #f2f2f2;
     .card {

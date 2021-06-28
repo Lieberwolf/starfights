@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container-fluid">
     <div class="row">
         @if($alliance->id != null)
             <div class="col-12 title-line">Allianz "{{$alliance->alliance_name}}"</div>

@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container-fluid">
     <div class="row">
         <div class="col-12 title-line">Notizblock</div>
         <form action="/notice/{{$activePlanet}}/edit" method="post" class="col-12">

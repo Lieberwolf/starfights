@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container-fluid">
     <div class="row">
         <div class="col-12 title-line">Allianz Gründen</div>
         <div class="col-12 sub-line">

@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container-fluid">
     <div class="row">
         <div class="col-12 title-line">Account "{{$profileData->nickname}}"</div>
         <table style="width: 100%;">

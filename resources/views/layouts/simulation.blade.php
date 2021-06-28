@@ -1,4 +1,4 @@
-<div class="">
+<div class="container-fluid">
     <form action="/simulation/{{$activePlanet}}/calc" method="post">
         @csrf
         <div class="container-fluid">
