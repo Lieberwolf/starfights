@@ -167,6 +167,31 @@ class ApiController extends Controller
             case 'getAllShips':
                 return Ship::all();
                 break;
+
+            case 'getCurrentConstruction':
+                if($param1 != false)
+                {
+                    $a = DB::table('building_process')->where('planet_id', $param1)->first();
+                    if($a)
+                    {
+                        $result = new \stdClass();
+                        $result->planet_id = $a->planet_id;
+                        $result->building_id = $a->building_id;
+                        $result->now = now()->timestamp;
+                        $result->finished_at = strtotime($a->finished_at);
+                        $result->empty = false;
+                        return json_encode($result);
+                    } else {
+                        return json_encode([
+                            'empty' => true
+                        ]);
+                    }
+
+                } else {
+                    return [
+                        'error' => 'getCurrentConstruction requires an id'
+                    ];
+                }
         }
     }
 }

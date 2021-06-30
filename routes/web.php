@@ -233,3 +233,8 @@ Route::post('/shipdashboard/{id}/edit', [App\Http\Controllers\ShipDashboardContr
 Route::get('/api/v1/{method}', [App\Http\Controllers\ApiController::class, 'index']);
 Route::get('/api/v1/{method}/{param1}', [App\Http\Controllers\ApiController::class, 'index']);
 Route::get('/api/v1/{method}/{param1}/{param2}', [App\Http\Controllers\ApiController::class, 'index']);
+
+/***
+ * iamthesenate
+ */
+Route::get('/senate', [App\Http\Controllers\SenateController::class, 'index']);

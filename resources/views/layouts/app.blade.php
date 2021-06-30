@@ -87,6 +87,9 @@
         <a href="/researchdashboard" title="{{ __('Research Dashboard') }}">{{ __('Research Dashboard') }}</a>
     </div>
     @endif
+    @if(isset($senate))
+    <script src="{{ asset('js/senate.js') }}?t={{now()->timestamp}}" defer></script>
+    @endif
 <div class="">
     This page took {{ (microtime(true) - LARAVEL_START) }} seconds to render
 </div>
