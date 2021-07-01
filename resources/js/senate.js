@@ -21,39 +21,43 @@ senate = {
         });
     },
     getCurrentBuilding: function($element) {
-        $.get(origin + '/api/v1/getCurrentConstruction/' + $element.data('planetId'), (data) => {
-            data = JSON.parse(data);
-            if(!data.empty) {
-                var timestamp = data.finished_at - data.now;
-                $element.removeClass('btn-danger').addClass('btn-success disabled').attr('draggable', false);
-                var days    = senate.component(timestamp, 24 * 60 * 60),
-                    hours   = senate.component(timestamp,      60 * 60) % 24,
-                    minutes = senate.component(timestamp,           60) % 60,
-                    seconds = senate.component(timestamp,            1) % 60,
-                    suffix  = ':';
+        if(!$element.hasClass('js-active')) {
+            $element.addClass('js-active');
+            $.get(origin + '/api/v1/getCurrentConstruction/' + $element.data('planetId'), (data) => {
+                data = JSON.parse(data);
+                if(!data.empty) {
+                    var timestamp = data.finished_at - data.now;
+                    $element.removeClass('btn-danger').addClass('btn-success disabled').attr('draggable', false);
+                    var days    = senate.component(timestamp, 24 * 60 * 60),
+                        hours   = senate.component(timestamp,      60 * 60) % 24,
+                        minutes = senate.component(timestamp,           60) % 60,
+                        seconds = senate.component(timestamp,            1) % 60,
+                        suffix  = ':';
 
-                if(days > 0)
-                {
-                    days =  days < 10 ? '0' + days +" d, " : days +" d, ";
-                } else {
-                    days = '';
-                }
+                    if(days > 0)
+                    {
+                        days =  days < 10 ? '0' + days +" d, " : days +" d, ";
+                    } else {
+                        days = '';
+                    }
 
-                hours = hours < 10 ? '0' + hours + suffix : hours + suffix;
-                minutes = minutes < 10 ? '0' + minutes + suffix : minutes + suffix;
-                seconds = seconds < 10 ? '0' + seconds : seconds;
-                if(timestamp <= 0)
-                {
-                    $element.find('.time').text('-');
-                    senate.getCurrentBuilding($element);
-                    senate.checkForBuildings($element.parent());
+                    hours = hours < 10 ? '0' + hours + suffix : hours + suffix;
+                    minutes = minutes < 10 ? '0' + minutes + suffix : minutes + suffix;
+                    seconds = seconds < 10 ? '0' + seconds : seconds;
+                    if(timestamp <= 0)
+                    {
+                        $element.find('.time').text('-');
+                        senate.getCurrentBuilding($element);
+                        senate.checkForBuildings($element.parent());
+                    } else {
+                        $element.find('.time').text(days + hours + minutes + seconds);
+                    }
                 } else {
-                    $element.find('.time').text(days + hours + minutes + seconds);
+                    $element.removeClass('btn-success disabled').addClass('btn-danger').attr('draggable', true);
                 }
-            } else {
-                $element.removeClass('btn-success disabled').addClass('btn-danger').attr('draggable', true);
-            }
-        });
+                $element.removeClass('js-active');
+            })
+        }
     },
     startConstruction: function($planet, bId) {
         $.get(origin + '/construction/' + $planet.data('planetId') + '/' + bId, () => {
