@@ -233,6 +233,26 @@
                                     <div class="col-6">{{number_format($ship->defend,0, ',', '.')}}</div>
                                     <div class="col-6">Ladakapazität (Basiswert):</div>
                                     <div class="col-6">{{number_format($ship->cargo,0, ',', '.')}}</div>
+                                    <div class="col-6">Kosten:</div>
+                                    <div class="col-6">
+                                        <ul class="m-0 p-0">
+                                            @if($ship->fe > 0)
+                                            <li>{{number_format($ship->fe,0, ',', '.')}} Eisen</li>
+                                            @endif
+                                            @if($ship->lut > 0)
+                                            <li>{{number_format($ship->lut,0, ',', '.')}} Lutinum</li>
+                                            @endif
+                                            @if($ship->cry > 0)
+                                            <li>{{number_format($ship->cry,0, ',', '.')}} Kristalle</li>
+                                            @endif
+                                            @if($ship->h2o > 0)
+                                            <li>{{number_format($ship->h2o,0, ',', '.')}} Wasser</li>
+                                            @endif
+                                            @if($ship->h2 > 0)
+                                            <li>{{number_format($ship->h2,0, ',', '.')}} Wasserstoff</li>
+                                            @endif
+                                        </ul>
+                                    </div>
                                     <div class="col-6">Verbrauch:</div>
                                     <div class="col-6">{{number_format($ship->consumption,0, ',', '.')}}</div>
                                     <div class="col-6">Geschwindigkeit:</div>
@@ -281,6 +301,26 @@
                                     <div class="col-6">{{number_format($turret->attack,0, ',', '.')}}</div>
                                     <div class="col-6">Verteidigungswert (Basiswert):</div>
                                     <div class="col-6">{{number_format($turret->defend,0, ',', '.')}}</div>
+                                    <div class="col-6">Kosten:</div>
+                                    <div class="col-6">
+                                        <ul class="m-0 p-0">
+                                            @if($turret->fe > 0)
+                                                <li>{{number_format($turret->fe,0, ',', '.')}} Eisen</li>
+                                            @endif
+                                            @if($turret->lut > 0)
+                                            <li>{{number_format($turret->lut,0, ',', '.')}} Lutinum</li>
+                                            @endif
+                                            @if($turret->cry > 0)
+                                            <li>{{number_format($turret->cry,0, ',', '.')}} Kristalle</li>
+                                            @endif
+                                            @if($turret->h2o > 0)
+                                            <li>{{number_format($turret->h2o,0, ',', '.')}} Wasser</li>
+                                            @endif
+                                            @if($turret->h2 > 0)
+                                            <li>{{number_format($turret->h2,0, ',', '.')}} Wasserstoff</li>
+                                            @endif
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
                         </div>
