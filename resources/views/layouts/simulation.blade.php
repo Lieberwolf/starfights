@@ -108,7 +108,7 @@
                     @foreach($allDefense as $defense)
                         <div class="form-group">
                             <label for="def-def-{{$defense->id}}">{{$defense->turret_name}}</label>
-                            <input value="{{$defense->defenderAmount != null ? $defense->defenderAmount : 0 }}" class="form-control" id="def-def-{{$defense->id}}" type="number" min="0" step="1" name="sim[def][def][{{$defense->id}}]"/>
+                            <input value="{{$defense->amount != null ? $defense->amount : 0 }}" class="form-control" id="def-def-{{$defense->id}}" type="number" min="0" step="1" name="sim[def][def][{{$defense->id}}]"/>
                         </div>
                     @endforeach
                 </div>
@@ -121,12 +121,12 @@
                     </div>
                     <div class="col-4">
                         <div class="form-group">
-                            <input value="0" class="form-control" id="research-att-{{$research->id}}" type="number" min="0" step="1" name="sim[att][research][{{$research->id}}]"/>
+                            <input value="{{$research->attLevel != null ? $research->attLevel : 0 }}" class="form-control" id="research-att-{{$research->id}}" type="number" min="0" step="1" name="sim[att][research][{{$research->id}}]"/>
                         </div>
                     </div>
                     <div class="col-4">
                         <div class="form-group">
-                            <input value="0" class="form-control" id="research-def-{{$research->id}}" type="number" min="0" step="1" name="sim[def][research][{{$research->id}}]"/>
+                            <input value="{{$research->defLevel != null ? $research->defLevel : 0 }}" class="form-control" id="research-def-{{$research->id}}" type="number" min="0" step="1" name="sim[def][research][{{$research->id}}]"/>
                         </div>
                     </div>
                 @endforeach

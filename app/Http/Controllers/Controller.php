@@ -1728,7 +1728,6 @@ class Controller extends BaseController
             }
 
         }
-
         $attacker["attack_value"] = 0;
         $attacker["final_attack_value"] = 0;
         $attacker["final_defense_value"] = 0;
@@ -1772,7 +1771,6 @@ class Controller extends BaseController
 
             }
         }
-
         // calc final values for attack
         if(count($attacker["research"]) > 0)
         {
@@ -1835,25 +1833,25 @@ class Controller extends BaseController
                 }
             }
         }
-        $defenderResearchList = [];
         foreach($allResearchForFight as $research)
         {
             foreach($defender["research"] as $key => $defenderResearch)
             {
+
                 if($research->research_id == $defenderResearch->research_id)
                 {
 
-                    $temp = $research;
+                    $temp = clone $research;
                     $temp->level = $defenderResearch->level;
-                    $defenderResearchList[] = $temp;
+                    $defender["research"][$key] = $temp;
                 }
             }
         }
 
         // calc final values for attack
-        if(count($defenderResearchList) > 0)
+        if(count($defender["research"]) > 0)
         {
-            foreach($defenderResearchList as $research)
+            foreach($defender["research"] as $research)
             {
                 if(property_exists($research, 'increase_ship_attack') && $research->increase_ship_attack > 0)
                 {
@@ -2118,7 +2116,6 @@ class Controller extends BaseController
             $return->attacker = $attacker;
             $return->defender = $defender;
         }
-
         return $return;
     }
 

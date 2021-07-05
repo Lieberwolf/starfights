@@ -69,8 +69,31 @@ class SimulationController extends Controller
                     {
                         $defenderTurret->turret_name = $turret->turret_name;
                         $turret->defenderAmount = $defenderTurret->newAmount;
+                        $turret->amount = $defenderTurret->amount;
                     }
                 }
+            }
+            foreach($allResearch as $key => $research)
+            {
+                foreach($report[0]["research"] as $attackerResearch)
+                {
+                    if($attackerResearch->research_id == $research->research_id)
+                    {
+                        $research->attLevel = $attackerResearch->level;
+                    }
+                }
+                foreach($report[1]["research"] as $defenderResearch)
+                {
+                    if($defenderResearch->research_id == $research->research_id)
+                    {
+                        $research->defLevel = $defenderResearch->level;
+                    }
+                }
+            }
+        } else {
+            foreach($allResearch as $key => $research) {
+                $research->attLevel = 0;
+                $research->defLevel = 0;
             }
         }
         if(count($planetaryResources)>0)
