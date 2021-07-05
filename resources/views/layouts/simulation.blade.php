@@ -57,11 +57,11 @@
                     </div>
                     <div class="col-4 col-md-4 offset-md-8">
                         <div class="row">
-                            @if($report[1]["def"])
+                            @if($report[1]["turrets"])
                                 <div class="col-4">Verteidigung</div>
                                 <div class="col-4">Eingesetzt</div>
                                 <div class="col-4">Verbelibend</div>
-                                @foreach($report[1]["def"] as $turret)
+                                @foreach($report[1]["turrets"] as $turret)
                                     <div class="col-4">{{$turret->turret_name}}</div>
                                     <div class="col-4">{{$turret->amount}}</div>
                                     <div class="col-4">{{$turret->newAmount}}</div>

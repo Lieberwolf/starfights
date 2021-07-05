@@ -46,31 +46,33 @@ class SimulationController extends Controller
             {
                 foreach($report[0]["ship"] as $attackerShip)
                 {
-                    if($ship->id == $attackerShip->id)
+                    if($ship->id == $attackerShip->ship_id)
                     {
+                        $attackerShip->ship_name = $ship->ship_name;
                         $allShips[$key]->attackerAmount = $attackerShip->amount;
                     }
                 }
                 foreach($report[1]["ship"] as $defenderShip)
                 {
-                    if($ship->id == $defenderShip->id)
+                    if($ship->id == $defenderShip->ship_id)
                     {
+                        $defenderShip->ship_name = $ship->ship_name;
                         $allShips[$key]->defenderAmount = $defenderShip->amount;
                     }
                 }
             }
             foreach($allDefense as $key => $turret)
             {
-                foreach($report[1]["def"] as $defenderTurret)
+                foreach($report[1]["turrets"] as $defenderTurret)
                 {
-                    if($turret->id == $defenderTurret->id)
+                    if($turret->id == $defenderTurret->turret_id)
                     {
+                        $defenderTurret->turret_name = $turret->turret_name;
                         $turret->defenderAmount = $defenderTurret->newAmount;
                     }
                 }
             }
         }
-
         if(count($planetaryResources)>0)
         {
             return view('simulation.show', [
@@ -91,236 +93,66 @@ class SimulationController extends Controller
 
     public function calc($planet_id)
     {
-        $data = request();
-        $attacker = $data["sim"]["att"];
-        $defender = $data["sim"]["def"];
-        $attacker["attack_value"] = 0;
-        $attacker["final_attack_value"] = 0;
-        $attacker["final_defense_value"] = 0;
-        $attacker["defense_value"] = 0;
-        $attacker["final_shield_value"] = 0;
+        $data = request()->validate([
+            'sim.att.ship.1' => 'required|integer',
+            'sim.att.ship.2' => 'required|integer',
+            'sim.att.ship.3' => 'required|integer',
+            'sim.att.ship.4' => 'required|integer',
+            'sim.att.ship.5' => 'required|integer',
+            'sim.att.ship.6' => 'required|integer',
+            'sim.att.ship.7' => 'required|integer',
+            'sim.att.ship.8' => 'required|integer',
+            'sim.att.ship.9' => 'required|integer',
+            'sim.att.ship.10' => 'required|integer',
+            'sim.att.ship.11' => 'required|integer',
+            'sim.att.ship.12' => 'required|integer',
+            'sim.att.ship.13' => 'required|integer',
+            'sim.att.ship.14' => 'required|integer',
+            'sim.att.ship.15' => 'required|integer',
+            'sim.att.ship.16' => 'required|integer',
+            'sim.att.ship.17' => 'required|integer',
+            'sim.att.ship.18' => 'required|integer',
+            'sim.att.ship.19' => 'required|integer',
+            'sim.def.ship.1' => 'required|integer',
+            'sim.def.ship.2' => 'required|integer',
+            'sim.def.ship.3' => 'required|integer',
+            'sim.def.ship.4' => 'required|integer',
+            'sim.def.ship.5' => 'required|integer',
+            'sim.def.ship.6' => 'required|integer',
+            'sim.def.ship.7' => 'required|integer',
+            'sim.def.ship.8' => 'required|integer',
+            'sim.def.ship.9' => 'required|integer',
+            'sim.def.ship.10' => 'required|integer',
+            'sim.def.ship.11' => 'required|integer',
+            'sim.def.ship.12' => 'required|integer',
+            'sim.def.ship.13' => 'required|integer',
+            'sim.def.ship.14' => 'required|integer',
+            'sim.def.ship.15' => 'required|integer',
+            'sim.def.ship.16' => 'required|integer',
+            'sim.def.ship.17' => 'required|integer',
+            'sim.def.ship.18' => 'required|integer',
+            'sim.def.ship.19' => 'required|integer',
+            'sim.def.def.1' => 'required|integer',
+            'sim.def.def.2' => 'required|integer',
+            'sim.def.def.3' => 'required|integer',
+            'sim.def.def.4' => 'required|integer',
+            'sim.att.research.7' => 'required|integer',
+            'sim.att.research.8' => 'required|integer',
+            'sim.att.research.9' => 'required|integer',
+            'sim.att.research.12' => 'required|integer',
+            'sim.att.research.13' => 'required|integer',
+            'sim.att.research.14' => 'required|integer',
+            'sim.def.research.7' => 'required|integer',
+            'sim.def.research.8' => 'required|integer',
+            'sim.def.research.9' => 'required|integer',
+            'sim.def.research.12' => 'required|integer',
+            'sim.def.research.13' => 'required|integer',
+            'sim.def.research.14' => 'required|integer',
+        ]);
+        $result = Controller::fightCalculation($data, true);
 
-        $defender["attack_value"] = 0;
-        $defender["final_attack_value"] = 0;
-        $defender["final_defense_value"] = 0;
-        $defender["defense_value"] = 0;
-        $defender["final_shield_value"] = 0;
-
-        foreach($attacker["ship"] as $key => $amount)
-        {
-            // check if ship was selected
-            if($amount > 0)
-            {
-                $attacker["ship"][$key] = new \stdClass();
-                $attacker["ship"][$key] = Ship::getOneById($key);
-                $attacker["ship"][$key]->amount = $amount;
-                $attacker["attack_value"] += $attacker["ship"][$key]->amount * $attacker["ship"][$key]->attack;
-                $attacker["defense_value"] += $attacker["ship"][$key]->amount * $attacker["ship"][$key]->defend;
-            } else {
-                unset($attacker["ship"][$key]);
-            }
-        }
-
-        foreach($attacker["research"] as $key => $amount)
-        {
-            // check lvl of selected research
-            if($amount > 0)
-            {
-                $attacker["research"][$key] = new \stdClass();
-                $attacker["research"][$key] = Research::getOneById($key);
-                $attacker["research"][$key]->level = $amount;
-            }
-            else {
-                unset($attacker["research"][$key]);
-            }
-        }
-
-        // calc final values for attack
-        if(count($attacker["research"]) > 0)
-        {
-            foreach($attacker["research"] as $research)
-            {
-                if($research->increase_ship_attack > 0)
-                {
-                    $temp = 0;
-                    for($i = 0; $i < $research->level; $i++)
-                    {
-                        $temp += ($attacker["attack_value"] + $temp) * ($research->increase_ship_attack / 100);
-                    }
-                    $attacker["final_attack_value"] = $temp;
-                }
-
-                if($research->increase_ship_defense > 0)
-                {
-                    $temp = 0;
-                    for($i = 0; $i < $research->level; $i++)
-                    {
-                        $temp += ($attacker["defense_value"] + $temp) * ($research->increase_ship_defense / 100);
-                    }
-                    $attacker["final_defense_value"] = $temp;
-                }
-
-                if($research->increase_shield_defense > 0)
-                {
-                    $temp = 0;
-                    for($i = 0; $i < $research->level; $i++)
-                    {
-                        $temp += ($attacker["defense_value"] + $temp) * ($research->increase_shield_defense / 100);
-                    }
-                    $attacker["final_shield_value"] = $temp;
-                }
-            }
-        }
-        $attacker["final_attack_value"] += $attacker["attack_value"];
-        $attacker["final_defense_value"] += $attacker["defense_value"] + $attacker["final_shield_value"];
-
-        $attacker["final_attack_value"] = floor($attacker["final_attack_value"]);
-        $attacker["final_defense_value"] = floor($attacker["final_defense_value"]);
-
-        /////////// defender Part
-        foreach($defender["ship"] as $key => $amount)
-        {
-            // check if ship was selected
-            if($amount > 0)
-            {
-                $defender["ship"][$key] = new \stdClass();
-                $defender["ship"][$key] = Ship::getOneById($key);
-                $defender["ship"][$key]->amount = $amount;
-                $defender["attack_value"] += $defender["ship"][$key]->amount * $defender["ship"][$key]->attack;
-                $defender["defense_value"] += $defender["ship"][$key]->amount * $defender["ship"][$key]->defend;
-            } else {
-                unset($defender["ship"][$key]);
-            }
-        }
-
-        foreach($defender["research"] as $key => $amount)
-        {
-            // check lvl of selected research
-            if($amount > 0)
-            {
-                $defender["research"][$key] = new \stdClass();
-                $defender["research"][$key] = Research::getOneById($key);
-                $defender["research"][$key]->level = $amount;
-            }
-            else {
-                unset($defender["research"][$key]);
-            }
-        }
-
-        // calc final values for attack
-        if(count($defender["research"]) > 0)
-        {
-            foreach($defender["research"] as $research)
-            {
-                if($research->increase_ship_attack > 0)
-                {
-                    $temp = 0;
-                    for($i = 0; $i < $research->level; $i++)
-                    {
-                        $temp += ($defender["attack_value"] + $temp) * ($research->increase_ship_attack / 100);
-                    }
-                    $defender["final_attack_value"] = $temp;
-                }
-
-                if($research->increase_ship_defense > 0)
-                {
-                    $temp = 0;
-                    for($i = 0; $i < $research->level; $i++)
-                    {
-                        $temp += ($defender["defense_value"] + $temp) * ($research->increase_ship_defense / 100);
-                    }
-                    $defender["final_defense_value"] = $temp;
-                }
-
-                if($research->increase_shield_defense > 0)
-                {
-                    $temp = 0;
-                    for($i = 0; $i < $research->level; $i++)
-                    {
-                        $temp += ($defender["defense_value"] + $temp) * ($research->increase_shield_defense / 100);
-                    }
-                    $defender["final_shield_value"] = $temp;
-                }
-            }
-        }
-
-        $turretList = [];
-
-        if($defender["def"])
-        {
-            $turretAtt = 0;
-            $turretDef = 0;
-            foreach($defender["def"] as $key => $amount)
-            {
-                $tempTurret = Turret::getOneById($key);
-                $tempListEntry = new \stdClass();
-                $tempListEntry->id = $tempTurret->id;
-                $tempListEntry->turret_name = $tempTurret->turret_name;
-                $tempListEntry->amount = $amount;
-                $turretList[] = $tempListEntry;
-                $turretAtt += $tempTurret->attack * $amount;
-                $turretDef += $tempTurret->defend * $amount;
-            }
-            $defender["final_attack_value"] += $turretAtt;
-            $defender["final_defense_value"] += $turretDef;
-
-        }
-
-        $defender["final_attack_value"] += $defender["attack_value"];
-        $defender["final_defense_value"] += $defender["defense_value"] + $defender["final_shield_value"];
-
-        $defender["final_attack_value"] = floor($defender["final_attack_value"]);
-        $defender["final_defense_value"] = floor($defender["final_defense_value"]);
-
-        // no ships? redirect this punk
-        if(count($attacker["ship"]) <= 0 && count($defender["ship"]) <= 0)
-        {
-            return redirect('/simulation/' . $planet_id);
-        }
-
-        // formular:
-        /*
-         Angriff Flotte 1: Def flotte 2 - Att Flotte 1
-         250000 - 120000 = 130000 RestDef Flotte 2
-         Angriff Flotte 2: Def Flotte 1 - Att Flotte 2
-         299500 - 110000 = 189500 RestDef Flotte 1
-         */
-        $survivedDef = $defender["final_defense_value"] - $attacker["final_attack_value"];
-        if($defender["final_defense_value"] > 0 && $survivedDef > 0)
-        {
-            $survivedDefRatio = 100 / $defender["final_defense_value"] * $survivedDef;
-        } else {
-            $survivedDefRatio = 0;
-        }
-        $defender["survivedDefRatio"] = $survivedDefRatio;
-
-        $survivedAtt = $attacker["final_defense_value"] - $defender["final_attack_value"];
-        if($attacker["final_defense_value"] > 0 && $survivedAtt > 0)
-        {
-            $survivedAttRatio = 100 / $attacker["final_defense_value"] * $survivedAtt;
-        } else {
-            $survivedAttRatio = 0;
-        }
-        $attacker["survivedAttRatio"] = $survivedAttRatio;
-        foreach($attacker["ship"] as $key => $attackerShip)
-        {
-            $attackerShip->newAmount = ceil($attackerShip->amount * ($survivedAttRatio/100));
-        }
-
-        foreach($defender["ship"] as $key => $defenderShip)
-        {
-            $defenderShip->newAmount = ceil($defenderShip->amount * ($survivedDefRatio/100));
-        }
-
-        if($defender["def"]) {
-            foreach($turretList as $key => $defenderTurret)
-            {
-                $defenderTurret->newAmount = ceil($defenderTurret->amount * ($survivedDefRatio/100));
-            }
-
-            $defender["def"] = $turretList;
-        }
-
+        $attacker = $result->attacker;
+        $defender = $result->defender;
         return redirect('/simulation/' . $planet_id)->with('report', [$attacker, $defender]);
     }
 }
