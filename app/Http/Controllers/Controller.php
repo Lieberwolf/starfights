@@ -1899,14 +1899,18 @@ class Controller extends BaseController
 
             foreach($turrets as $turret)
             {
-                $tempTurret = Turret::getOneById($turret->turret_id)->first();
-                $tempListEntry = new \stdClass();
-                $tempListEntry->turret_id = $turret->turret_id;
-                $tempListEntry->turret_name = $tempTurret->turret_name;
-                $tempListEntry->amount = $turret->amount;
-                $turretList[] = $tempListEntry;
-                $turretAtt += $tempTurret->attack * $turret->amount;
-                $turretDef += $tempTurret->defend * $turret->amount;
+                if(property_exists($turret, 'turret_id'))
+                {
+                    $tempTurret = Turret::getOneById($turret->turret_id)->first();
+                    $tempListEntry = new \stdClass();
+                    $tempListEntry->turret_id = $turret->turret_id;
+                    $tempListEntry->turret_name = $tempTurret->turret_name;
+                    $tempListEntry->amount = $turret->amount;
+                    $turretList[] = $tempListEntry;
+                    $turretAtt += $tempTurret->attack * $turret->amount;
+                    $turretDef += $tempTurret->defend * $turret->amount;
+                }
+
             }
 
             $defender["final_attack_value"] += $turretAtt;
