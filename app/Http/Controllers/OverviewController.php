@@ -12,6 +12,7 @@ use App\Models\Fleet as Fleet;
 use App\Models\Defense as Defense;
 use Illuminate\Support\Arr;
 use Symfony\Component\Process\Process;
+use Illuminate\Support\Facades\DB;
 
 class OverviewController extends Controller
 {
@@ -40,13 +41,26 @@ class OverviewController extends Controller
      */
     public function show($planet_id)
     {
+
         // update session with new planet id
         session(['default_planet' => $planet_id]);
         $user_id = Auth::id();
         $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
+
         $planetInformation = Planet::getOneById($planet_id);
         $allUserPlanets = Controller::getAllUserPlanets($user_id);
+
+
+        $count = 0;
+        DB::listen(function($query) use (&$count) {
+            $count++;
+        });
+
         Controller::checkAllProcesses($allUserPlanets);
+
+
+        //dd($count);
+
         $planetaryBuildingProcesses = Planet::getAllPlanetaryBuildingProcess($allUserPlanets);
         $planetaryResearchProcesses = Planet::getAllPlanetaryResearchProcess($allUserPlanets, $user_id);
         $shipsAtPlanet = Fleet::getShipsAtPlanet($planet_id);
@@ -117,7 +131,7 @@ class OverviewController extends Controller
         }
         if($fleetsOnMission)
         {
-            foreach($fleetsOnMission[0] as $process)
+            foreach($fleetsOnMission as $process)
             {
                 if($process)
                 {
@@ -189,6 +203,7 @@ class OverviewController extends Controller
 
         $allPlanetPoints = Planet::getAllPlanetaryPointsByIds($allUserPlanets);
         $allResearchPoints = Research::getAllUserResearchPointsByUserId($user_id);
+
         if(count($planetaryResources)>0)
         {
             return view('overview.show', [

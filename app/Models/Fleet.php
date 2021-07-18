@@ -67,19 +67,25 @@ class Fleet extends Model
     {
 
         $list = false;
-        foreach($allUserPlanets as $planet)
-        {
-            $temp = Fleet::whereNotNull('mission')
-                           ->where('planet_id', $planet->id)
-                           ->get();
-            if(count($temp) > 0)
-            {
-                foreach($temp as $key => $tempChild)
-                {
-                    $temp[$key]->readableSource = Planet::getOneById($tempChild->planet_id);
-                    $temp[$key]->readableTarget = Planet::getOneById($tempChild->target);
-                }
-                $list[] = $temp;
+        $query = '';
+        foreach($allUserPlanets as $key => $planet) {
+            $queryPart = Fleet::whereNotNull('mission')
+                ->where('planet_id', $planet->id);
+            if($key == 0) {
+                $query = $queryPart;
+            } else {
+                $query->union($queryPart);
+            }
+        }
+
+        $query = $query->get();
+        //dd($query);
+
+        if(count($query)>0) {
+            foreach($query as $key => $fleet) {
+                $fleet->readableSource = Planet::getOneById($fleet->planet_id);
+                $fleet->readableTarget = Planet::getOneById($fleet->target);
+                $list[] = $fleet;
             }
         }
 

@@ -174,16 +174,30 @@ class Building extends Model
         }
 
         // get infrastructure
+        $query = '';
+        foreach($buildings as $key => $building) {
+            $queryPart = DB::table('infrastructures AS i')
+                ->where('i.building_id', '=', $building->id)
+                ->where('i.planet_id', '=', $planet_id);
+            if($key == 0) {
+                $query = $queryPart;
+            } else {
+                $query->union($queryPart);
+            }
+        }
+        $query = $query->get();
         foreach($buildings as $key => $building)
         {
-            $temp = DB::table('infrastructures AS i')
-                      ->where('i.building_id', '=', $building->id)
-                      ->where('i.planet_id', '=', $planet_id)
-                      ->first();
 
             $buildings[$key]->buildable = true;
-            $buildings[$key]->infrastructure = $temp;
-            $infrastructure[$building->building_name] = $temp;
+            $buildings[$key]->infrastructure = null;
+            $infrastructure[$building->building_name] = null;
+            foreach($query as $qBuilding) {
+                if($qBuilding->building_id == $building->id) {
+                    $buildings[$key]->infrastructure = $qBuilding;
+                    $infrastructure[$building->building_name] = $qBuilding;
+                }
+            }
 
             foreach(json_decode($building->building_requirements) as $keyB => $req)
             {
