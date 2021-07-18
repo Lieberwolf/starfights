@@ -59,7 +59,6 @@ class Controller extends BaseController
         }
 
         $query = $query->get();
-
         if(count($query) > 0 ) {
             foreach($query as $process)
             {
@@ -67,21 +66,21 @@ class Controller extends BaseController
                 {
                     if(strtotime($process->finished_at) < now()->timestamp)
                     {
-                        $infrastructure = Controller::getLevelForBuildingOnPlanet($planet_id->id, $process->building_id);
+                        $infrastructure = Controller::getLevelForBuildingOnPlanet($process->planet_id, $process->building_id);
 
                         if(!$infrastructure)
                         {
                             // first build of this type
                             $levelUp = DB::table('infrastructures')
                                 ->insert([
-                                    'planet_id' => $planet_id->id,
+                                    'planet_id' => $process->planet_id,
                                     'building_id' => $process->building_id,
                                     'level' => 1
                                 ]);
                         } else {
                             // at least lvl 1
                             $levelUp = DB::table('infrastructures')
-                                ->where('planet_id', $planet_id->id)
+                                ->where('planet_id', $process->planet_id)
                                 ->where('building_id', $process->building_id)
                                 ->update(['level' => ($infrastructure->level + 1)]);
                         }
@@ -89,16 +88,16 @@ class Controller extends BaseController
                         if($levelUp)
                         {
                             $cleanBuildProcesses = DB::table('building_process')
-                                ->where('planet_id', $planet_id->id)
+                                ->where('planet_id', $process->planet_id)
                                 ->delete();
 
                             if($cleanBuildProcesses)
                             {
                                 // pick last needed Info
                                 $buildingData = Building::find($process->building_id);
-                                $planetData = Planet::find($planet_id->id);
+                                $planetData = Planet::find($process->planet_id);
 
-                                self::calcResourceRatesForPlanet($planet_id->id);
+                                self::calcResourceRatesForPlanet($process->planet_id);
 
                                 // emit system message to user
                                 $message = [
@@ -331,14 +330,14 @@ class Controller extends BaseController
                         if($levelUp)
                         {
                             $cleanResearchProcesses = DB::table('research_process')
-                                ->where('planet_id', $planet_id->id)
+                                ->where('planet_id', $process->planet_id)
                                 ->delete();
 
                             if($cleanResearchProcesses)
                             {
                                 // pick last needed Info
                                 $researchData = Research::find($process->research_id);
-                                $planetData = Planet::find($planet_id->id);
+                                $planetData = Planet::find($process->planet_id);
 
                                 // emit system message to user
                                 $message = [
