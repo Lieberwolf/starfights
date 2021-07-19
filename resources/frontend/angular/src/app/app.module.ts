@@ -35,7 +35,6 @@ import { HighscoreComponent } from './ingame/highscore/highscore.component';
 import { SettingsComponent } from './ingame/settings/settings.component';
 import { AllianceComponent } from './ingame/alliance/alliance.component';
 import {OverviewData} from "./shared/overview.service";
-import {NgxSpinnerModule} from "ngx-spinner";
 
 @NgModule({
   declarations: [
