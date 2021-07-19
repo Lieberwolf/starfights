@@ -48,13 +48,7 @@ class OverviewController extends Controller
 
         $planetInformation = Planet::getOneById($planet_id);
         $allUserPlanets = Controller::getAllUserPlanets($user_id);
-
-
-        $count = 0;
-        DB::listen(function($query) use (&$count) {
-            $count++;
-        });
-
+        $allUserPlanets = json_decode($allUserPlanets);
         Controller::checkAllProcesses($allUserPlanets);
 
 
