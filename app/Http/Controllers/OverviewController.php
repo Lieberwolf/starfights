@@ -43,7 +43,6 @@ class OverviewController extends Controller
         $user_id = Auth::id();
         $planetInformation = Planet::getOneById($planet_id);
         $allUserPlanets = Controller::getAllUserPlanets($user_id);
-        $allUserPlanets = json_decode($allUserPlanets);
         Controller::checkAllProcesses($allUserPlanets);
         $planetaryBuildingProcesses = Planet::getAllPlanetaryBuildingProcess($allUserPlanets);
         $planetaryResearchProcesses = Planet::getAllPlanetaryResearchProcess($allUserPlanets, $user_id);

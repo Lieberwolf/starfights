@@ -4,9 +4,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\OverviewController;
-use App\Http\Controllers\ConstructionController;
 use App\Models\Profile;
-use \App\Models\Planet;
+use App\Models\Planet;
+use App\Models\Building;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,4 +39,5 @@ Route::group([
     Route::get('/getAllUserPlanets/{user_id}', [Planet::class, 'getAllUserPlanetsAsJSON']);
     Route::get('/getPlanetaryResourcesByPlanetId/{planet_id}/{user_id}', [Planet::class, 'getPlanetaryResourcesByPlanetId']);
     Route::get('/getOverview/{planet_id}', [OverviewController::class, 'show']);
+    Route::get('/getAllAvailableBuildings/{planet_id}/{user_id}', [Building::class, 'getAllAvailableBuildings']);
 });
