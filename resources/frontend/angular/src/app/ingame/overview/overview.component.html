@@ -1,1 +1,137 @@
-<p>overview works!</p>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12 title-line">
+      Planet "{{data.planet?.information?.planet_name != null ? data.planet?.information?.planet_name : 'Unbenannter Planet'}}"
+      <a [routerLink]="['universe', data.planet?.information?.galaxy, data.planet?.information?.system]">({{data.planet?.information?.galaxy}}:{{data.planet?.information?.system}}:{{data.planet?.information?.planet}})</a>
+      <a [routerLink]="['details', data.planet?.information?.id]">[Details]</a>
+    </div>
+    <div class="col-12 sub-line">
+      <div class="row">
+        <div class="col-6 col-md-2 offset-md-1">
+          <a [routerLink]="['planetary']">Planetenübersicht</a>
+        </div>
+        <div class="col-6 col-md-2">
+          <a [routerLink]="['ships']">Schiffsübersicht</a>
+        </div>
+        <div class="col-12 col-md-2">
+          <a [routerLink]="['notice']">Notizblock</a>
+        </div>
+        <div class="col-6 col-md-2">
+          <a [routerLink]="['statistics']">Kampfstatistik</a>
+        </div>
+        <div class="col-6 col-md-2">
+          <a href="">Handel</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 sub-line">Serverzeit</div>
+    <div class="col-6 sub-line">{{ date }}</div>
+    <ng-container *ngIf="data.planet?.information?.image">
+      <div class="col-12 title-line mt-3">Planetenbild <a [routerLink]="['details', data.planet?.information?.id]">[ändern]</a></div>
+      <div class="col-12 sub-line py-2">
+        <img class="img-fluid" src="{{data.planet?.information?.image}}" title="Toller Planet" alt="Kaputt"/>
+      </div>
+    </ng-container>
+
+    <div class="col-12 title-line mt-3">Schiffe am Planeten</div>
+    <ng-container *ngIf="data.planet?.shipsAtPlanet">
+      <ng-template ngFor let-ship [ngForOf]="data.planet?.shipsAtPlanet">
+        <ng-container *ngIf="ship.amount">
+          <div class="col-6 sub-line">{{ship.ship_name}}</div>
+          <div class="col-6 sub-line">{{ship.amount | number: '0.0-0':'de'}}</div>
+        </ng-container>
+      </ng-template>
+    </ng-container>
+    <ng-container *ngIf="!data.planet?.shipsAtPlanet">
+      <div class="col-12 sub-line">- keine -</div>
+    </ng-container>
+
+    <div class="col-12 title-line mt-3">Verteidigungsanalgen</div>
+    <ng-container *ngIf="data.planet?.turretsAtPlanet">
+      <ng-template ngFor let-turret [ngForOf]="data.planet?.turretsAtPlanet">
+        <ng-container *ngIf="turret.amount">
+          <div class="col-6 sub-line">{{turret.turret_name}}</div>
+          <div class="col-6 sub-line">{{turret.amount | number: '0.0-0':'de'}}</div>
+        </ng-container>
+      </ng-template>
+    </ng-container>
+    <ng-container *ngIf="!data.planet?.turretsAtPlanet">
+      <div class="col-12 sub-line">- keine -</div>
+    </ng-container>
+
+    <div class="col-12 title-line mt-3">Ereignisse</div>
+    <ng-container *ngIf="data.planet?.processes">
+      <div class="col-3 text-right sub-line">Restzeit - [Uhrzeit]</div>
+      <div class="col-9 sub-line">Ereignis</div>
+      <!--
+
+      @foreach($planetaryProcesses as $process)
+            @if($process)
+                @if($process->type == 'building')
+                    <div class="col-3 text-right sub-line" style="background-color:#BD5C03;"><span class="js-add-countdown" data-seconds-to-count="{{strtotime($process->finished_at) - now()->timestamp}}"></span> - [{{date('H:i:s', strtotime($process->finished_at))}}]</div>
+                    <div class="col-9 sub-line" style="background-color:#BD5C03;">
+                        <span>Konstruktion von {{$process->building_name}} Stufe {{$process->level != null ? $process->level + 1 : 1}} auf {{$process->galaxy}}:{{$process->system}}:{{$process->planet}}</span>
+                    </div>
+                @endif
+                @if($process->type == 'research')
+                    <div class="col-3 text-right sub-line" style="background-color:#067D06;"><span class="js-add-countdown" data-seconds-to-count="{{strtotime($process->finished_at) - now()->timestamp}}"></span> - [{{date('H:i:s', strtotime($process->finished_at))}}]</div>
+                    <div class="col-9 sub-line" style="background-color:#067D06;">
+                        <span>Forschung von {{$process->research_name}} Stufe {{$process->level != null ? $process->level + 1 : 1}} auf {{$process->galaxy}}:{{$process->system}}:{{$process->planet}}</span>
+                    </div>
+                @endif
+                @if($process->type == 'foreignFleet' && $process->mission != 0)
+                    <div class="col-3 text-right sub-line {{($process->mission == 2 ? 'transport' : ($process->mission == 3 ? 'espionage' : ($process->mission == 4 ? 'espionage' : ($process->mission == 6 ? 'attack' : ($process->mission == 7 ? 'invasion' : '')))))}}">
+                        <span class="js-add-countdown" data-seconds-to-count="{{strtotime($process->arrival) - now()->timestamp}}"></span> - [{{date('H:i:s', strtotime($process->arrival))}}]
+                    </div>
+                    <div class="col-9 sub-line {{($process->mission == 2 ? 'transport' : ($process->mission == 3 ? 'espionage' : ($process->mission == 4 ? 'espionage' : ($process->mission == 6 ? 'attack' : ($process->mission == 7 ? 'invasion' : '')))))}}">
+                        <span>Flotte von {{$process->galaxy}}:{{$process->system}}:{{$process->planet}} erreicht {{$process->targetPlanet->galaxy}}:{{$process->targetPlanet->system}}:{{$process->targetPlanet->planet}} ({{$process->mission == 1 ? 'Stationierung' : ($process->mission == 2 ? 'Transport' : ($process->mission == 3 ? 'Spionage' : ($process->mission == 4 ? 'Delta Scan' : ($process->mission == 5 ? 'Kolonisierung' : ($process->mission == 6 ? 'Angriff' : ($process->mission == 7 ? 'Invasion' : ''))))))}})</span>
+                    </div>
+                @endif
+                @if($process->type == 'fleet')
+                    @if(strtotime($process->arrival) > now()->timestamp && $process->aborted == null)
+                    <div class="col-3 text-right sub-line" style="background-color:#102f4c;">
+                        <span class="js-add-countdown" data-seconds-to-count="{{strtotime($process->arrival) - now()->timestamp}}"></span> - [{{date('H:i:s', strtotime($process->arrival))}}]
+                    </div>
+                    <div class="col-9 sub-line" style="background-color:#102f4c;">
+                        <span>Flotte von {{$process->readableSource->galaxy}}:{{$process->readableSource->system}}:{{$process->readableSource->planet}} erreicht {{$process->readableTarget->galaxy}}:{{$process->readableTarget->system}}:{{$process->readableTarget->planet}} ({{$process->mission == 1 ? 'Stationierung' : ($process->mission == 2 ? 'Transport' : ($process->mission == 3 ? 'Spionage' : ($process->mission == 4 ? 'Delta Scan' : ($process->mission == 5 ? 'Kolonisierung' : ($process->mission == 6 ? 'Angriff' : ($process->mission == 7 ? 'Invasion' : ''))))))}})</span>
+                    </div>
+                    @endif
+                    @if($process->mission == 0)
+                    <div class="col-3 text-right sub-line" style="background-color:#001e3b;">
+                        <span class="js-add-countdown" data-seconds-to-count="{{strtotime($process->arrival) + (strtotime($process->arrival) - strtotime($process->departure)) - now()->timestamp}}"></span> - [{{date('H:i:s', strtotime($process->arrival) + (strtotime($process->arrival) - strtotime($process->departure)))}}]
+                    </div>
+                    <div class="col-9 sub-line" style="background-color:#001e3b;">
+                        <span>Flotte von {{$process->readableSource->galaxy}}:{{$process->readableSource->system}}:{{$process->readableSource->planet}} kehrt zurück [Mission abgebrochen]</span>
+                    </div>
+                    @else
+                    @if($process->aborted == 1)
+                    <div class="col-3 text-right sub-line" style="background-color:#001e3b;">
+                        <span class="js-add-countdown" data-seconds-to-count="{{strtotime($process->arrival) + (strtotime($process->arrival) - strtotime($process->departure)) - now()->timestamp}}"></span> - [{{date('H:i:s', strtotime($process->arrival) + (strtotime($process->arrival) - strtotime($process->departure)))}}]
+                    </div>
+                    <div class="col-9 sub-line" style="background-color:#001e3b;">
+                        <span>Flotte von {{$process->readableSource->galaxy}}:{{$process->readableSource->system}}:{{$process->readableSource->planet}} erreicht {{$process->readableTarget->galaxy}}:{{$process->readableTarget->system}}:{{$process->readableTarget->planet}} ({{$process->mission == 1 ? 'Stationierung' : ($process->mission == 2 ? 'Transport' : ($process->mission == 3 ? 'Spionage' : ($process->mission == 4 ? 'Delta Scan' : ($process->mission == 5 ? 'Kolonisierung' : ($process->mission == 6 ? 'Angriff' : ($process->mission == 7 ? 'Invasion' : ''))))))}}) [Rückkehr]</span>
+                    </div>
+                    @endif
+                    @endif
+                @endif
+            @endif
+        @endforeach
+
+      -->
+
+    </ng-container>
+    <ng-container *ngIf="!data.planet?.processes">
+      <div class="col-12 sub-line">- keine -</div>
+    </ng-container>
+
+    <div class="col-12 title-line mt-3">Account "{{ 'NAME' }}"</div>
+    <div class="col-6 sub-line">Planeten</div>
+    <div class="col-6 sub-line">{{ 'COUNT' }} (max. {{ data.planet?.maxPlanets }})</div>
+    <div class="col-6 sub-line">Planetenpunkte</div>
+    <div class="col-6 sub-line">{{ data.points?.allPlanetPoints | number:'0.0-0':'de' }}</div>
+    <div class="col-6 sub-line">Forschungspunkte</div>
+    <div class="col-6 sub-line">{{ data.points?.allResearchPoints | number:'0.0-0':'de' }}</div>
+    <div class="col-6 sub-line">Accountpunkte</div>
+    <div class="col-6 sub-line">{{ totalPoints | number:'0.0-0':'de' }}</div>
+  </div>
+</div>

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Research;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Profile as Profile;
 use App\Models\Planet as Planet;
@@ -208,22 +207,12 @@ class OverviewController extends Controller
         if(count($planetaryResources)>0)
         {
             return view('overview.show', [
-                'defaultPlanet' => session('default_planet'),
-                'planetaryResources' => $planetaryResources[0],
-                'planetaryStorage' => $planetaryResources[1],
                 'allUserPlanets' => $allUserPlanets,
-                'activePlanet' => $planet_id,
-                'planetInformation' => $planetInformation,
                 'planetaryBuildingProcesses' => $planetaryBuildingProcesses,
                 'planetaryResearchProcesses' => $planetaryResearchProcesses,
                 'planetaryProcesses' => $planetaryProcesses,
                 'notifications' => $checkForNotifications,
-                'allPlanetPoints' => $allPlanetPoints,
-                'allResearchPoints' => $allResearchPoints,
-                'shipsAtPlanet' => $shipsAtPlanet,
-                'turretsAtPlanet' => $turretsAtPlanet,
                 'attackAlert' => $attackAlert,
-                'maxPlanets' => $maxPlanets,
             ]);
         } else {
             return view('error.index');

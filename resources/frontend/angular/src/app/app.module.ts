@@ -34,6 +34,7 @@ import { SimulationComponent } from './ingame/simulation/simulation.component';
 import { HighscoreComponent } from './ingame/highscore/highscore.component';
 import { SettingsComponent } from './ingame/settings/settings.component';
 import { AllianceComponent } from './ingame/alliance/alliance.component';
+import {OverviewData} from "./shared/overview.service";
 
 @NgModule({
   declarations: [
@@ -81,6 +82,7 @@ import { AllianceComponent } from './ingame/alliance/alliance.component';
       multi: true,
     },
     ProfileService,
+    OverviewData
   ],
   bootstrap: [AppComponent]
 })
