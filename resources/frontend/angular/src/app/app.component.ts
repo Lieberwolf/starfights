@@ -1,5 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import { AuthStateService } from './shared/auth-state.service';
+import {TokenService} from "./shared/token.service";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'sf-root',
@@ -14,6 +16,8 @@ export class AppComponent implements OnInit {
 
   constructor(
     private auth: AuthStateService,
+    public token: TokenService,
+    public router: Router,
   ) {
     this.isSignedIn = false;
     this.hasNotifications = true;

@@ -124,14 +124,14 @@
       <div class="col-12 sub-line">- keine -</div>
     </ng-container>
 
-    <div class="col-12 title-line mt-3">Account "{{ 'NAME' }}"</div>
+    <div class="col-12 title-line mt-3">Account "{{ user_name }}"</div>
     <div class="col-6 sub-line">Planeten</div>
-    <div class="col-6 sub-line">{{ 'COUNT' }} (max. {{ data.planet?.maxPlanets }})</div>
+    <div class="col-6 sub-line">{{ total_planets }} (max. {{ data.planet?.maxPlanets }})</div>
     <div class="col-6 sub-line">Planetenpunkte</div>
     <div class="col-6 sub-line">{{ data.points?.allPlanetPoints | number:'0.0-0':'de' }}</div>
     <div class="col-6 sub-line">Forschungspunkte</div>
     <div class="col-6 sub-line">{{ data.points?.allResearchPoints | number:'0.0-0':'de' }}</div>
     <div class="col-6 sub-line">Accountpunkte</div>
-    <div class="col-6 sub-line">{{ totalPoints | number:'0.0-0':'de' }}</div>
+    <div class="col-6 sub-line">{{ total_points | number:'0.0-0':'de' }}</div>
   </div>
 </div>

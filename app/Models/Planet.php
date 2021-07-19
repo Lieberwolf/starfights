@@ -91,6 +91,11 @@ class Planet extends Model
         return DB::table('planets')->where('user_id', $user_id)->get(['id', 'galaxy', 'system', 'planet']);
     }
 
+    public static function getAllUserPlanetsAsJSON($user_id)
+    {
+        return response()->json(DB::table('planets')->where('user_id', $user_id)->get(['id', 'galaxy', 'system', 'planet']));
+    }
+
     public static function getPlanetaryResourcesByPlanetId($planet_id, $user_id, $buildings = false)
     {
         $lastStand = Planet::find($planet_id);

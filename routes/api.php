@@ -3,8 +3,9 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\OverviewController;
+use App\Http\Controllers\ConstructionController;
+use App\Models\Profile;
 use \App\Models\Planet;
 
 /*
@@ -34,7 +35,8 @@ Route::group([
     'prefix' => 'data'
 
 ], function ($router) {
-    Route::get('/getProfile/{user_id}', [ProfileController::class, 'getProfile']);
+    Route::get('/getProfile/{user_id}', [Profile::class, 'getUsersProfileById']);
+    Route::get('/getAllUserPlanets/{user_id}', [Planet::class, 'getAllUserPlanetsAsJSON']);
     Route::get('/getPlanetaryResourcesByPlanetId/{planet_id}/{user_id}', [Planet::class, 'getPlanetaryResourcesByPlanetId']);
     Route::get('/getOverview/{planet_id}', [OverviewController::class, 'show']);
 });
