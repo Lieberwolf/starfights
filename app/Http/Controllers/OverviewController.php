@@ -43,7 +43,8 @@ class OverviewController extends Controller
         $user_id = Auth::id();
         $planetInformation = Planet::getOneById($planet_id);
         $allUserPlanets = Controller::getAllUserPlanets($user_id);
-        Controller::checkAllProcesses($allUserPlanets);
+        // todo: MUST BE RESOLVED TO SIMPLE SINGLE REQUESTS
+        //Controller::checkAllProcesses($allUserPlanets);
         $planetaryBuildingProcesses = Planet::getAllPlanetaryBuildingProcess($allUserPlanets);
         $planetaryResearchProcesses = Planet::getAllPlanetaryResearchProcess($allUserPlanets, $user_id);
         $shipsAtPlanet = Fleet::getShipsAtPlanet($planet_id);
