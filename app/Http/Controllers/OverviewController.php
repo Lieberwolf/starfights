@@ -10,8 +10,6 @@ use App\Models\Messages as Messages;
 use App\Models\Fleet as Fleet;
 use App\Models\Defense as Defense;
 use Illuminate\Support\Arr;
-use Symfony\Component\Process\Process;
-use Illuminate\Support\Facades\DB;
 
 class OverviewController extends Controller
 {
@@ -40,20 +38,13 @@ class OverviewController extends Controller
      */
     public function show($planet_id)
     {
-
         // update session with new planet id
         session(['default_planet' => $planet_id]);
         $user_id = Auth::id();
-        $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
-
         $planetInformation = Planet::getOneById($planet_id);
         $allUserPlanets = Controller::getAllUserPlanets($user_id);
         $allUserPlanets = json_decode($allUserPlanets);
         Controller::checkAllProcesses($allUserPlanets);
-
-
-        //dd($count);
-
         $planetaryBuildingProcesses = Planet::getAllPlanetaryBuildingProcess($allUserPlanets);
         $planetaryResearchProcesses = Planet::getAllPlanetaryResearchProcess($allUserPlanets, $user_id);
         $shipsAtPlanet = Fleet::getShipsAtPlanet($planet_id);
@@ -124,7 +115,7 @@ class OverviewController extends Controller
         }
         if($fleetsOnMission)
         {
-            foreach($fleetsOnMission as $process)
+            foreach($fleetsOnMission[0] as $process)
             {
                     if($process)
                     {
@@ -197,6 +188,19 @@ class OverviewController extends Controller
 
         $allPlanetPoints = Planet::getAllPlanetaryPointsByIds($allUserPlanets);
         $allResearchPoints = Research::getAllUserResearchPointsByUserId($user_id);
+
+        $result = new \stdClass();
+        $result->planet = new \stdClass();
+        $result->planet->information = $planetInformation;
+        $result->planet->processes = $planetaryProcesses;
+        $result->planet->shipsAtPlanet = json_decode($shipsAtPlanet->ship_types);
+        $result->planet->turretsAtPlanet = json_decode($turretsAtPlanet->turret_types);
+        $result->planet->maxPlanets = $maxPlanets;
+        $result->points = new \stdClass();
+        $result->points->allPlanetPoints = $allPlanetPoints;
+        $result->points->allResearchPoints = $allResearchPoints;
+
+        return response()->json($result);
 
         if(count($planetaryResources)>0)
         {
