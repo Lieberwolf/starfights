@@ -133,32 +133,33 @@ class OverviewController extends Controller
         {
             foreach($fleetsOnMission as $process)
             {
-                if($process)
-                {
-                    $process->type = 'fleet';
-                    if($process->mission == 0)
+                    if($process)
                     {
-                        $process->finished_at = date("Y-m-d H:i:s", strtotime($process->arrival) + (strtotime($process->arrival) - strtotime($process->departure)));
-                    } else {
-                        $process->finished_at = $process->arrival;
+                        $process->type = 'fleet';
+                        if($process->mission == 0)
+                        {
+                            $process->finished_at = date("Y-m-d H:i:s", strtotime($process->arrival) + (strtotime($process->arrival) - strtotime($process->departure)));
+                        } else {
+                            $process->finished_at = $process->arrival;
+                        }
+
+                        $planetaryProcesses[] = $process;
+                        // create extra return entry for return entry
+                        if($process->mission != 0 && $process->mission != 1 && $process->mission != 3 && $process->mission != 5)
+                        {
+                            $processReturn = new \stdClass();
+                            $processReturn->type = $process->type;
+                            $processReturn->arrival = $process->arrival;
+                            $processReturn->departure = $process->departure;
+                            $processReturn->readableSource = $process->readableSource;
+                            $processReturn->readableTarget = $process->readableTarget;
+                            $processReturn->aborted = 1;
+                            $processReturn->mission = $process->mission;
+                            $processReturn->finished_at = date("Y-m-d H:i:s", strtotime($process->arrival) + (strtotime($process->arrival) - strtotime($process->departure)));
+                            $planetaryProcesses[] = $processReturn;
+                        }
                     }
 
-                    $planetaryProcesses[] = $process;
-                    // create extra return entry for return entry
-                    if($process->mission != 0 && $process->mission != 1 && $process->mission != 3 && $process->mission != 5)
-                    {
-                        $processReturn = new \stdClass();
-                        $processReturn->type = $process->type;
-                        $processReturn->arrival = $process->arrival;
-                        $processReturn->departure = $process->departure;
-                        $processReturn->readableSource = $process->readableSource;
-                        $processReturn->readableTarget = $process->readableTarget;
-                        $processReturn->aborted = 1;
-                        $processReturn->mission = $process->mission;
-                        $processReturn->finished_at = date("Y-m-d H:i:s", strtotime($process->arrival) + (strtotime($process->arrival) - strtotime($process->departure)));
-                        $planetaryProcesses[] = $processReturn;
-                    }
-                }
             }
         }
 

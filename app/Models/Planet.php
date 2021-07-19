@@ -227,7 +227,7 @@ class Planet extends Model
         $return[0] = $lastStand;
         $return[1] = $storage;
 
-        return $return;
+        return response()->json($return);
     }
 
     public static function setResourcesForPlanetById($planet_id, $resourceArray)

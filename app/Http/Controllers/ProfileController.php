@@ -75,4 +75,9 @@ class ProfileController extends Controller
             return view('error.index');
         }
     }
+
+    public function getProfile($user_id)
+    {
+        return response()->json(Profile::where('user_id', '=', $user_id)->first());
+    }
 }
