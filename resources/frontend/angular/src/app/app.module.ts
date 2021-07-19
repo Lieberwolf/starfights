@@ -72,7 +72,6 @@ import {NgxSpinnerModule} from "ngx-spinner";
     HttpClientModule,
     ReactiveFormsModule,
     FormsModule,
-    NgxSpinnerModule,
   ],
   providers: [
     {
