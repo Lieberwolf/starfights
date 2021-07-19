@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\OverviewController;
 use \App\Models\Planet;
 
 /*
@@ -35,4 +36,5 @@ Route::group([
 ], function ($router) {
     Route::get('/getProfile/{user_id}', [ProfileController::class, 'getProfile']);
     Route::get('/getPlanetaryResourcesByPlanetId/{planet_id}/{user_id}', [Planet::class, 'getPlanetaryResourcesByPlanetId']);
+    Route::get('/getOverview/{planet_id}', [OverviewController::class, 'show']);
 });

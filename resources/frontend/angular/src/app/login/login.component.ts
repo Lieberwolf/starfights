@@ -47,7 +47,8 @@ export class LoginComponent implements OnInit {
         let user = localStorage.getItem('user') || '';
 
         this.profileService.getProfile(JSON.parse(user).id).subscribe(data => {
-          this.router.navigate(['overview', data.start_planet]);
+          localStorage.setItem('planet_id', data.start_planet);
+          this.router.navigate(['overview']);
         });
       }
     );

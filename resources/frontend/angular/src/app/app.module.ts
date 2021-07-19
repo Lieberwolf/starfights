@@ -18,6 +18,22 @@ import { GamemenuComponent } from './ingame/gamemenu/gamemenu.component';
 import { ResourcesComponent } from './ingame/resources/resources.component';
 import { NotificationComponent } from './ingame/notification/notification.component';
 import { AttacknotificationComponent } from './ingame/attacknotification/attacknotification.component';
+import { ConstructionComponent } from './ingame/construction/construction.component';
+import { ShipyardComponent } from './ingame/shipyard/shipyard.component';
+import { DefenseComponent } from './ingame/defense/defense.component';
+import { ResearchComponent } from './ingame/research/research.component';
+import { MissionComponent } from './ingame/mission/mission.component';
+import { FleetlistComponent } from './ingame/fleetlist/fleetlist.component';
+import { ResourceviewComponent } from './ingame/resourceview/resourceview.component';
+import { MessagesComponent } from './ingame/messages/messages.component';
+import { UniverseComponent } from './ingame/universe/universe.component';
+import { SearchComponent } from './ingame/search/search.component';
+import { TechtreeComponent } from './ingame/techtree/techtree.component';
+import { DatabaseComponent } from './ingame/database/database.component';
+import { SimulationComponent } from './ingame/simulation/simulation.component';
+import { HighscoreComponent } from './ingame/highscore/highscore.component';
+import { SettingsComponent } from './ingame/settings/settings.component';
+import { AllianceComponent } from './ingame/alliance/alliance.component';
 
 @NgModule({
   declarations: [
@@ -31,6 +47,22 @@ import { AttacknotificationComponent } from './ingame/attacknotification/attackn
     ResourcesComponent,
     NotificationComponent,
     AttacknotificationComponent,
+    ConstructionComponent,
+    ShipyardComponent,
+    DefenseComponent,
+    ResearchComponent,
+    MissionComponent,
+    FleetlistComponent,
+    ResourceviewComponent,
+    MessagesComponent,
+    UniverseComponent,
+    SearchComponent,
+    TechtreeComponent,
+    DatabaseComponent,
+    SimulationComponent,
+    HighscoreComponent,
+    SettingsComponent,
+    AllianceComponent,
   ],
   imports: [
     BrowserModule,
