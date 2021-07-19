@@ -140,6 +140,121 @@ class ConstructionController extends Controller
 
     }
 
+    public function showAsJSON($planet_id, $building_id = false)
+    {
+        // update session with new planet id
+        session(['default_planet' => $planet_id]);
+        $user_id = Auth::id();
+        $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
+        $planetInformation = Planet::getOneById($planet_id);
+        $allUserPlanets = Controller::getAllUserPlanets($user_id);
+        Controller::checkAllProcesses($allUserPlanets);
+        $buildingListRaw = Building::getAllAvailableBuildings($planet_id, $user_id);
+        $currentConstruction = Planet::getPlanetaryBuildingProcess($planet_id);
+        $buildingList = Controller::factorizeBuildings($buildingListRaw);
+
+        // check is a build process started
+        if($building_id)
+        {
+            // selected building exists?
+            $selectedBuilding = $buildingList->firstWhere('id', $building_id);
+            if($selectedBuilding)
+            {
+                // check if selected building can be built (resources)
+                if($planetaryResources[0]->fe >= $selectedBuilding->fe && $planetaryResources[0]->lut >= $selectedBuilding->lut && $planetaryResources[0]->cry >= $selectedBuilding->cry && $planetaryResources[0]->h2o >= $selectedBuilding->h2o && $planetaryResources[0]->h2 >= $selectedBuilding->h2)
+                {
+                    $needle = $buildingListRaw->filter(function($value, $key) use ($building_id) {
+                        if($value->id == $building_id)
+                        {
+                            return $value->buildable;
+                        }
+                    });
+
+                    if(count($needle) > 0)
+                    {
+                        //start the build
+                        $started = Building::startBuilding($selectedBuilding, $planet_id);
+                        if($started)
+                        {
+                            // calculate new resources
+                            $planetaryResources[0]->fe -= $selectedBuilding->fe;
+                            $planetaryResources[0]->lut -= $selectedBuilding->lut;
+                            $planetaryResources[0]->cry -= $selectedBuilding->cry;
+                            $planetaryResources[0]->h2o -= $selectedBuilding->h2o;
+                            $planetaryResources[0]->h2 -= $selectedBuilding->h2;
+                            Planet::setResourcesForPlanetById($planet_id, $planetaryResources[0]);
+
+                            return response()->json([
+                                'message' => 'success'
+                            ], 200);
+                        }
+                    } else {
+                        return response()->json([
+                            'message' => 'Building not found'
+                        ], 500);
+                    }
+                } else {
+                    return response()->json([
+                        'message' => 'Not enough resources'
+                    ], 500);
+                }
+            } else {
+                // provide an error
+                return response()->json([
+                    'message' => 'Some Error occurred'
+                ], 500);
+            }
+        }
+
+        $prevPlanet = false;
+        foreach($allUserPlanets as $key => $planet)
+        {
+            if($planet->id == $planet_id)
+            {
+                if(!empty($allUserPlanets[$key-1]))
+                {
+                    $prevPlanet = $allUserPlanets[$key-1];
+                } else {
+                    $prevPlanet = $allUserPlanets[count($allUserPlanets)-1];
+                }
+            }
+        }
+
+        $nextPlanet = false;
+        foreach($allUserPlanets as $key => $planet)
+        {
+            if($planet->id == $planet_id)
+            {
+                if(!empty($allUserPlanets[$key+1]))
+                {
+                    $nextPlanet = $allUserPlanets[$key+1];
+                } else {
+                    $nextPlanet = $allUserPlanets[0];
+                }
+            }
+        }
+
+        if(count($planetaryResources)>0)
+        {
+            return view('construction.show', [
+                'defaultPlanet' => session('default_planet'),
+                'planetaryResources' => $planetaryResources[0],
+                'planetaryStorage' => $planetaryResources[1],
+                'allUserPlanets' => $allUserPlanets,
+                'activePlanet' => $planet_id,
+                'planetInformation' => $planetInformation,
+                'availableBuildings' => $buildingList,
+                'currentConstruction' => $currentConstruction,
+                'prevPlanet' => $prevPlanet,
+                'nextPlanet' => $nextPlanet,
+
+            ]);
+        } else {
+            return view('error.index');
+        }
+
+    }
+
     public function edit($planet_id)
     {
         $user_id = Auth::id();
@@ -166,6 +281,38 @@ class ConstructionController extends Controller
             return redirect('construction/' . $planet_id);
         } else {
             dd('something broke');
+        }
+    }
+    public function editAsJSON($planet_id)
+    {
+        $user_id = Auth::id();
+        $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
+        $buildingList = Building::getAllAvailableBuildings($planet_id, $user_id);
+        $currentConstruction = Planet::getPlanetaryBuildingProcess($planet_id);
+        $buildingListFactorized = Controller::factorizeBuildings($buildingList);
+        $levelResources = $buildingListFactorized->first(function($value) use ($currentConstruction) {
+            return $value->id == $currentConstruction->building_id;
+        });
+
+        // calculate new resources
+        // todo: higher levels => higher cost, it only calculates level 1 costs
+        $planetaryResources[0]->fe += $levelResources->fe;
+        $planetaryResources[0]->lut += $levelResources->lut;
+        $planetaryResources[0]->cry += $levelResources->cry;
+        $planetaryResources[0]->h2o += $levelResources->h2o;
+        $planetaryResources[0]->h2 += $levelResources->h2;
+        Planet::setResourcesForPlanetById($planet_id, $planetaryResources[0]);
+
+        $canceled = Building::cancelBuilding($planet_id);
+        if($canceled)
+        {
+            return response()->json([
+                'message' => 'canceled'
+        ], 200);
+        } else {
+            return response()->json([
+                'message' => 'something broke'
+            ], 500);
         }
     }
 }

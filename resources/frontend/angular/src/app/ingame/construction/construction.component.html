@@ -1,33 +1,35 @@
 <div class="container-fluid">
   <div class="row">
-    <!--
     <div class="col-12 title-line">
-      @if($prevPlanet)
-      <span>
-                <a href="/construction/{{$prevPlanet->id}}"><<</a>
-            </span>
-      @endif
-      <span>Verfügbare Konstruktionen auf {{$planetInformation->galaxy}}:{{$planetInformation->system}}:{{$planetInformation->planet}}</span>
+      <!--
+        @if($prevPlanet)
+        <span>
+                  <a href="/construction/{{$prevPlanet->id}}"><<</a>
+              </span>
+        @endif
+        -->
+
+        <span>Verfügbare Konstruktionen auf {{'GALAXY'}}:{{'SYSTEM'}}:{{'PLANET'}}</span>
+      <!--
       @if($nextPlanet)
-      <span>
-                <a href="/construction/{{$nextPlanet->id}}">>></a>
-            </span>
-      @endif
-    </div>
-    @if($currentConstruction)
-    <div class="col-10 current-process process-entry">
-      <span>Aktuell in Konstruktion: {{$currentConstruction->building_name}} Stufe {{$currentConstruction->infrastructure != null ? $currentConstruction->infrastructure->level + 1 : 1}}</span>
-      <br/>
-      <span>Abgeschlossen in: </span>
-      <span class="js-add-countdown" data-seconds-to-count="{{strtotime($currentConstruction->finished_at) - now()->timestamp}}">-</span>
-      <br/>
-      <span>Fertigstellung: {{ date("d.m.Y H:i:s", strtotime($currentConstruction->finished_at)) }}</span>
-    </div>
-    <div class="col-2 process-action">
-      <a class="process-denied" href="/construction/{{$activePlanet}}/edit">Abbrechen</a>
-    </div>
-    @endif
--->
+        <span>
+                  <a href="/construction/{{$nextPlanet->id}}">>></a>
+              </span>
+        @endif
+        -->
+      </div>
+
+      <ng-container *ngIf="processing && process">
+        <div class="col-10 current-process process-entry">
+          <span>Aktuell in Konstruktion: {{process.building_name}} Stufe {{process.infrastructure != null ? process.infrastructure.level + 1 : 1}}</span>
+          <br/>
+          <span>Fertigstellung: {{ process.finished_at | date:'dd.MM.yyyy, HH:mm:ss':'+0200':'de' }}</span>
+        </div>
+        <div class="col-2 process-action">
+          <a class="process-denied" [routerLink]="['/construction', 'edit']">Abbrechen</a>
+        </div>
+      </ng-container>
+
     <ng-template ngFor let-building [ngForOf]="constructionEntries">
       <ng-container *ngIf="building.buildable">
         <div class="col-10 process-entry">
@@ -57,17 +59,24 @@
         </div>
         <div class="col-2 process-action">
           <!--
-          @if(!currentConstruction && planetaryResources.fe >= building.fe && planetaryResources.lut >= building.lut && planetaryResources.cry >= building.cry && planetaryResources.h2o >= building.h2o && planetaryResources.h2 >= building.h2)
-          <a class="process-start" href="/construction/{{activePlanet}}/{{building.id}}">Konstruktion<br/>Stufe {{building.infrastructure != null ? building.infrastructure.level + 1 : 1}}</a>
-          @else
-          <span class="process-denied">Ausbau</span>
-          @endif
+          @if(planetaryResources.fe >= building.fe && planetaryResources.lut >= building.lut && planetaryResources.cry >= building.cry && planetaryResources.h2o >= building.h2o && planetaryResources.h2 >= building.h2)
           -->
+          <ng-container *ngIf="!processing">
+            <a class="process-start" [routerLink]="['/construction', building.id]">
+              Konstruktion<br/>
+              Stufe {{building.infrastructure.level > 0 ? building.infrastructure.level + 1 : 1}}
+            </a>
+          </ng-container>
+          <ng-container *ngIf="processing">
+            <span class="process-denied">Ausbau</span>
+          </ng-container>
         </div>
       </ng-container>
     </ng-template>
-    
-    
-    
+    <ng-container *ngIf="building_id">
+      <div class="col-12 sub-line">
+        <span>Konstruktion wird gestartet...</span>
+      </div>
+    </ng-container>
   </div>
 </div>

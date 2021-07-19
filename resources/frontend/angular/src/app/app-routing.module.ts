@@ -27,6 +27,7 @@ const routes: Routes = [
   {path: 'register', component: RegisterComponent},
   {path: 'overview', component: OverviewComponent},
   {path: 'construction', component: ConstructionComponent},
+  {path: 'construction/:building_id', component: ConstructionComponent},
   {path: 'shipyard', component: ShipyardComponent},
   {path: 'defense', component: DefenseComponent},
   {path: 'research', component: ResearchComponent},

@@ -26,4 +26,9 @@ class Profile extends Model
     {
         return Profile::where('user_id', $user_id)->first();
     }
+
+    public static function getUsersProfileByIdAsJSON($user_id)
+    {
+        return Profile::where('user_id', $user_id)->first();
+    }
 }
