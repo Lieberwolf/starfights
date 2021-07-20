@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {ConstructionService} from "../../shared/construction.service";
+import {ConstructionService} from "../../shared/services/views/views.module";
 import {ConstructionEntryDataInterface} from "../../shared/interfaces/construction-entry-data-interface";
 import {ActivatedRoute, Router} from "@angular/router";
 import {ConstructionProcessDataInterface} from "../../shared/interfaces/construction-process-data-interface";
