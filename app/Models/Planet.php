@@ -232,6 +232,144 @@ class Planet extends Model
         $return[0] = $lastStand;
         $return[1] = $storage;
 
+        return $return;
+    }
+    public static function getPlanetaryResourcesByPlanetIdAsJSON($planet_id, $user_id, $buildings = false)
+    {
+        $lastStand = Planet::find($planet_id);
+        $buildingsList = Building::getAllAvailableBuildings($planet_id, $user_id, $buildings);
+
+        $storage = new \stdClass();
+        $storage->fe = 10000;
+        $storage->lut = 10000;
+        $storage->cry = 100;
+        $storage->h2o = 10000;
+        $storage->h2 = 1000;
+
+        foreach($buildingsList as $building) {
+            if($building->store_fe > 0) {
+                if($building->infrastructure && $building->infrastructure->level > 0) {
+                    $storage->fe += $building->store_fe * $building->infrastructure->level;
+                }
+            }
+            if($building->store_lut > 0) {
+                if($building->infrastructure && $building->infrastructure->level > 0) {
+                    $storage->lut += $building->store_lut * $building->infrastructure->level;
+                }
+            }
+            if($building->store_cry > 0) {
+                if($building->infrastructure && $building->infrastructure->level > 0) {
+                    $storage->cry += $building->store_cry * $building->infrastructure->level;
+                }
+            }
+            if($building->store_h2o > 0) {
+                if($building->infrastructure && $building->infrastructure->level > 0) {
+                    $storage->h2o += $building->store_h2o * $building->infrastructure->level;
+                }
+            }
+            if($building->store_h2 > 0) {
+                if($building->infrastructure && $building->infrastructure->level > 0) {
+                    $storage->h2 += $building->store_h2 * $building->infrastructure->level;
+                }
+            }
+        }
+
+        $ressFe = [
+            "currentFe" => $lastStand->fe,
+            "goneSeconds" => now()->diffInSeconds($lastStand->updated_at),
+            "feRate" => $lastStand->rate_fe,
+            "perSecond" => $lastStand->rate_fe/3600,
+            "tobeAdded" => ($lastStand->rate_fe/3600)*now()->diffInSeconds($lastStand->updated_at),
+            "newFe" => $lastStand->fe+($lastStand->rate_fe/3600)*now()->diffInSeconds($lastStand->updated_at),
+        ];
+
+        $ressLut = [
+            "currentLut" => $lastStand->lut,
+            "goneSeconds" => now()->diffInSeconds($lastStand->updated_at),
+            "lutRate" => $lastStand->rate_lut,
+            "perSecond" => $lastStand->rate_lut/3600,
+            "tobeAdded" => ($lastStand->rate_lut/3600)*now()->diffInSeconds($lastStand->updated_at),
+            "newLut" => $lastStand->lut+($lastStand->rate_lut/3600)*now()->diffInSeconds($lastStand->updated_at),
+        ];
+
+        $ressCry = [
+            "currentCry" => $lastStand->cry,
+            "goneSeconds" => now()->diffInSeconds($lastStand->updated_at),
+            "cryRate" => $lastStand->rate_cry,
+            "perSecond" => $lastStand->rate_cry/3600,
+            "tobeAdded" => ($lastStand->rate_cry/3600)*now()->diffInSeconds($lastStand->updated_at),
+            "newCry" => $lastStand->cry+($lastStand->rate_cry/3600)*now()->diffInSeconds($lastStand->updated_at),
+        ];
+
+        $ressH2o = [
+            "currentH2o" => $lastStand->h2o,
+            "goneSeconds" => now()->diffInSeconds($lastStand->updated_at),
+            "h2oRate" => $lastStand->rate_h2o,
+            "perSecond" => $lastStand->rate_h2o/3600,
+            "tobeAdded" => ($lastStand->rate_h2o/3600)*now()->diffInSeconds($lastStand->updated_at),
+            "newH2o" => $lastStand->h2o+($lastStand->rate_h2o/3600)*now()->diffInSeconds($lastStand->updated_at),
+        ];
+
+        $ressH2 = [
+            "currentH2" => $lastStand->h2,
+            "goneSeconds" => now()->diffInSeconds($lastStand->updated_at),
+            "h2Rate" => $lastStand->rate_h2,
+            "perSecond" => $lastStand->rate_h2/3600,
+            "tobeAdded" => ($lastStand->rate_h2/3600)*now()->diffInSeconds($lastStand->updated_at),
+            "newH2" => $lastStand->h2+($lastStand->rate_h2/3600)*now()->diffInSeconds($lastStand->updated_at),
+        ];
+
+        if($ressFe["newFe"] <= $storage->fe) {
+            $lastStand->fe = $ressFe['newFe'];
+        } else {
+            $lastStand->fe = $storage->fe;
+        }
+        if($ressLut["newLut"] <= $storage->lut) {
+            $lastStand->lut = $ressLut['newLut'];
+        } else {
+            $lastStand->lut = $storage->lut;
+        }
+        if($ressCry["newCry"] <= $storage->cry) {
+            $lastStand->cry = $ressCry['newCry'];
+        } else {
+            $lastStand->cry = $storage->cry;
+        }
+        if($ressH2o["newH2o"] <= $storage->h2o) {
+            $lastStand->h2o = $ressH2o['newH2o'];
+        } else {
+            $lastStand->h2o = $storage->h2o;
+        }
+        if($ressH2["newH2"] <= $storage->h2) {
+            $lastStand->h2 = $ressH2['newH2'];
+        } else {
+            $lastStand->h2 = $storage->h2;
+        }
+
+        if($lastStand->fe < 0)
+        {
+            $lastStand->fe = 0;
+        }
+        if($lastStand->lut < 0)
+        {
+            $lastStand->lut = 0;
+        }
+        if($lastStand->cry < 0)
+        {
+            $lastStand->cry = 0;
+        }
+        if($lastStand->h2o < 0)
+        {
+            $lastStand->h2o = 0;
+        }
+        if($lastStand->h2 < 0)
+        {
+            $lastStand->h2 = 0;
+        }
+
+        $lastStand->save();
+        $return[0] = $lastStand;
+        $return[1] = $storage;
+
         return response()->json($return);
     }
 
@@ -341,6 +479,31 @@ class Planet extends Model
                 return $building;
             } else {
                 return null;
+            }
+
+    }
+
+    public static function getPlanetaryBuildingProcessAsJSON($planet_id)
+    {
+
+            $building = DB::table('building_process AS bp')
+                ->leftJoin('planets AS p', 'p.id', '=', 'bp.planet_id')
+                ->leftJoin('buildings AS b','b.id','=','bp.building_id')
+                ->where('bp.planet_id', $planet_id)
+                ->first();
+
+            if($building)
+            {
+                $structure = DB::table('infrastructures AS i')
+                               ->where('i.planet_id','=', $planet_id)
+                               ->where('i.building_id','=', $building->building_id)
+                               ->first();
+
+                $building->infrastructure = $structure;
+                $building->secondsRemaining = strtotime($building->finished_at) - now()->timestamp;
+                return response()->json($building);
+            } else {
+                return response()->json(null);
             }
 
     }

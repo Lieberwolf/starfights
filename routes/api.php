@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\OverviewController;
+use App\Http\Controllers\ConstructionController;
 use App\Models\Profile;
 use App\Models\Planet;
 use App\Models\Building;
@@ -35,9 +36,13 @@ Route::group([
     'prefix' => 'data'
 
 ], function ($router) {
-    Route::get('/getProfile/{user_id}', [Profile::class, 'getUsersProfileById']);
+    Route::get('/getProfile/{user_id}', [Profile::class, 'getUsersProfileByIdAsJSON']);
     Route::get('/getAllUserPlanets/{user_id}', [Planet::class, 'getAllUserPlanetsAsJSON']);
-    Route::get('/getPlanetaryResourcesByPlanetId/{planet_id}/{user_id}', [Planet::class, 'getPlanetaryResourcesByPlanetId']);
+    Route::get('/getPlanetaryResourcesByPlanetId/{planet_id}/{user_id}', [Planet::class, 'getPlanetaryResourcesByPlanetIdAsJSON']);
     Route::get('/getOverview/{planet_id}', [OverviewController::class, 'show']);
-    Route::get('/getAllAvailableBuildings/{planet_id}/{user_id}', [Building::class, 'getAllAvailableBuildings']);
+    Route::get('/getAllAvailableBuildings/{planet_id}/{user_id}', [Building::class, 'getAllAvailableBuildingsAsJSON']);
+    Route::get('/startConstruction/{planet_id}/{building_id}', [ConstructionController::class, 'showAsJSON']);
+    Route::get('/getConstruction/{planet_id}', [Planet::class, 'getPlanetaryBuildingProcessAsJSON']);
+    Route::get('/cancelConstruction/{planet_id}', [ConstructionController::class, 'editAsJSON']);
+
 });
