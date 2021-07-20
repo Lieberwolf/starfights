@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
-import { TokenService } from '../shared/token.service';
+import { TokenService } from '../globals/token.service';
+import { Inject} from "@angular/core";
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +13,7 @@ export class AuthStateService {
   userAuthState = this.userState.asObservable();
 
   constructor(
+    @Inject(TokenService)
     public token: TokenService
   ) { }
 

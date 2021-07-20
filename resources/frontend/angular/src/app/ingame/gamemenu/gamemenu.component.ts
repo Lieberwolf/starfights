@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import {AuthStateService} from "../../shared/auth-state.service";
+import {AuthStateService, ProfileService, TokenService} from "../../shared/services/services.module";
 import {ActivatedRoute, Router} from "@angular/router";
-import {TokenService} from "../../shared/token.service";
-import {ProfileService} from "../../shared/profile.service";
 
 @Component({
   selector: 'sf-gamemenu',

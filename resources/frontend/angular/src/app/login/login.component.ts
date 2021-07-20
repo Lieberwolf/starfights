@@ -1,11 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from './../shared/auth.service';
+import { AuthService, AuthStateService, ProfileService, TokenService, PlanetBaseData, PlanetService} from '../shared/services/services.module';
 import { FormBuilder, FormGroup } from "@angular/forms";
-import { TokenService } from '../shared/token.service';
-import { AuthStateService } from '../shared/auth-state.service';
-import {ProfileService} from "../shared/profile.service";
-import {PlanetBaseData, PlanetService} from "../shared/planet.service";
 
 @Component({
   selector: 'sf-login',

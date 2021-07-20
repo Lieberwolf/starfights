@@ -11,9 +11,7 @@ import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import {AuthInterceptor} from "./shared/auth.interceptor";
 import { OverviewComponent } from './ingame/overview/overview.component';
-import {ProfileService} from "./shared/profile.service";
 import { GamemenuComponent } from './ingame/gamemenu/gamemenu.component';
 import { ResourcesComponent } from './ingame/resources/resources.component';
 import { NotificationComponent } from './ingame/notification/notification.component';
@@ -34,7 +32,7 @@ import { SimulationComponent } from './ingame/simulation/simulation.component';
 import { HighscoreComponent } from './ingame/highscore/highscore.component';
 import { SettingsComponent } from './ingame/settings/settings.component';
 import { AllianceComponent } from './ingame/alliance/alliance.component';
-import {OverviewData} from "./shared/overview.service";
+import {ServicesModule, AuthInterceptor, TokenService} from "./shared/services/services.module";
 
 @NgModule({
   declarations: [
@@ -71,6 +69,7 @@ import {OverviewData} from "./shared/overview.service";
     HttpClientModule,
     ReactiveFormsModule,
     FormsModule,
+    ServicesModule,
   ],
   providers: [
     {
@@ -81,8 +80,6 @@ import {OverviewData} from "./shared/overview.service";
       useClass: AuthInterceptor,
       multi: true,
     },
-    ProfileService,
-    OverviewData
   ],
   bootstrap: [AppComponent]
 })

@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import {OverviewData, OverviewService} from "../../shared/overview.service";
+import {Component, Inject, OnInit} from '@angular/core';
+import {OverviewData, OverviewService} from "../../shared/services/services.module";
 
 @Component({
   selector: 'sf-overview',
@@ -15,6 +15,7 @@ export class OverviewComponent implements OnInit {
 
   constructor(
     private overviewService: OverviewService,
+    @Inject(OverviewData)
     public data: OverviewData,
   ) {
     this.planet_id = JSON.parse(localStorage.getItem('planet_id') || '');
