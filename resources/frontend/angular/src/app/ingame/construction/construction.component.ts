@@ -5,7 +5,7 @@ import {Router} from "@angular/router";
 import {ConstructionProcessDataInterface} from "../../shared/interfaces/construction-process-data-interface";
 import {BehaviorSubject} from "rxjs";
 import {ResourceEntryDataInterface} from "../../shared/interfaces/resource-entry-data-interface";
-import {PlanetService, ResourcesService} from "../../shared/services/globals/globals.module";
+import {PlanetBaseData, PlanetService, ResourcesService} from "../../shared/services/globals/globals.module";
 import {LocalStorageService} from "../../shared/services/globals/local-storage.service";
 
 @Component({
@@ -15,6 +15,7 @@ import {LocalStorageService} from "../../shared/services/globals/local-storage.s
 })
 export class ConstructionComponent implements OnInit {
   planet_id: number;
+  planet: PlanetBaseData;
   user_id: number;
   process?: ConstructionProcessDataInterface;
   processing: boolean;
@@ -51,6 +52,7 @@ export class ConstructionComponent implements OnInit {
       }
     };
     this.planet_id = this.localStorage.getItem('planet_id');
+    this.planet = JSON.parse(this.localStorage.getItem('p-' + this.planet_id));
     this.user_id = JSON.parse(this.localStorage.getItem('user') || '').id;
     this.processing = false;
     this.resourcesBS = this.resourceService.getResources();
@@ -61,6 +63,7 @@ export class ConstructionComponent implements OnInit {
     this.planetService.getActivePlanet().then(resolve => {
       resolve.subscribe(data => {
         this.planet_id = data;
+        this.planet = JSON.parse(this.localStorage.getItem('p-' + this.planet_id));
         this.constructionService.getConstruction(this.planet_id).subscribe(data => {
           if(data.id != null) {
             this.process = data;
