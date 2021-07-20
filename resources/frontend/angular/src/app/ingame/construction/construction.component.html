@@ -17,28 +17,32 @@
               </span>
         @endif
         -->
+    </div>
+
+    <ng-container *ngIf="process">
+      <div class="col-10 current-process process-entry">
+        <span>Aktuell in Konstruktion: {{process.building_name}} Stufe {{process.infrastructure != null ? process.infrastructure.level + 1 : 1}}</span>
+        <br/>
+        <span>Fertigstellung: {{ process.finished_at | date:'dd.MM.yyyy, HH:mm:ss':'+0200':'de' }}</span>
       </div>
-
-      <ng-container *ngIf="processing && process">
-        <div class="col-10 current-process process-entry">
-          <span>Aktuell in Konstruktion: {{process.building_name}} Stufe {{process.infrastructure != null ? process.infrastructure.level + 1 : 1}}</span>
-          <br/>
-          <span>Fertigstellung: {{ process.finished_at | date:'dd.MM.yyyy, HH:mm:ss':'+0200':'de' }}</span>
-        </div>
-        <div class="col-2 process-action">
-          <a class="process-denied" [routerLink]="['/construction', 'edit']">Abbrechen</a>
-        </div>
-      </ng-container>
-
+      <div class="col-2 process-action">
+        <span class="process-denied" (click)="cancel()" style="cursor: pointer;">Abbrechen</span>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="processing">
+      <div class="col-12 sub-line">
+        <span>Konstruktion wird gestartet...</span>
+      </div>
+    </ng-container>
     <ng-template ngFor let-building [ngForOf]="constructionEntries">
-      <ng-container *ngIf="building.buildable">
-        <div class="col-10 process-entry">
-          <span>{{building.building_name}} {{building.infrastructure.level > 0 ? '(Stufe ' + building.infrastructure.level + ')' : ''}} <!--<a data-toggle="collapse" href="#collapse{{building.id}}">[Info]</a>--></span>
-          <div class="collapse" id="collapse{{building.id}}">
-            <span>{{building.description.split('---')[0]}}</span>
-          </div>
-          <span>Ausbau auf Stufe {{building.infrastructure.level > 0 ? building.infrastructure.level + 1 : 1}}:</span>
-          <span>
+        <ng-container *ngIf="building.buildable">
+          <div class="col-10 process-entry">
+            <span>{{building.building_name}} {{building.infrastructure.level > 0 ? '(Stufe ' + building.infrastructure.level + ')' : ''}} <!--<a data-toggle="collapse" href="#collapse{{building.id}}">[Info]</a>--></span>
+            <div class="collapse" id="collapse{{building.id}}">
+              <span>{{building.description.split('---')[0]}}</span>
+            </div>
+            <span>Ausbau auf Stufe {{building.infrastructure.level > 0 ? building.infrastructure.level + 1 : 1}}:</span>
+            <span>
             <span *ngIf="building.fe > 0">
               Eisen: {{ building.fe | number:'0.0-0':'de' }}
             </span>
@@ -55,28 +59,24 @@
               Wasserstoff: {{ building.h2 | number:'0.0-0':'de' }}
             </span>
           </span>
-          <span>Dauer: {{building.readableBuildtime}}</span>
-        </div>
-        <div class="col-2 process-action">
-          <!--
-          @if(planetaryResources.fe >= building.fe && planetaryResources.lut >= building.lut && planetaryResources.cry >= building.cry && planetaryResources.h2o >= building.h2o && planetaryResources.h2 >= building.h2)
-          -->
-          <ng-container *ngIf="!processing">
-            <a class="process-start" [routerLink]="['/construction', building.id]">
+            <span>Dauer: {{building.readableBuildtime}}</span>
+          </div>
+          <div class="col-2 process-action">
+            <!--
+            @if(planetaryResources.fe >= building.fe && planetaryResources.lut >= building.lut && planetaryResources.cry >= building.cry && planetaryResources.h2o >= building.h2o && planetaryResources.h2 >= building.h2)
+            -->
+            <ng-container *ngIf="!process && !processing">
+            <span class="process-start" (click)="start(building.id)" style="cursor: pointer;">
               Konstruktion<br/>
               Stufe {{building.infrastructure.level > 0 ? building.infrastructure.level + 1 : 1}}
-            </a>
-          </ng-container>
-          <ng-container *ngIf="processing">
-            <span class="process-denied">Ausbau</span>
-          </ng-container>
-        </div>
-      </ng-container>
-    </ng-template>
-    <ng-container *ngIf="building_id">
-      <div class="col-12 sub-line">
-        <span>Konstruktion wird gestartet...</span>
-      </div>
-    </ng-container>
+            </span>
+            </ng-container>
+            <ng-container *ngIf="process || processing">
+              <span class="process-denied">Ausbau</span>
+            </ng-container>
+          </div>
+        </ng-container>
+      </ng-template>
+
   </div>
 </div>
