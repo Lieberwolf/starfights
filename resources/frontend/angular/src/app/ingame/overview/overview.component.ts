@@ -26,6 +26,22 @@ export class OverviewComponent implements OnInit {
       resolve.subscribe(data => {
         this.planet_id = data;
         if(this.planet_id) {
+          /*
+          // check if data in local storage exist, else get new
+          let prefetchedData = JSON.parse(this.localStorage.getItem('p-' + this.planet_id));
+          if(prefetchedData.data != null) {
+            this.data = prefetchedData.data;
+            this.total_points = prefetchedData.data.points.allPlanetPoints + prefetchedData.data.points.allResearchPoints;
+          }
+          else {
+            this.overviewService.getOverview(this.planet_id).subscribe((data) => {
+              prefetchedData.data = data;
+              this.localStorage.setItem('p-' + this.planet_id, JSON.stringify(prefetchedData));
+              this.data = data;
+              this.total_points = data.points.allPlanetPoints + data.points.allResearchPoints;
+            });
+          }
+          */
           this.overviewService.getOverview(this.planet_id).subscribe((data) => {
             this.data = data;
             this.total_points = data.points.allPlanetPoints + data.points.allResearchPoints;

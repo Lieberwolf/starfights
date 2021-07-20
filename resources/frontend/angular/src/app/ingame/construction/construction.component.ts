@@ -80,20 +80,25 @@ export class ConstructionComponent implements OnInit {
   start(building_id: Number): void {
     this.processing = true;
     this.constructionService.startConstruction(this.planet_id, building_id).subscribe(() => {
-      this.constructionService.getConstruction(this.planet_id).subscribe(data => {
-        this.processing = false;
-        if(data.id != null) {
-          this.process = data;
-        }
-      })
+      this.resourceService.getPlanetaryResourcesByPlanetId(this.planet_id, this.user_id).subscribe(data => {
+        this.resourceService.setResources(data);
+        this.constructionService.getConstruction(this.planet_id).subscribe(data => {
+          this.processing = false;
+          if(data.id != null) {
+            this.process = data;
+          }
+        })
+      });
     });
   }
 
   cancel(): void {
     this.constructionService.cancelConstruction(this.planet_id).subscribe(() => {
-      this.processing = false;
-      this.process = undefined;
+      this.resourceService.getPlanetaryResourcesByPlanetId(this.planet_id, this.user_id).subscribe(data => {
+        this.resourceService.setResources(data);
+          this.processing = false;
+          this.process = undefined;
+      });
     });
   }
-
 }
