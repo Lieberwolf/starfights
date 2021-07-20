@@ -4,7 +4,12 @@
 
     <!-- Errors -->
     <div *ngIf="errors" class="alert alert-danger mt-3">
-      {{ errors }}
+      <pre>
+        <code>
+          {{ errors | json}}
+        </code>
+      </pre>
+     
     </div>
 
     <!-- Login -->

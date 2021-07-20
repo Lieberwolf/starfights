@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import {ResourcesService} from "../../shared/resources.service";
+import {ResourcesService, ProfileService} from "../../shared/services/services.module";
 import {ActivatedRoute} from "@angular/router";
-import {ProfileService} from "../../shared/profile.service";
 
 @Component({
   selector: 'sf-resources',

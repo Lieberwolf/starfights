@@ -192,8 +192,16 @@ class OverviewController extends Controller
         $result->planet = new \stdClass();
         $result->planet->information = $planetInformation;
         $result->planet->processes = $planetaryProcesses;
-        $result->planet->shipsAtPlanet = json_decode($shipsAtPlanet->ship_types);
-        $result->planet->turretsAtPlanet = json_decode($turretsAtPlanet->turret_types);
+        if($shipsAtPlanet){
+            $result->planet->shipsAtPlanet = json_decode($shipsAtPlanet->ship_types);
+        }else {
+            $result->planet->shipsAtPlanet = null;
+        }
+        if($turretsAtPlanet){
+            $result->planet->turretsAtPlanet = json_decode($turretsAtPlanet->turret_types);
+        }else {
+            $result->planet->turretsAtPlanet = null;
+        }
         $result->planet->maxPlanets = $maxPlanets;
         $result->points = new \stdClass();
         $result->points->allPlanetPoints = $allPlanetPoints;

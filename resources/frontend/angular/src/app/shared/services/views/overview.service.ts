@@ -14,6 +14,9 @@ export class TurretEntryData {
   amount?: number;
 }
 
+@Injectable({
+  providedIn: "root"
+})
 export class OverviewData {
   planet?: {
     information?: {
