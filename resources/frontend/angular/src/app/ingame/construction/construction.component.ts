@@ -3,6 +3,9 @@ import {ConstructionService} from "../../shared/services/views/views.module";
 import {ConstructionEntryDataInterface} from "../../shared/interfaces/construction-entry-data-interface";
 import {Router} from "@angular/router";
 import {ConstructionProcessDataInterface} from "../../shared/interfaces/construction-process-data-interface";
+import {BehaviorSubject} from "rxjs";
+import {ResourceEntryDataInterface} from "../../shared/interfaces/resource-entry-data-interface";
+import {ResourcesService} from "../../shared/services/globals/globals.module";
 
 @Component({
   selector: 'sf-construction',
@@ -15,14 +18,43 @@ export class ConstructionComponent implements OnInit {
   process?: ConstructionProcessDataInterface;
   processing: boolean;
   constructionEntries?: Array<ConstructionEntryDataInterface>;
+  resourcesBS: BehaviorSubject<ResourceEntryDataInterface>;
+  resources: ResourceEntryDataInterface;
 
   constructor(
     private constructionService: ConstructionService,
+    private resourceService: ResourcesService,
     public router: Router,
   ) {
+    this.resources = {
+      data: {
+        fe: 0,
+        lut: 0,
+        cry: 0,
+        h2o: 0,
+        h2: 0,
+        rate_fe: 0,
+        rate_lut: 0,
+        rate_cry: 0,
+        rate_h2o: 0,
+        rate_h2: 0,
+      },
+      storages: {
+        fe: 0,
+        lut: 0,
+        cry: 0,
+        h2o: 0,
+        h2: 0,
+      }
+    };
     this.planet_id = JSON.parse(localStorage.getItem('planet_id') || '');
     this.user_id = JSON.parse(localStorage.getItem('user') || '').id;
     this.processing = false;
+
+    this.resourcesBS = this.resourceService.getResources();
+    this.resourcesBS.subscribe((data) => {
+      this.resources = data;
+    });
 
     this.constructionService.getConstruction(this.planet_id).subscribe(data => {
       if(data.id != null) {
@@ -40,7 +72,7 @@ export class ConstructionComponent implements OnInit {
 
   start(building_id: Number): void {
     this.processing = true;
-    this.constructionService.startConstruction(this.planet_id, building_id).subscribe(data => {
+    this.constructionService.startConstruction(this.planet_id, building_id).subscribe(() => {
       this.constructionService.getConstruction(this.planet_id).subscribe(data => {
         this.processing = false;
         if(data.id != null) {
@@ -51,7 +83,7 @@ export class ConstructionComponent implements OnInit {
   }
 
   cancel(): void {
-    this.constructionService.cancelConstruction(this.planet_id).subscribe(data => {
+    this.constructionService.cancelConstruction(this.planet_id).subscribe(() => {
       this.processing = false;
       this.process = undefined;
     });

@@ -62,18 +62,15 @@
             <span>Dauer: {{building.readableBuildtime}}</span>
           </div>
           <div class="col-2 process-action">
-            <!--
-            @if(planetaryResources.fe >= building.fe && planetaryResources.lut >= building.lut && planetaryResources.cry >= building.cry && planetaryResources.h2o >= building.h2o && planetaryResources.h2 >= building.h2)
-            -->
-            <ng-container *ngIf="!process && !processing">
-            <span class="process-start" (click)="start(building.id)" style="cursor: pointer;">
-              Konstruktion<br/>
-              Stufe {{building.infrastructure.level > 0 ? building.infrastructure.level + 1 : 1}}
-            </span>
+            <ng-container *ngIf="!process && !processing && resources.data.fe >= building.fe && resources.data.lut >= building.lut && resources.data.cry >= building.cry && resources.data.h2o >= building.h2o && resources.data.h2 >= building.h2; else denied" >
+              <span class="process-start" (click)="start(building.id)" style="cursor: pointer;">
+                Konstruktion<br/>
+                Stufe {{building.infrastructure.level > 0 ? building.infrastructure.level + 1 : 1}}
+              </span>
             </ng-container>
-            <ng-container *ngIf="process || processing">
+            <ng-template #denied>
               <span class="process-denied">Ausbau</span>
-            </ng-container>
+            </ng-template>
           </div>
         </ng-container>
       </ng-template>

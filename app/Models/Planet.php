@@ -367,8 +367,9 @@ class Planet extends Model
         }
 
         $lastStand->save();
-        $return[0] = $lastStand;
-        $return[1] = $storage;
+        $return = new \stdClass();
+        $return->data = $lastStand;
+        $return->storages = $storage;
 
         return response()->json($return);
     }

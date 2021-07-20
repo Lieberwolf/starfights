@@ -1,22 +1,22 @@
 <div class="resources">
-  <div class="resources-holder" title="{{ resources[0]?.rate_fe | number: '0.0-0':'de' }}/h">
+  <div class="resources-holder" title="{{ resources.data.rate_fe | number: '0.0-0':'de' }}/h">
     <span class="resources-title title-line">Eisen</span>
-    <span class="resources-amount sub-line">{{ resources[0]?.fe | number: '0.0-0':'de' }}</span>
+    <span class="resources-amount sub-line">{{ resources.data.fe | number: '0.0-0':'de' }}</span>
   </div>
-  <div class="resources-holder" title="{{ resources[0]?.rate_lut | number: '0.0-0':'de' }}/h">
+  <div class="resources-holder" title="{{ resources.data.rate_lut | number: '0.0-0':'de' }}/h">
     <span class="resources-title title-line">Lutinum</span>
-    <span class="resources-amount sub-line">{{ resources[0]?.lut | number: '0.0-0':'de' }}</span>
+    <span class="resources-amount sub-line">{{ resources.data.lut | number: '0.0-0':'de' }}</span>
   </div>
-  <div class="resources-holder" title="{{ resources[0]?.rate_cry | number: '0.0-0':'de' }}/h">
+  <div class="resources-holder" title="{{ resources.data.rate_cry | number: '0.0-0':'de' }}/h">
     <span class="resources-title title-line">Kristalle</span>
-    <span class="resources-amount sub-line">{{ resources[0]?.cry | number: '0.0-0':'de' }}</span>
+    <span class="resources-amount sub-line">{{ resources.data.cry | number: '0.0-0':'de' }}</span>
   </div>
-  <div class="resources-holder" title="{{ resources[0]?.rate_h2o | number: '0.0-0':'de' }}/h">
+  <div class="resources-holder" title="{{ resources.data.rate_h2o | number: '0.0-0':'de' }}/h">
     <span class="resources-title title-line">Wasser</span>
-    <span class="resources-amount sub-line">{{ resources[0]?.h2o | number: '0.0-0':'de' }}</span>
+    <span class="resources-amount sub-line">{{ resources.data.h2o | number: '0.0-0':'de' }}</span>
   </div>
-  <div class="resources-holder" title="{{ resources[0]?.rate_h2 | number: '0.0-0':'de' }}/h">
+  <div class="resources-holder" title="{{ resources.data.rate_h2 | number: '0.0-0':'de' }}/h">
     <span class="resources-title title-line">Wasserstoff</span>
-    <span class="resources-amount sub-line">{{ resources[0]?.h2 | number: '0.0-0':'de' }}</span>
+    <span class="resources-amount sub-line">{{ resources.data.h2 | number: '0.0-0':'de' }}</span>
   </div>
 </div>
