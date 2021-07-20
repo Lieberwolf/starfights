@@ -105,29 +105,25 @@
     <li><a [routerLinkActive]="['active']" [routerLink]="['fleetlist']">Flottenliste</a></li>
     <li><a [routerLinkActive]="['active']" [routerLink]="['resources']">Rohstoffe</a></li>
   </ul>
-  <!--
   <ul class="planet-selector">
     <li>
-      <form id="planet-select-form">
-        <form class="form-group">
-          <select data-url="" id="planet-select" class="form-control js-planet-select" name="planet-select" onchange="window.location.href=document.getElementById('planet-select').value;">
-            @foreach($allUserPlanets as $planet)
-            <option {{$planet->id == $activePlanet ? 'selected' : ''}} value="{{$planet->id}}">{{$planet->galaxy}}:{{$planet->system}}:{{$planet->planet}}</option>
-            @endforeach
-          </select>
-          <div class="row planet-triggers">
-            <div class="col-6">
-              <span class="js-trigger-before">&lt;&lt;</span>
-            </div>
-            <div class="col-6">
-              <span class="js-trigger-next">&gt;&gt;</span>
-            </div>
+      <form class="form-group" id="planet-select-form" [formGroup]="selectorForm">
+        <select [(ngModel)]="planet_id" data-url="" id="planet-select" class="form-control js-planet-select" formControlName="planetSelect">
+          <ng-template ngFor let-planet [ngForOf]="planets_all">
+            <option value="{{planet.id}}">{{planet.galaxy}}:{{planet.system}}:{{planet.planet}}</option>
+          </ng-template>
+        </select>
+        <div class="row planet-triggers">
+          <div class="col-6">
+            <span (click)="prev()" style="cursor: pointer;">&lt;&lt;</span>
           </div>
-        </form>
+          <div class="col-6">
+            <span (click)="next()" style="cursor: pointer;">&gt;&gt;</span>
+          </div>
+        </div>
       </form>
     </li>
   </ul>
-  -->
   <ul>
     <li class="heading">Information</li>
     <li><a [routerLinkActive]="['active']" [routerLink]="['messages', 'new']">Nachrichten</a></li>

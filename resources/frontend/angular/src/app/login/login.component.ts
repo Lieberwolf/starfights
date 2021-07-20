@@ -49,9 +49,13 @@ export class LoginComponent implements OnInit {
 
         this.profileService.getProfile(user_id).subscribe(data => {
           this.planetService.setActivePlanet(data.start_planet);
-          this.planetService.getAllUserPlanets(user_id).subscribe(data => {
-            this.localStorage.setItem('allPlanets', JSON.stringify(data));
-            this.router.navigate(['overview']);
+          this.planetService.getAllUserPlanetsInit().then(resolve => {
+            resolve.subscribe(data => {
+              if(data) {
+                this.localStorage.setItem('allPlanets', JSON.stringify(data));
+                this.router.navigate(['overview']);
+              }
+            });
           });
         });
       }

@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import {AuthStateService, ProfileService, TokenService} from "../../shared/services/services.module";
+import {AuthStateService, PlanetService, ProfileService, TokenService} from "../../shared/services/services.module";
 import {ActivatedRoute, Router} from "@angular/router";
 import {LocalStorageService} from "../../shared/services/globals/local-storage.service";
+import {FormBuilder, FormGroup} from "@angular/forms";
 
 @Component({
   selector: 'sf-gamemenu',
@@ -11,6 +12,8 @@ import {LocalStorageService} from "../../shared/services/globals/local-storage.s
 export class GamemenuComponent implements OnInit {
   isSignedIn: boolean;
   planet_id: Number;
+  planets_all: any;
+  selectorForm: FormGroup;
 
   constructor(
     private auth: AuthStateService,
@@ -18,15 +21,59 @@ export class GamemenuComponent implements OnInit {
     public router: Router,
     public token: TokenService,
     private localStorage: LocalStorageService,
+    private planetService: PlanetService,
+    public formBuilder: FormBuilder,
   ) {
     this.isSignedIn = false;
     this.planet_id = this.localStorage.getItem('planet_id');
+    this.planets_all = JSON.parse(this.localStorage.getItem('allPlanets'));
+
+    this.planetService.getActivePlanet().then(resolve => {
+      resolve.subscribe(data => {
+        this.planet_id = data;
+        if(this.planets_all == null) {
+          this.planetService.getAllUserPlanets().then(resolve => {
+            resolve.subscribe(data => {
+              if(data) {
+                this.localStorage.setItem('allPlanets', JSON.stringify(data));
+                this.planets_all = data;
+              }
+            });
+          });
+        }
+      });
+    });
+
+    this.selectorForm = this.formBuilder.group({
+      planetSelect: []
+    });
+    this.selectorForm.valueChanges.subscribe(data => {
+      this.changePlanet(data.planetSelect);
+    });
   }
 
   ngOnInit(): void {
     this.auth.userAuthState.subscribe(val => {
       this.isSignedIn = val;
-    })
+    });
+  }
+
+  // move to prev planet
+  prev(): void {
+    let map = new Map();
+    for(let i = 0; i < this.planets_all.length; i++) {
+      map.set(i, this.planets_all[i]);
+    }
+    console.log(map);
+  }
+
+  // move to next planet
+  next(): void {
+  }
+
+  //change Planet
+  changePlanet(id: number): void {
+    this.planetService.setActivePlanet(id);
   }
 
   // Signout
