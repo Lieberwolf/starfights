@@ -5,7 +5,8 @@ import {Router} from "@angular/router";
 import {ConstructionProcessDataInterface} from "../../shared/interfaces/construction-process-data-interface";
 import {BehaviorSubject} from "rxjs";
 import {ResourceEntryDataInterface} from "../../shared/interfaces/resource-entry-data-interface";
-import {ResourcesService} from "../../shared/services/globals/globals.module";
+import {PlanetService, ResourcesService} from "../../shared/services/globals/globals.module";
+import {LocalStorageService} from "../../shared/services/globals/local-storage.service";
 
 @Component({
   selector: 'sf-construction',
@@ -24,6 +25,8 @@ export class ConstructionComponent implements OnInit {
   constructor(
     private constructionService: ConstructionService,
     private resourceService: ResourcesService,
+    private localStorage: LocalStorageService,
+    private planetService: PlanetService,
     public router: Router,
   ) {
     this.resources = {
@@ -47,22 +50,26 @@ export class ConstructionComponent implements OnInit {
         h2: 0,
       }
     };
-    this.planet_id = JSON.parse(localStorage.getItem('planet_id') || '');
-    this.user_id = JSON.parse(localStorage.getItem('user') || '').id;
+    this.planet_id = this.localStorage.getItem('planet_id');
+    this.user_id = JSON.parse(this.localStorage.getItem('user') || '').id;
     this.processing = false;
-
     this.resourcesBS = this.resourceService.getResources();
     this.resourcesBS.subscribe((data) => {
       this.resources = data;
     });
 
-    this.constructionService.getConstruction(this.planet_id).subscribe(data => {
-      if(data.id != null) {
-        this.process = data;
-        this.processing = false;
-      }
-      this.constructionService.getAllAvailableBuildings(this.planet_id, this.user_id).subscribe(data => {
-        this.constructionEntries = data;
+    this.planetService.getActivePlanet().then(resolve => {
+      resolve.subscribe(data => {
+        this.planet_id = data;
+        this.constructionService.getConstruction(this.planet_id).subscribe(data => {
+          if(data.id != null) {
+            this.process = data;
+            this.processing = false;
+          }
+          this.constructionService.getAllAvailableBuildings(this.planet_id, this.user_id).subscribe(data => {
+            this.constructionEntries = data;
+          });
+        });
       });
     });
   }

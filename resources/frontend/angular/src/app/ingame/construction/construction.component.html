@@ -37,11 +37,11 @@
     <ng-template ngFor let-building [ngForOf]="constructionEntries">
         <ng-container *ngIf="building.buildable">
           <div class="col-10 process-entry">
-            <span>{{building.building_name}} {{building.infrastructure.level > 0 ? '(Stufe ' + building.infrastructure.level + ')' : ''}} <!--<a data-toggle="collapse" href="#collapse{{building.id}}">[Info]</a>--></span>
+            <span>{{building.building_name}} {{building.infrastructure != null ? '(Stufe ' + building.infrastructure.level + ')' : ''}} <!--<a data-toggle="collapse" href="#collapse{{building.id}}">[Info]</a>--></span>
             <div class="collapse" id="collapse{{building.id}}">
               <span>{{building.description.split('---')[0]}}</span>
             </div>
-            <span>Ausbau auf Stufe {{building.infrastructure.level > 0 ? building.infrastructure.level + 1 : 1}}:</span>
+            <span>Ausbau auf Stufe {{building.infrastructure != null ? building.infrastructure.level + 1 : 1}}:</span>
             <span>
             <span *ngIf="building.fe > 0">
               Eisen: {{ building.fe | number:'0.0-0':'de' }}
@@ -65,7 +65,7 @@
             <ng-container *ngIf="!process && !processing && resources.data.fe >= building.fe && resources.data.lut >= building.lut && resources.data.cry >= building.cry && resources.data.h2o >= building.h2o && resources.data.h2 >= building.h2; else denied" >
               <span class="process-start" (click)="start(building.id)" style="cursor: pointer;">
                 Konstruktion<br/>
-                Stufe {{building.infrastructure.level > 0 ? building.infrastructure.level + 1 : 1}}
+                Stufe {{building.infrastructure != null ? building.infrastructure.level + 1 : 1}}
               </span>
             </ng-container>
             <ng-template #denied>

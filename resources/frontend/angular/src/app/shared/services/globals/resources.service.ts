@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {BehaviorSubject, Observable} from "rxjs";
 import {ResourceEntryDataInterface} from "../../interfaces/resource-entry-data-interface";
+import {LocalStorageService} from "./local-storage.service";
+import {PlanetService} from "./planet.service";
 
 @Injectable({
   providedIn: 'root'
@@ -10,12 +12,15 @@ import {ResourceEntryDataInterface} from "../../interfaces/resource-entry-data-i
 export class ResourcesService {
   subject: BehaviorSubject<ResourceEntryDataInterface>;
   resources: ResourceEntryDataInterface;
+  planet_id: number;
+  interval?: number;
 
   constructor(
     private http: HttpClient,
+    private localStorage: LocalStorageService,
+    public planetService: PlanetService,
   ) {
-    const planet_id = parseInt(localStorage.getItem('planet_id') || '');
-    const user = localStorage.getItem('user') || '';
+    const user = this.localStorage.getItem('user') || '';
     const user_id = JSON.parse(user).id;
     this.resources = {
       data: {
@@ -38,11 +43,20 @@ export class ResourcesService {
         h2: 0,
       }
     };
+    this.planet_id = 0;
     this.subject = new BehaviorSubject(this.resources);
-    this.getPlanetaryResourcesByPlanetId(planet_id, user_id).subscribe(data => {
-      this.enableResourceCounters(data);
-      this.resources = data;
-    })
+    this.planetService.getActivePlanet().then(resolve => {
+      resolve.subscribe(data => {
+        if(data) {
+          this.planet_id = data;
+          this.getPlanetaryResourcesByPlanetId(this.planet_id, user_id).subscribe(data => {
+            this.enableResourceCounters(data);
+            this.resources = data;
+          })
+        }
+
+      });
+    });
   }
 
   getResources(): BehaviorSubject<ResourceEntryDataInterface> {
@@ -84,7 +98,9 @@ export class ResourcesService {
       rate: resourceData.data.rate_h2,
     };
 
-    setInterval(() => {
+    this.clearCounter();
+
+    this.interval = setInterval(() => {
       this.resources.data.fe += (fe.rate / (60 * 60 * 2));
       if(this.resources.data.fe > fe.max) {
         this.resources.data.fe = fe.max;
@@ -108,5 +124,9 @@ export class ResourcesService {
 
       this.setResources(this.resources);
     }, 500);
+  }
+
+  clearCounter(): void {
+    clearInterval(this.interval);
   }
 }

@@ -1,5 +1,6 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {OverviewData, OverviewService} from "../../shared/services/services.module";
+import {OverviewData, OverviewService, PlanetService} from "../../shared/services/services.module";
+import {LocalStorageService} from "../../shared/services/globals/local-storage.service";
 
 @Component({
   selector: 'sf-overview',
@@ -15,23 +16,28 @@ export class OverviewComponent implements OnInit {
 
   constructor(
     private overviewService: OverviewService,
+    private localStorage: LocalStorageService,
+    private planetService: PlanetService,
     @Inject(OverviewData)
     public data: OverviewData,
   ) {
-    this.planet_id = JSON.parse(localStorage.getItem('planet_id') || '');
+    this.planet_id = 0;
+    this.planetService.getActivePlanet().then(resolve => {
+      resolve.subscribe(data => {
+        this.planet_id = data;
+        if(this.planet_id) {
+          this.overviewService.getOverview(this.planet_id).subscribe((data) => {
+            this.data = data;
+            this.total_points = data.points.allPlanetPoints + data.points.allResearchPoints;
+          });
+        }
+      });
+    });
 
-    this.user_name = JSON.parse(localStorage.getItem('user') || '').username;
-    this.total_planets = JSON.parse(localStorage.getItem('allPlanets') || '').length;
+    this.user_name = JSON.parse(this.localStorage.getItem('user') || '').username;
+    this.total_planets = JSON.parse(this.localStorage.getItem('allPlanets') || '').length;
     this.total_points = 0;
     this.date = new Date().toDateString();
-
-    if(this.planet_id) {
-      this.overviewService.getOverview(this.planet_id).subscribe((data) => {
-        this.data = data;
-        this.total_points = data.points.allPlanetPoints + data.points.allResearchPoints;
-      });
-    }
-
   }
 
   ngOnInit(): void {

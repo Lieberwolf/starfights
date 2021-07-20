@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {AppModule} from "../../../app.module";
+import {LocalStorageService} from "./local-storage.service";
 
 @Injectable({
   providedIn: 'root'
@@ -12,14 +12,16 @@ export class TokenService {
     register: 'http://127.0.0.1:8000/api/auth/register'
   };
 
-  constructor() { }
+  constructor(
+    private localStorage: LocalStorageService
+  ) { }
 
   handleData(token: string){
-    localStorage.setItem('auth_token', token);
+    this.localStorage.setItem('auth_token', token);
   }
 
   getToken(){
-    return localStorage.getItem('auth_token');
+    return this.localStorage.getItem('auth_token');
   }
 
   // Verify the token
@@ -49,7 +51,7 @@ export class TokenService {
 
   // Remove token
   removeToken(){
-    localStorage.removeItem('auth_token');
+    this.localStorage.removeItem('auth_token');
   }
 
 }
