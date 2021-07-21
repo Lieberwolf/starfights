@@ -60,15 +60,38 @@ export class GamemenuComponent implements OnInit {
 
   // move to prev planet
   prev(): void {
-    let map = new Map();
+    let index = 0;
     for(let i = 0; i < this.planets_all.length; i++) {
-      map.set(i, this.planets_all[i]);
+      if(this.planets_all[i].id == this.planet_id) {
+        index = i;
+      }
     }
-    console.log(map);
+
+    // is there a prev planet?
+    // else get to the last entry
+    if(this.planets_all[(index-1)] != undefined) {
+      this.planetService.setActivePlanet(this.planets_all[(index-1)].id);
+    } else {
+      this.planetService.setActivePlanet(this.planets_all[(this.planets_all.length-1)].id);
+    }
   }
 
   // move to next planet
   next(): void {
+    let index = 0;
+    for(let i = 0; i < this.planets_all.length; i++) {
+      if(this.planets_all[i].id == this.planet_id) {
+        index = i;
+      }
+    }
+
+    // is there a prev planet?
+    // else get to the last entry
+    if(this.planets_all[(index+1)] != undefined) {
+      this.planetService.setActivePlanet(this.planets_all[(index+1)].id);
+    } else {
+      this.planetService.setActivePlanet(this.planets_all[0].id);
+    }
   }
 
   //change Planet

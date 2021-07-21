@@ -52,6 +52,9 @@ export class LoginComponent implements OnInit {
           this.planetService.getAllUserPlanetsInit().then(resolve => {
             resolve.subscribe(data => {
               if(data) {
+                data.forEach((value: any) => {
+                  this.localStorage.setItem('p-' + value.id, JSON.stringify(value));
+                });
                 this.localStorage.setItem('allPlanets', JSON.stringify(data));
                 this.router.navigate(['overview']);
               }

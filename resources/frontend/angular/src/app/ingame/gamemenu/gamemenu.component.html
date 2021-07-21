@@ -1,27 +1,27 @@
 <div class="container-fluid menu mobile d-md-none d-lg-none d-xl-none pos-f s-bottom pb-3 pt-3">
   <div class="row">
     <div class="col-2">
-      <a [routerLink]="['overview']" class="btn btn-secondary">
+      <a [routerLink]="['/overview']" class="btn btn-secondary">
         <i class="fas fa-home"></i>
       </a>
     </div>
     <div class="col-2">
-      <a [routerLink]="['construction']" class="btn btn-secondary">
+      <a [routerLink]="['/construction']" class="btn btn-secondary">
         <i class="fas fa-tools"></i>
       </a>
     </div>
     <div class="col-2">
-      <a [routerLink]="['research']" class="btn btn-secondary">
+      <a [routerLink]="['/research']" class="btn btn-secondary">
         <i class="fas fa-microscope"></i>
       </a>
     </div>
     <div class="col-2">
-      <a [routerLink]="['shipyard']" class="btn btn-secondary">
+      <a [routerLink]="['/shipyard']" class="btn btn-secondary">
         <i class="fas fa-rocket"></i>
       </a>
     </div>
     <div class="col-2">
-      <a [routerLink]="['mission']" class="btn btn-secondary">
+      <a [routerLink]="['/mission']" class="btn btn-secondary">
         <i class="fas fa-file-signature"></i>
       </a>
     </div>
@@ -45,29 +45,29 @@
         <div class="menu">
           <ul>
             <li class="heading">Aktion</li>
-            <li><a [routerLinkActive]="['active']" [routerLink]="['overview']">Übersicht</a></li>
-            <li><a [routerLinkActive]="['active']" [routerLink]="['construction']">Konstruktion</a></li>
-            <li><a [routerLinkActive]="['active']" [routerLink]="['shipyard']">Schiffswerft</a></li>
-            <li><a [routerLinkActive]="['active']" [routerLink]="['defense']">Verteidigung</a></li>
-            <li><a [routerLinkActive]="['active']" [routerLink]="['research']">Forschung</a></li>
-            <li><a [routerLinkActive]="['active']" [routerLink]="['mission']">Mission</a></li>
-            <li><a [routerLinkActive]="['active']" [routerLink]="['fleetlist']">Flottenliste</a></li>
-            <li><a [routerLinkActive]="['active']" [routerLink]="['resources']">Rohstoffe</a></li>
+            <li><a [routerLinkActive]="['active']" [routerLink]="['/overview']">Übersicht</a></li>
+            <li><a [routerLinkActive]="['active']" [routerLink]="['/construction']">Konstruktion</a></li>
+            <li><a [routerLinkActive]="['active']" [routerLink]="['/shipyard']">Schiffswerft</a></li>
+            <li><a [routerLinkActive]="['active']" [routerLink]="['/defense']">Verteidigung</a></li>
+            <li><a [routerLinkActive]="['active']" [routerLink]="['/research']">Forschung</a></li>
+            <li><a [routerLinkActive]="['active']" [routerLink]="['/mission']">Mission</a></li>
+            <li><a [routerLinkActive]="['active']" [routerLink]="['/fleetlist']">Flottenliste</a></li>
+            <li><a [routerLinkActive]="['active']" [routerLink]="['/resources']">Rohstoffe</a></li>
           </ul>
           <ul>
             <li class="heading">Information</li>
-            <li><a [routerLinkActive]="['active']" [routerLink]="['messages', 'new']">Nachrichten</a></li>
-            <li><a [routerLinkActive]="['active']" [routerLink]="['universe']">Universum</a></li>
-            <li><a [routerLinkActive]="['active']" [routerLink]="['search']">Suche</a></li>
-            <li><a [routerLinkActive]="['active']" [routerLink]="['techtree']">Technik</a></li>
-            <li><a [routerLinkActive]="['active']" [routerLink]="['database']">Datenbank</a></li>
-            <li><a [routerLinkActive]="['active']" [routerLink]="['simulation']">Simulation</a></li>
-            <li><a [routerLinkActive]="['active']" [routerLink]="['highscore']">Top 100</a></li>
+            <li><a [routerLinkActive]="['active']" [routerLink]="['/messages', 'new']">Nachrichten</a></li>
+            <li><a [routerLinkActive]="['active']" [routerLink]="['/universe']">Universum</a></li>
+            <li><a [routerLinkActive]="['active']" [routerLink]="['/search']">Suche</a></li>
+            <li><a [routerLinkActive]="['active']" [routerLink]="['/techtree']">Technik</a></li>
+            <li><a [routerLinkActive]="['active']" [routerLink]="['/database']">Datenbank</a></li>
+            <li><a [routerLinkActive]="['active']" [routerLink]="['/simulation']">Simulation</a></li>
+            <li><a [routerLinkActive]="['active']" [routerLink]="['/highscore']">Top 100</a></li>
           </ul>
           <ul>
             <li class="heading">Account</li>
-            <li><a [routerLinkActive]="['active']" [routerLink]="['settings']">Einstellungen</a></li>
-            <li><a [routerLinkActive]="['active']" [routerLink]="['alliance']">Meine Allianz</a></li>
+            <li><a [routerLinkActive]="['active']" [routerLink]="['/settings']">Einstellungen</a></li>
+            <li><a [routerLinkActive]="['active']" [routerLink]="['/alliance']">Meine Allianz</a></li>
             <li><a href="#" (click)="signOut()" *ngIf="isSignedIn">Logout</a></li>
           </ul>
         </div>
@@ -96,14 +96,14 @@
 <div class="menu d-none d-md-block d-lg-block d-xl-block">
   <ul>
     <li class="heading">Aktion</li>
-    <li><a [routerLinkActive]="['active']" [routerLink]="['overview']">Übersicht</a></li>
-    <li><a [routerLinkActive]="['active']" [routerLink]="['construction']">Konstruktion</a></li>
-    <li><a [routerLinkActive]="['active']" [routerLink]="['shipyard']">Schiffswerft</a></li>
-    <li><a [routerLinkActive]="['active']" [routerLink]="['defense']">Verteidigung</a></li>
-    <li><a [routerLinkActive]="['active']" [routerLink]="['research']">Forschung</a></li>
-    <li><a [routerLinkActive]="['active']" [routerLink]="['mission']">Mission</a></li>
-    <li><a [routerLinkActive]="['active']" [routerLink]="['fleetlist']">Flottenliste</a></li>
-    <li><a [routerLinkActive]="['active']" [routerLink]="['resources']">Rohstoffe</a></li>
+    <li><a [routerLinkActive]="['active']" [routerLink]="['/overview']">Übersicht</a></li>
+    <li><a [routerLinkActive]="['active']" [routerLink]="['/construction']">Konstruktion</a></li>
+    <li><a [routerLinkActive]="['active']" [routerLink]="['/shipyard']">Schiffswerft</a></li>
+    <li><a [routerLinkActive]="['active']" [routerLink]="['/defense']">Verteidigung</a></li>
+    <li><a [routerLinkActive]="['active']" [routerLink]="['/research']">Forschung</a></li>
+    <li><a [routerLinkActive]="['active']" [routerLink]="['/mission']">Mission</a></li>
+    <li><a [routerLinkActive]="['active']" [routerLink]="['/fleetlist']">Flottenliste</a></li>
+    <li><a [routerLinkActive]="['active']" [routerLink]="['/resources']">Rohstoffe</a></li>
   </ul>
   <ul class="planet-selector">
     <li>
@@ -126,18 +126,18 @@
   </ul>
   <ul>
     <li class="heading">Information</li>
-    <li><a [routerLinkActive]="['active']" [routerLink]="['messages', 'new']">Nachrichten</a></li>
-    <li><a [routerLinkActive]="['active']" [routerLink]="['universe']">Universum</a></li>
-    <li><a [routerLinkActive]="['active']" [routerLink]="['search']">Suche</a></li>
-    <li><a [routerLinkActive]="['active']" [routerLink]="['techtree']">Technik</a></li>
-    <li><a [routerLinkActive]="['active']" [routerLink]="['database']">Datenbank</a></li>
-    <li><a [routerLinkActive]="['active']" [routerLink]="['simulation']">Simulation</a></li>
-    <li><a [routerLinkActive]="['active']" [routerLink]="['highscore']">Top 100</a></li>
+    <li><a [routerLinkActive]="['active']" [routerLink]="['/messages', 'new']">Nachrichten</a></li>
+    <li><a [routerLinkActive]="['active']" [routerLink]="['/universe']">Universum</a></li>
+    <li><a [routerLinkActive]="['active']" [routerLink]="['/search']">Suche</a></li>
+    <li><a [routerLinkActive]="['active']" [routerLink]="['/techtree']">Technik</a></li>
+    <li><a [routerLinkActive]="['active']" [routerLink]="['/database']">Datenbank</a></li>
+    <li><a [routerLinkActive]="['active']" [routerLink]="['/simulation']">Simulation</a></li>
+    <li><a [routerLinkActive]="['active']" [routerLink]="['/highscore']">Top 100</a></li>
   </ul>
   <ul>
     <li class="heading">Account</li>
-    <li><a [routerLinkActive]="['active']" [routerLink]="['settings']">Einstellungen</a></li>
-    <li><a [routerLinkActive]="['active']" [routerLink]="['alliance']">Meine Allianz</a></li>
+    <li><a [routerLinkActive]="['active']" [routerLink]="['/settings']">Einstellungen</a></li>
+    <li><a [routerLinkActive]="['active']" [routerLink]="['/alliance']">Meine Allianz</a></li>
     <li><a href="#" (click)="signOut()" *ngIf="isSignedIn">Logout</a></li>
   </ul>
 </div>
