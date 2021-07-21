@@ -1,6 +1,9 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, EventEmitter, Inject, Input, OnInit, NgModule} from '@angular/core';
 import {OverviewData, OverviewService, PlanetService} from "../../shared/services/services.module";
 import {LocalStorageService} from "../../shared/services/globals/local-storage.service";
+import {OverviewBuildingProcessDataInterface} from "../../shared/interfaces/overview-building-process-data-interface";
+import {Subject, Subscription, timer} from 'rxjs';
+import {switchMap, take, tap} from "rxjs/operators";
 
 @Component({
   selector: 'sf-overview',
@@ -13,6 +16,11 @@ export class OverviewComponent implements OnInit {
   total_points: number;
   total_planets: number;
   planet_id: number;
+  processes?:Array<OverviewBuildingProcessDataInterface>;
+
+  milliseconds?:number;
+  @Input('data-name') finished:string= "";
+
 
   constructor(
     private overviewService: OverviewService,
@@ -28,6 +36,7 @@ export class OverviewComponent implements OnInit {
         if(this.planet_id) {
           this.overviewService.getOverview(this.planet_id).subscribe((data) => {
             this.data = data;
+            this.processes = this.data.planet?.processes;
             this.total_points = data.points.allPlanetPoints + data.points.allResearchPoints;
           });
         }
@@ -38,9 +47,20 @@ export class OverviewComponent implements OnInit {
     this.total_planets = JSON.parse(this.localStorage.getItem('allPlanets') || '').length;
     this.total_points = 0;
     this.date = new Date().toDateString();
+
+
+
+
   }
 
   ngOnInit(): void {
+    console.log(this.finished)
+
+    setInterval(()=>{
+      this.milliseconds = Date.parse(this.finished) - Date.now()
+    }, 1000);
+
   }
+
 
 }
