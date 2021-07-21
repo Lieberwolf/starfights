@@ -16,7 +16,7 @@ export class OverviewComponent implements OnInit {
   total_points: number;
   total_planets: number;
   planet_id: number;
-  processes?:Array<OverviewBuildingProcessDataInterface>;
+  processes:Array<OverviewBuildingProcessDataInterface>;
 
   milliseconds?:number;
   @Input('data-name') finished:string= "";
@@ -29,6 +29,7 @@ export class OverviewComponent implements OnInit {
     @Inject(OverviewData)
     public data: OverviewData,
   ) {
+    this.processes = [];
     this.planet_id = 0;
     this.planetService.getActivePlanet().then(resolve => {
       resolve.subscribe(data => {
@@ -52,7 +53,10 @@ export class OverviewComponent implements OnInit {
           */
           this.overviewService.getOverview(this.planet_id).subscribe((data) => {
             this.data = data;
-            this.processes = this.data.planet?.processes;
+            this.processes = data.planet.processes;
+            this.processes.forEach(function(process) {
+              process.timeleft = (Date.parse(process.finished_at)/1000) - (Date.now()/1000);
+            });
             this.total_points = data.points.allPlanetPoints + data.points.allResearchPoints;
           });
         }
@@ -64,19 +68,13 @@ export class OverviewComponent implements OnInit {
     this.total_points = 0;
     this.date = new Date().toDateString();
 
-
-
-
   }
 
   ngOnInit(): void {
-    console.log(this.finished)
-
-    setInterval(()=>{
-      this.milliseconds = Date.parse(this.finished) - Date.now()
+    setInterval(() => {
+      this.processes.forEach(function(process) {
+        process.timeleft--;
+      });
     }, 1000);
-
   }
-
-
 }

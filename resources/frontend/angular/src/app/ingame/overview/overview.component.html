@@ -65,10 +65,11 @@
       <div class="col-9 sub-line">Ereignis</div>
 
       <ng-container *ngFor="let entry of data.planet?.processes">
-          <div class="col-3 text-right sub-line" [attr.data-name]="entry.finished_at.split(' ')[1]">
-            {{  milliseconds | date :'mediumTime'}}
-            [{{entry.finished_at.split(" ")[1]}}]</div>
-          <div class="col-9 sub-line">Konstruktion von {{entry.building_name}} auf {{entry.galaxy}}:{{entry.system}}:{{entry.planet}}</div>
+        <div class="col-3 text-right sub-line" style="background-color: #BD5C03;">
+          <span>{{  entry.timeleft | timecounter }}</span>
+          [{{entry.finished_at.split(" ")[1]}}]
+        </div>
+        <div class="col-9 sub-line" style="background-color: #BD5C03;">Konstruktion von {{entry.building_name}} auf {{entry.galaxy}}:{{entry.system}}:{{entry.planet}}</div>
 
       </ng-container>
 

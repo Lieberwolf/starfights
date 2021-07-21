@@ -31,13 +31,13 @@ export class PlanetService {
 
   async getAllUserPlanetsInit(): Promise<BehaviorSubject<any>> {
 
-    this.http.get('http://127.0.0.1:8000/api/data/getAllUserPlanets/' + JSON.parse(this.localStorage.getItem('user')).id).subscribe((data) => {
-      this.planet_all_subject.next(data);
-      this.planet_all = data;
-      this.localStorage.setItem('allPlanets', JSON.stringify(data));
+    return new Promise(resolve => {
+      this.http.get('http://127.0.0.1:8000/api/data/getAllUserPlanets/' + JSON.parse(this.localStorage.getItem('user')).id).subscribe((data) => {
+        this.planet_all_subject.next(data);
+        this.planet_all = data;
+        this.localStorage.setItem('allPlanets', JSON.stringify(data));
+      });
     });
-
-    return this.planet_all_subject;
   }
 
   async getAllUserPlanets(): Promise<BehaviorSubject<any>> {

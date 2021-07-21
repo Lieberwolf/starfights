@@ -32,7 +32,8 @@ import { SimulationComponent } from './ingame/simulation/simulation.component';
 import { HighscoreComponent } from './ingame/highscore/highscore.component';
 import { SettingsComponent } from './ingame/settings/settings.component';
 import { AllianceComponent } from './ingame/alliance/alliance.component';
-import {ServicesModule, AuthInterceptor, TokenService} from "./shared/services/services.module";
+import {ServicesModule, AuthInterceptor} from "./shared/services/services.module";
+import { TimecounterPipe } from './shared/pipes/timecounter.pipe';
 
 @NgModule({
   declarations: [
@@ -62,6 +63,7 @@ import {ServicesModule, AuthInterceptor, TokenService} from "./shared/services/s
     HighscoreComponent,
     SettingsComponent,
     AllianceComponent,
+    TimecounterPipe,
   ],
   imports: [
     BrowserModule,
