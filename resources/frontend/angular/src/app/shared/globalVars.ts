@@ -68,6 +68,7 @@ export class GlobalVars {
 
   // GETTERS AND SETTERS
   getUser(): BehaviorSubject<User> {
+    console.log('user', this.user.observers);
     return this.user;
   }
 
@@ -104,6 +105,7 @@ export class GlobalVars {
   }
 
   getResources(): BehaviorSubject<ResourceEntryDataInterface> {
+    console.log('res', this.resources.observers);
     return this.resources;
   }
 

@@ -6,7 +6,6 @@ import {Observable} from "rxjs";
   providedIn: 'root'
 })
 export class ConstructionService {
-
   constructor(private http: HttpClient) { }
 
   getAllAvailableBuildings(planet_id: number | undefined, user_id: number | undefined): Observable<any> {

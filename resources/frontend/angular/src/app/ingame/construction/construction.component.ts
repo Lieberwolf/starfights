@@ -4,8 +4,7 @@ import {ConstructionEntryDataInterface} from "../../shared/interfaces/constructi
 import {Router} from "@angular/router";
 import {ConstructionProcessDataInterface} from "../../shared/interfaces/construction-process-data-interface";
 import {ResourceEntryDataInterface} from "../../shared/interfaces/resource-entry-data-interface";
-import {PlanetBaseData, PlanetService, ResourcesService} from "../../shared/services/globals/globals.module";
-import {LocalStorageService} from "../../shared/services/globals/local-storage.service";
+import {PlanetBaseData, ResourcesService} from "../../shared/services/globals/globals.module";
 import {GlobalVars} from "../../shared/globalVars";
 
 @Component({
