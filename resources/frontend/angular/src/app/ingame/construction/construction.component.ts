@@ -3,10 +3,10 @@ import {ConstructionService} from "../../shared/services/views/views.module";
 import {ConstructionEntryDataInterface} from "../../shared/interfaces/construction-entry-data-interface";
 import {Router} from "@angular/router";
 import {ConstructionProcessDataInterface} from "../../shared/interfaces/construction-process-data-interface";
-import {BehaviorSubject} from "rxjs";
 import {ResourceEntryDataInterface} from "../../shared/interfaces/resource-entry-data-interface";
 import {PlanetBaseData, PlanetService, ResourcesService} from "../../shared/services/globals/globals.module";
 import {LocalStorageService} from "../../shared/services/globals/local-storage.service";
+import {GlobalVars} from "../../shared/globalVars";
 
 @Component({
   selector: 'sf-construction',
@@ -14,21 +14,19 @@ import {LocalStorageService} from "../../shared/services/globals/local-storage.s
   styleUrls: ['./construction.component.scss']
 })
 export class ConstructionComponent implements OnInit {
-  planet_id: number;
-  planet: PlanetBaseData;
-  user_id: number;
+  planet_id?: number;
+  planet?: PlanetBaseData;
+  user_id: number | undefined;
   process?: ConstructionProcessDataInterface;
   processing: boolean;
   constructionEntries?: Array<ConstructionEntryDataInterface>;
-  resourcesBS: BehaviorSubject<ResourceEntryDataInterface>;
   resources: ResourceEntryDataInterface;
 
   constructor(
     private constructionService: ConstructionService,
     private resourceService: ResourcesService,
-    private localStorage: LocalStorageService,
-    private planetService: PlanetService,
     public router: Router,
+    public globalVars: GlobalVars
   ) {
     this.resources = {
       data: {
@@ -51,44 +49,55 @@ export class ConstructionComponent implements OnInit {
         h2: 0,
       }
     };
-    this.planet_id = this.localStorage.getItem('planet_id');
-    this.planet = JSON.parse(this.localStorage.getItem('p-' + this.planet_id));
-    this.user_id = JSON.parse(this.localStorage.getItem('user') || '').id;
     this.processing = false;
-    this.resourcesBS = this.resourceService.getResources();
-    this.resourcesBS.subscribe((data) => {
-      this.resources = data;
-    });
 
-    this.planetService.getActivePlanet().then(resolve => {
-      resolve.subscribe(data => {
-        this.planet_id = data;
-        this.planet = JSON.parse(this.localStorage.getItem('p-' + this.planet_id));
-        this.constructionService.getConstruction(this.planet_id).subscribe(data => {
-          if(data.id != null) {
-            this.process = data;
-            this.processing = false;
+    this.globalVars.getUser().subscribe(user => {
+      if(user) {
+        this.user_id = user.id;
+        this.globalVars.getResources().subscribe(resources => {
+          if(resources) {
+            this.resources = resources;
+            this.globalVars.getPlanetId().subscribe(planet_id => {
+              if(planet_id) {
+                this.planet_id = planet_id;
+                this.constructionService.getConstruction(planet_id).subscribe(construction => {
+                  /**
+                   * if a building is currently build, this states true
+                   */
+                  if(Object.keys(construction).length) {
+                    this.process = construction;
+                    this.processing = false;
+                  }
+                  this.constructionService.getAllAvailableBuildings(this.planet_id, this.user_id).subscribe(data => {
+                    this.constructionEntries = data;
+                  });
+                });
+              } else {
+                console.log('Error getting planet_id in construction component');
+              }
+            });
+          } else {
+            console.log('Error getting resources in construction component');
           }
-          this.constructionService.getAllAvailableBuildings(this.planet_id, this.user_id).subscribe(data => {
-            this.constructionEntries = data;
-          });
         });
-      });
+      } else {
+        console.log('Error getting user in construction component');
+      }
     });
   }
 
   ngOnInit(): void {
   }
 
-  start(building_id: Number): void {
+  start(building_id: number): void {
     this.processing = true;
     this.constructionService.startConstruction(this.planet_id, building_id).subscribe(() => {
-      this.resourceService.getPlanetaryResourcesByPlanetId(this.planet_id, this.user_id).subscribe(data => {
-        this.resourceService.setResources(data);
-        this.constructionService.getConstruction(this.planet_id).subscribe(data => {
+      this.resourceService.getPlanetaryResourcesByPlanetId(this.planet_id, this.user_id).subscribe(resources => {
+        this.globalVars.setResources(resources);
+        this.constructionService.getConstruction(this.planet_id).subscribe(construction => {
           this.processing = false;
-          if(data.id != null) {
-            this.process = data;
+          if(construction.id != null) {
+            this.process = construction;
           }
         })
       });
@@ -97,8 +106,8 @@ export class ConstructionComponent implements OnInit {
 
   cancel(): void {
     this.constructionService.cancelConstruction(this.planet_id).subscribe(() => {
-      this.resourceService.getPlanetaryResourcesByPlanetId(this.planet_id, this.user_id).subscribe(data => {
-        this.resourceService.setResources(data);
+      this.resourceService.getPlanetaryResourcesByPlanetId(this.planet_id, this.user_id).subscribe(resources => {
+        this.globalVars.setResources(resources);
           this.processing = false;
           this.process = undefined;
       });

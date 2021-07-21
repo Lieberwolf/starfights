@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 
 // User interface
 export class User {
+  id?: number;
   username?: String;
   email?: String;
   password?: String;

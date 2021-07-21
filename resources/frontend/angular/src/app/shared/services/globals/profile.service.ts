@@ -10,18 +10,7 @@ export class ProfileService {
 
   constructor(private http: HttpClient) { }
 
-  getProfile(user_id: Number): Observable<any> {
+  getProfile(user_id: number | undefined): Observable<any> {
     return this.http.get('http://127.0.0.1:8000/api/data/getProfile/' + user_id);
   }
-
-  getStartPlanet(user_id: Number): Promise<any> {
-
-    return new Promise(resolve => {
-      this.getProfile(user_id).subscribe(data => {
-        resolve(data.start_planet);
-      });
-    });
-
-  }
-
 }

@@ -1,27 +1,23 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from "@angular/common/http";
-import {BehaviorSubject, Observable} from "rxjs";
+import {Observable} from "rxjs";
 import {ResourceEntryDataInterface} from "../../interfaces/resource-entry-data-interface";
-import {LocalStorageService} from "./local-storage.service";
-import {PlanetService} from "./planet.service";
+import {GlobalVars} from "../../globalVars";
 
 @Injectable({
   providedIn: 'root'
 })
 
 export class ResourcesService {
-  subject: BehaviorSubject<ResourceEntryDataInterface>;
   resources: ResourceEntryDataInterface;
   planet_id: number;
   interval?: number;
 
   constructor(
     private http: HttpClient,
-    private localStorage: LocalStorageService,
-    public planetService: PlanetService,
+    public globalVars: GlobalVars,
   ) {
-    const user = this.localStorage.getItem('user') || '';
-    const user_id = JSON.parse(user).id;
+    this.planet_id = 0;
     this.resources = {
       data: {
         fe: 0,
@@ -43,32 +39,31 @@ export class ResourcesService {
         h2: 0,
       }
     };
-    this.planet_id = 0;
-    this.subject = new BehaviorSubject(this.resources);
-    this.planetService.getActivePlanet().then(resolve => {
-      resolve.subscribe(data => {
-        if(data) {
-          this.planet_id = data;
-          this.getPlanetaryResourcesByPlanetId(this.planet_id, user_id).subscribe(data => {
-            this.enableResourceCounters(data);
-            this.resources = data;
-          })
-        }
-
-      });
+    this.globalVars.getUser().subscribe(user => {
+      if(user) {
+        this.globalVars.getPlanetId().subscribe(planet_id => {
+          if(planet_id) {
+            this.planet_id = planet_id;
+            this.getPlanetaryResourcesByPlanetId(planet_id, user.id).subscribe(resources => {
+              if(resources) {
+                this.globalVars.setResources(resources);
+                this.resources = resources;
+                //this.enableResourceCounters(resources);
+              } else {
+                console.log('Error getting resources in ResourceService');
+              }
+            });
+          } else {
+            console.log('Error getting planet in ResourceService');
+          }
+        });
+      } else {
+        console.log('Error getting user in ResourceService');
+      }
     });
   }
 
-  getResources(): BehaviorSubject<ResourceEntryDataInterface> {
-    return this.subject;
-  }
-
-  setResources(data: ResourceEntryDataInterface): void {
-    this.subject.next(data);
-    this.resources = data;
-  }
-
-  getPlanetaryResourcesByPlanetId(planet_id: Number, user_id: Number): Observable<any> {
+  getPlanetaryResourcesByPlanetId(planet_id: number | undefined, user_id: number | undefined): Observable<any> {
     return this.http.get('http://127.0.0.1:8000/api/data/getPlanetaryResourcesByPlanetId/' + planet_id + '/' + user_id);
   }
 
@@ -121,8 +116,8 @@ export class ResourcesService {
       if(this.resources.data.h2 > h2.max) {
         this.resources.data.h2 = h2.max;
       }
-
-      this.setResources(this.resources);
+      console.log('interval?');
+      this.globalVars.setResources(this.resources);
     }, 500);
   }
 

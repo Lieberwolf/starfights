@@ -1,8 +1,16 @@
+import {GlobalVars} from "../shared/globalVars";
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService, AuthStateService, ProfileService, TokenService, PlanetBaseData, PlanetService} from '../shared/services/services.module';
+import {
+  AuthService,
+  AuthStateService,
+  ProfileService,
+  TokenService,
+  PlanetBaseData,
+  PlanetService,
+  ResourcesService
+} from '../shared/services/services.module';
 import { FormBuilder, FormGroup } from "@angular/forms";
-import {LocalStorageService} from "../shared/services/globals/local-storage.service";
 
 @Component({
   selector: 'sf-login',
@@ -15,6 +23,7 @@ export class LoginComponent implements OnInit {
   errors = null;
 
   constructor(
+    public globalVars: GlobalVars,
     public router: Router,
     public fb: FormBuilder,
     public authService: AuthService,
@@ -22,7 +31,7 @@ export class LoginComponent implements OnInit {
     private token: TokenService,
     private authState: AuthStateService,
     private planetService: PlanetService,
-    private localStorage: LocalStorageService,
+    private resourceService: ResourcesService,
   ) {
     this.loginForm = this.fb.group({
       username: [],
@@ -36,7 +45,7 @@ export class LoginComponent implements OnInit {
     this.authService.login(this.loginForm.value).subscribe(
       result => {
         this.responseHandler(result.access_token);
-        this.localStorage.setItem('user', JSON.stringify(result.user));
+        this.globalVars.setUser(result.user);
       },
       error => {
         this.errors = error.error;
@@ -44,22 +53,30 @@ export class LoginComponent implements OnInit {
         this.authState.setAuthState(true);
         this.loginForm.reset();
 
-        let user = this.localStorage.getItem('user') || '';
-        let user_id = JSON.parse(user).id;
-
-        this.profileService.getProfile(user_id).subscribe(data => {
-          this.planetService.setActivePlanet(data.start_planet);
-          this.planetService.getAllUserPlanetsInit().then(resolve => {
-            resolve.subscribe(data => {
-              if(data) {
-                data.forEach((value: any) => {
-                  this.localStorage.setItem('p-' + value.id, JSON.stringify(value));
-                });
-                this.localStorage.setItem('allPlanets', JSON.stringify(data));
-                this.router.navigate(['overview']);
-              }
-            });
-          });
+        this.globalVars.getUser().subscribe(user => {
+          this.profileService.getProfile(user.id).subscribe(profile => {
+            if(profile) {
+              this.globalVars.setProfile(profile);
+              this.globalVars.setPlanetId(profile.start_planet);
+              this.planetService.getAllUserPlanetsInit(user.id).subscribe(planets => {
+                if(planets) {
+                  this.globalVars.setPlanets(planets);
+                  this.resourceService.getPlanetaryResourcesByPlanetId(profile.start_planet, user.id).subscribe(resources => {
+                    if(resources) {
+                      this.globalVars.setResources(resources);
+                      this.router.navigate(['/overview']);
+                    } else {
+                      console.log('Error while getting resources in LoginComponent');
+                    }
+                  });
+                } else {
+                  console.log('Error while getting planets in LoginComponent');
+                }
+              });
+            } else {
+              console.log('Error while getting profile in LoginComponent');
+            }
+          })
         });
       }
     );

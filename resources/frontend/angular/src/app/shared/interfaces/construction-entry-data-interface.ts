@@ -1,5 +1,5 @@
 export interface ConstructionEntryDataInterface {
-  id: Number,
+  id: number,
   buildable: Boolean,
   readableBuildtime: String,
   building_name: String,

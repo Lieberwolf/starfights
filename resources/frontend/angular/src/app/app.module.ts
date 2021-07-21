@@ -34,6 +34,7 @@ import { SettingsComponent } from './ingame/settings/settings.component';
 import { AllianceComponent } from './ingame/alliance/alliance.component';
 import {ServicesModule, AuthInterceptor} from "./shared/services/services.module";
 import { TimecounterPipe } from './shared/pipes/timecounter.pipe';
+import {GlobalVars} from "./shared/globalVars";
 
 @NgModule({
   declarations: [
@@ -82,11 +83,18 @@ import { TimecounterPipe } from './shared/pipes/timecounter.pipe';
       useClass: AuthInterceptor,
       multi: true,
     },
+    GlobalVars
   ],
   bootstrap: [AppComponent]
 })
 export class AppModule {
-  constructor() {
+  constructor(
+    public globalVars: GlobalVars,
+  ) {
     registerLocaleData(localeDe);
+    this.globalVars.getPlanetId().subscribe(val => {
+      console.log('from AppModule: ', val);
+    });
+    this.globalVars.enableCounters();
   }
 }

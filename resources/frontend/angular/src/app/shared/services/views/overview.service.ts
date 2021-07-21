@@ -45,7 +45,7 @@ export class OverviewService {
 
   constructor(private http: HttpClient) { }
 
-  getOverview(planet_id: Number): Observable<any> {
+  getOverview(planet_id: number | undefined): Observable<any> {
     return this.http.get('http://127.0.0.1:8000/api/data/getOverview/' + planet_id);
   }
 }

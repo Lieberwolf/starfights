@@ -29,27 +29,25 @@ export class PlanetService {
     this.planet_id_subject = new BehaviorSubject(this.planet_id);
   }
 
-  async getAllUserPlanetsInit(): Promise<BehaviorSubject<any>> {
-
-    return new Promise(resolve => {
-      this.http.get('http://127.0.0.1:8000/api/data/getAllUserPlanets/' + JSON.parse(this.localStorage.getItem('user')).id).subscribe((data) => {
-        this.planet_all_subject.next(data);
-        this.planet_all = data;
-        this.localStorage.setItem('allPlanets', JSON.stringify(data));
-      });
-    });
+  getAllUserPlanetsInit(user_id: number | undefined): Observable<any> {
+    if(user_id) {
+      return this.http.get('http://127.0.0.1:8000/api/data/getAllUserPlanets/' + user_id);
+    } else {
+      return this.http.get('');
+    }
   }
 
   async getAllUserPlanets(): Promise<BehaviorSubject<any>> {
     return this.planet_all_subject;
   }
 
-  async getActivePlanet(): Promise<BehaviorSubject<number>> {
-    return this.planet_id_subject;
+  getActivePlanet(): number {
+    return this.localStorage.getItem('planet_id');
   }
-
+/*
   setActivePlanet(val: number): void {
     this.localStorage.setItem('planet_id', val);
     this.planet_id_subject.next(val);
   }
+  */
 }

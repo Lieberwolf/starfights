@@ -1,3 +1,4 @@
+import {GlobalVars} from "../../shared/globalVars";
 import { Component, OnInit } from '@angular/core';
 import {AuthStateService, PlanetService, ProfileService, TokenService} from "../../shared/services/services.module";
 import {ActivatedRoute, Router} from "@angular/router";
@@ -11,7 +12,7 @@ import {FormBuilder, FormGroup} from "@angular/forms";
 })
 export class GamemenuComponent implements OnInit {
   isSignedIn: boolean;
-  planet_id: Number;
+  planet_id?: Number;
   planets_all: any;
   selectorForm: FormGroup;
 
@@ -23,26 +24,41 @@ export class GamemenuComponent implements OnInit {
     private localStorage: LocalStorageService,
     private planetService: PlanetService,
     public formBuilder: FormBuilder,
+    public globalVars: GlobalVars,
   ) {
     this.isSignedIn = false;
+    this.globalVars.getPlanetId().subscribe(planet_id => {
+      if(planet_id) {
+        this.planet_id = planet_id;
+        this.globalVars.getPlanets().subscribe(planets => {
+          if(planets) {
+            this.planets_all = planets;
+          } else {
+            console.log('Error getting planets in gamemenu component');
+          }
+        });
+      } else {
+        console.log('Error getting planet_id in gamemenu component');
+      }
+    });
+    /*
     this.planet_id = this.localStorage.getItem('planet_id');
     this.planets_all = JSON.parse(this.localStorage.getItem('allPlanets'));
 
-    this.planetService.getActivePlanet().then(resolve => {
-      resolve.subscribe(data => {
-        this.planet_id = data;
-        if(this.planets_all == null) {
-          this.planetService.getAllUserPlanets().then(resolve => {
-            resolve.subscribe(data => {
-              if(data) {
-                this.localStorage.setItem('allPlanets', JSON.stringify(data));
-                this.planets_all = data;
-              }
-            });
-          });
-        }
+    this.planet_id = this.planetService.getActivePlanet();
+    if(this.planets_all == null) {
+      this.planetService.getAllUserPlanets().then(resolve => {
+        resolve.subscribe(data => {
+          if(data) {
+            this.localStorage.setItem('allPlanets', JSON.stringify(data));
+            this.planets_all = data;
+          }
+        });
       });
-    });
+
+
+    }
+    */
 
     this.selectorForm = this.formBuilder.group({
       planetSelect: []
@@ -70,9 +86,9 @@ export class GamemenuComponent implements OnInit {
     // is there a prev planet?
     // else get to the last entry
     if(this.planets_all[(index-1)] != undefined) {
-      this.planetService.setActivePlanet(this.planets_all[(index-1)].id);
+      this.globalVars.setPlanetId(this.planets_all[(index-1)].id);
     } else {
-      this.planetService.setActivePlanet(this.planets_all[(this.planets_all.length-1)].id);
+      this.globalVars.setPlanetId(this.planets_all[(this.planets_all.length-1)].id);
     }
   }
 
@@ -88,15 +104,15 @@ export class GamemenuComponent implements OnInit {
     // is there a prev planet?
     // else get to the last entry
     if(this.planets_all[(index+1)] != undefined) {
-      this.planetService.setActivePlanet(this.planets_all[(index+1)].id);
+      this.globalVars.setPlanetId(this.planets_all[(index+1)].id);
     } else {
-      this.planetService.setActivePlanet(this.planets_all[0].id);
+      this.globalVars.setPlanetId(this.planets_all[0].id);
     }
   }
 
   //change Planet
   changePlanet(id: number): void {
-    this.planetService.setActivePlanet(id);
+    this.globalVars.setPlanetId(id);
   }
 
   // Signout
