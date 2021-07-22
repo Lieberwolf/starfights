@@ -1,7 +1,7 @@
 import {Injectable} from "@angular/core";
-import {BehaviorSubject} from "rxjs";
+import {BehaviorSubject, Observable} from "rxjs";
 import {User} from "./services/helpers/auth.service";
-import {PlanetBaseData} from "./services/globals/planet.service";
+import {PlanetBaseData, PlanetService} from "./services/globals/planet.service";
 import {ResourceEntryDataInterface} from "./interfaces/resource-entry-data-interface";
 import {LocalStorageService} from "./services/globals/local-storage.service";
 import {AuthStateService} from "./services/helpers/auth-state.service";
@@ -23,6 +23,7 @@ export class GlobalVars {
   processes: Array<any>;
   globalProcesses: BehaviorSubject<Array<any>>;
   constructor(
+    private planetService:PlanetService,
     private localStorage: LocalStorageService,
     private authState: AuthStateService,
   ) {
@@ -119,10 +120,28 @@ export class GlobalVars {
   }
 
   setGlobalProcesses(values: Array<any>): void {
-    this.localStorage.setItem('processes', JSON.stringify(values))
+    this.localStorage.setItem('processes', JSON.stringify(values));
     this.globalProcesses.next(values);
   }
 
+  getPlanetCoordinates(planet_id:number):Observable<PlanetBaseData> {
+    return new Observable(observer => {
+        const userPlanets = JSON.parse(this.localStorage.getItem('planets'));
+        let planet: PlanetBaseData = {};
+        userPlanets.forEach((item:any)=>{
+          if(item.id === planet_id){
+            observer.next(item)
+          }
+        });
+        if(Object.keys(planet).length > 0){
+          this.planetService.getPlanetById(planet_id).subscribe((e)=> {
+            observer.next(e)
+          })
+        }
+      }
+    );
+
+  }
   // GLOBAL HELPERS
   enableCounters(): void {
     this.globalProcesses.subscribe(data => {

@@ -61,4 +61,29 @@ class UniverseController extends Controller
             return view('error.index');
         }
     }
+
+
+    public function showAsJSON($galaxy = false, $system = false)
+    {
+        // update session with new planet id
+        $user_id = Auth::id();
+        $allUserPlanets = Controller::getAllUserPlanets($user_id);
+
+        if($galaxy == null)
+        {
+            $galaxy = 1;
+        }
+
+        if($system == null)
+        {
+            $system = 1;
+        }
+
+        $planets = (new Planet)->universePart($galaxy, $system);
+        foreach($planets as $key => $planet)
+        {
+            $planet->points = Planet::getPlanetaryPointsById($planet->id);
+        }
+        return response()->json($planets);
+    }
 }

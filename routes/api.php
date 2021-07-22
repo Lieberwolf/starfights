@@ -8,6 +8,7 @@ use App\Http\Controllers\ConstructionController;
 use App\Models\Profile;
 use App\Models\Planet;
 use App\Models\Building;
+use \App\Http\Controllers\UniverseController;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,5 +45,7 @@ Route::group([
     Route::get('/startConstruction/{planet_id}/{building_id}', [ConstructionController::class, 'showAsJSON']);
     Route::get('/getConstruction/{planet_id}', [Planet::class, 'getPlanetaryBuildingProcessAsJSON']);
     Route::get('/cancelConstruction/{planet_id}', [ConstructionController::class, 'editAsJSON']);
+    Route::get('/universePart/{galaxy}/{system}', [UniverseController::class, 'showAsJSON']);
+    Route::get('/getPlanetById/{planet_id}', [Planet::class, 'getOneByIdAsJSON']);
 
 });
