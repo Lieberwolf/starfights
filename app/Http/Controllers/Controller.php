@@ -1781,7 +1781,7 @@ class Controller extends BaseController
                     $temp = 0;
                     for($i = 0; $i < $research->level; $i++)
                     {
-                        $temp += ($attacker["attack_value"] + $temp) * ($research->increase_ship_attack / 100);
+                        $temp += $attacker["attack_value"] * ($research->increase_ship_attack / 100);
                     }
                     $attacker["final_attack_value"] += $temp;
                 }
@@ -1791,7 +1791,7 @@ class Controller extends BaseController
                     $temp = 0;
                     for($i = 0; $i < $research->level; $i++)
                     {
-                        $temp += ($attacker["defense_value"] + $temp) * ($research->increase_ship_defense / 100);
+                        $temp += $attacker["defense_value"] * ($research->increase_ship_defense / 100);
                     }
                     $attacker["final_defense_value"] += $temp;
                 }
@@ -1801,7 +1801,7 @@ class Controller extends BaseController
                     $temp = 0;
                     for($i = 0; $i < $research->level; $i++)
                     {
-                        $temp += ($attacker["defense_value"] + $temp) * ($research->increase_shield_defense / 100);
+                        $temp += $attacker["defense_value"] * ($research->increase_shield_defense / 100);
                     }
                     $attacker["final_shield_value"] += $temp;
                 }
@@ -1858,7 +1858,7 @@ class Controller extends BaseController
                     $temp = 0;
                     for($i = 0; $i < $research->level; $i++)
                     {
-                        $temp += ($defender["attack_value"] + $temp) * ($research->increase_ship_attack / 100);
+                        $temp += $defender["attack_value"] * ($research->increase_ship_attack / 100);
                     }
                     $defender["final_attack_value"] += $temp;
                 }
@@ -1868,7 +1868,7 @@ class Controller extends BaseController
                     $temp = 0;
                     for($i = 0; $i < $research->level; $i++)
                     {
-                        $temp += ($defender["defense_value"] + $temp) * ($research->increase_ship_defense / 100);
+                        $temp += $defender["defense_value"] * ($research->increase_ship_defense / 100);
                     }
                     $defender["final_defense_value"] += $temp;
                 }
@@ -1878,7 +1878,7 @@ class Controller extends BaseController
                     $temp = 0;
                     for($i = 0; $i < $research->level; $i++)
                     {
-                        $temp += ($defender["defense_value"] + $temp) * ($research->increase_shield_defense / 100);
+                        $temp += $defender["defense_value"] * ($research->increase_shield_defense / 100);
                     }
                     $defender["final_shield_value"] += $temp;
                 }
