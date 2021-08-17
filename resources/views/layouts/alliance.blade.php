@@ -58,6 +58,11 @@
                         </div>
                     </form>
                 </div>
+                @if($alliance->founder_id != $userData->user_id)
+                    <div class="col-12 sub-line">
+                        <a href="/alliance/{{$activePlanet}}/leave/{{$alliance->id}}" class="text-danger p1">Austreten</a>
+                    </div>
+                @endif
                 @if($alliance->founder_id == $userData->user_id)
                     <div class="col-6 sub-line p-1">Bewerbungen:</div>
                     <div class="col-6 sub-line p-1">
@@ -91,6 +96,9 @@
 
                         </div>
                     @endif
+                    <div class="col-12 sub-line">
+                        <a href="/alliance/{{$activePlanet}}/delete/{{$alliance->id}}" class="text-danger p1">Allianz auflösen</a>
+                    </div>
                 @endif
             @else
                 @if(!$userData->alliance_id && $userData->alliance_application == null)
