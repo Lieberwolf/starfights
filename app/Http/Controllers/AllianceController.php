@@ -6,10 +6,12 @@ use App\Models\Alliances as Alliance;
 use App\Models\Alliances;
 use App\Models\Messages as Messages;
 use App\Models\Research;
+use App\Models\Statistics;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Profile as Profile;
 use App\Models\Planet as Planet;
+use Illuminate\Support\Facades\DB;
 
 
 class AllianceController extends Controller
@@ -299,5 +301,45 @@ class AllianceController extends Controller
 
         return redirect('/alliance/' . $planet_id . '/' . $alliance_id)->with('status', 'Bewerbung von ' . $profile->nickname . ' abgelehnt.');
 
+    }
+
+    public function delete($planet_id, $alliance_id)
+    {
+        $founder = Auth::id();
+        $alliance = Alliances::getAllianceByAllyid($alliance_id);
+        if($alliance) {
+            if($founder != $alliance->founder_id) {
+                return redirect('/alliance/' . $planet_id . '/' . $alliance_id)->with('status', 'Du hast nicht ausreichende Rechte um dies zu tun.');
+            } else {
+                // you can delete the alliance!
+                // delete stats
+                Statistics::where('alliance_id', $alliance_id)->delete();
+                // unset members
+                $members = Alliances::getUsersInAlliance($alliance_id);
+                foreach($members->members as $member) {
+                    DB::table('profiles')->where('user_id', $member->user_id)->update([
+                        'alliance_id' => null
+                    ]);
+                }
+                // unset applicants
+                DB::table('profiles')->where('alliance_application', $alliance_id)->update([
+                    'alliance_application' => null
+                ]);
+                // delete alliance
+                Alliances::where('id', $alliance_id)->delete();
+            }
+            return redirect('/alliance/' . $planet_id)->with('status', 'Allianz erfolgreich aufgelöst.');
+        } else {
+            return redirect('/alliance/' . $planet_id . '/0')->with('status', 'Allianz nicht vorhanden');
+        }
+    }
+
+    public function leave($planet_id, $alliance_id)
+    {
+        $user_id = Auth::id();
+        DB::table('profiles')->where('user_id', $user_id)->update([
+            'alliance_id' => null
+        ]);
+        return redirect('/alliance/' . $planet_id)->with('status', 'Allianz erfolgreich verlassen.');
     }
 }
