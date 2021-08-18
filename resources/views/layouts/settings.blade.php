@@ -74,5 +74,31 @@
                 </div>
             </form>
         </div>
+        <div class="col-12 sub-line">
+            <form action="/settings/{{$activePlanet}}/delete" method="post">
+                @csrf
+                @error('delete')
+                <div class="col-12 col-md-6 offset-md-6">
+                    <span class="ui ui-state-error text-danger" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                </div>
+                @enderror
+                <div class="form-group row p-1 mb-0">
+                    <div class="col-6 col-form-label" for="password">Account Löschen</div>
+                    <div class="col-6 form-check p-1">
+                        <input class="form-check-input" type="checkbox" name="delete" id="delete" {{ old('delete') ? 'checked' : '' }}>
+                        <label class="form-check-label" for="delete">
+                            <span class="text-danger">Ja, wirklich löschen</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-md-6 offset-md-6 p-2">
+                        <button tabindex="6" type="submit" class="btn btn-danger">Löschen</button>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
 </div>

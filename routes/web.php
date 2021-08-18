@@ -128,6 +128,7 @@ Route::get('/settings', [App\Http\Controllers\SettingsController::class, 'index'
 Route::get('/settings/{planet_id}', [App\Http\Controllers\SettingsController::class, 'show']);
 Route::post('/settings/{planet_id}/updateE', [App\Http\Controllers\SettingsController::class, 'updateE']);
 Route::post('/settings/{planet_id}/updateP', [App\Http\Controllers\SettingsController::class, 'updateP']);
+Route::post('/settings/{planet_id}/delete', [App\Http\Controllers\SettingsController::class, 'delete']);
 
 // alliance
 Route::get('/alliance', [App\Http\Controllers\AllianceController::class, 'index']);
