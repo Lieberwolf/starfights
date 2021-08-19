@@ -102,7 +102,7 @@ class SettingsController extends Controller
         }
 
         $alliance = Alliances::getAllianceForUser(Auth::id());
-        if($alliance) {
+        if($alliance && $alliance->founder_id == Auth::id()) {
             // statistics
             DB::table('statistics')->where('alliance_id', $alliance->alliance_id)->delete();
             DB::table('alliances')->where('id', $alliance->alliance_id)->delete();
