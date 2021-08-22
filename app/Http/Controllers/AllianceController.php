@@ -7,11 +7,11 @@ use App\Models\Alliances;
 use App\Models\Messages as Messages;
 use App\Models\Research;
 use App\Models\Statistics;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Profile as Profile;
 use App\Models\Planet as Planet;
 use Illuminate\Support\Facades\DB;
+use PheRum\BBCode\BBCodeParser;
 
 
 class AllianceController extends Controller
@@ -58,6 +58,10 @@ class AllianceController extends Controller
         } else {
             $alliance = Alliance::getAllianceForUser($user_id);
             if($alliance_id == $alliance->alliance_id) {
+                if($alliance->alliance_description != null) {
+                    $parser = new BBCodeParser();
+                    $alliance->alliance_description_parsed = $parser->parse($alliance->alliance_description);
+                }
                 $alliance->own = true;
                 $applications = Alliance::getUserApplications($alliance_id);
             } else {
@@ -72,6 +76,10 @@ class AllianceController extends Controller
 
                 if($alliance) {
                     $alliance->own = false;
+                    if($alliance->alliance_description != null) {
+                        $parser = new BBCodeParser();
+                        $alliance->alliance_description_parsed = $parser->parse($alliance->alliance_description);
+                    }
                 } else {
                     return redirect('/overview/' . $planet_id);
                 }
@@ -341,5 +349,49 @@ class AllianceController extends Controller
             'alliance_id' => null
         ]);
         return redirect('/alliance/' . $planet_id)->with('status', 'Allianz erfolgreich verlassen.');
+    }
+
+    public function logo($planet_id, $alliance_id)
+    {
+        $alliance = Alliances::where('id', $alliance_id)->first();
+        $data = request()->validate([
+            'logoUrl' => 'required|url']);
+        $alliance->alliance_logo = $data["logoUrl"];
+
+        $alliance->save();
+
+        return redirect('/alliance/' . $planet_id . '/' . $alliance_id);
+    }
+
+    public function logoUnset($planet_id, $alliance_id)
+    {
+        $alliance = Alliances::where('id', $alliance_id)->first();
+        $alliance->alliance_logo = null;
+
+        $alliance->save();
+
+        return redirect('/alliance/' . $planet_id . '/' . $alliance_id);
+    }
+
+    public function description($planet_id, $alliance_id)
+    {
+        $alliance = Alliances::where('id', $alliance_id)->first();
+        $data = request()->validate([
+            'description' => 'required']);
+        $alliance->alliance_description = $data["description"];
+
+        $alliance->save();
+
+        return redirect('/alliance/' . $planet_id . '/' . $alliance_id);
+    }
+
+    public function descriptionUnset($planet_id, $alliance_id)
+    {
+        $alliance = Alliances::where('id', $alliance_id)->first();
+        $alliance->alliance_description = null;
+
+        $alliance->save();
+
+        return redirect('/alliance/' . $planet_id . '/' . $alliance_id);
     }
 }

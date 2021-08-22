@@ -81,7 +81,6 @@ class Controller extends BaseController
                         $cleanBuildProcesses = DB::table('building_process')
                                                  ->where('planet_id', $planet_id->id)
                                                  ->delete();
-
                         if($cleanBuildProcesses)
                         {
                             // pick last needed Info
@@ -90,14 +89,28 @@ class Controller extends BaseController
 
                             self::calcResourceRatesForPlanet($planet_id->id);
 
-                            // emit system message to user
-                            $message = [
-                                'user_id' => 0,
-                                'receiver_id' => $user_id,
-                                'subject' => 'Konstruktion Abgeschlossen',
-                                'message' => 'Konstruktion von '. $buildingData->building_name .' (Stufe ' . ($infrastructure ? $infrastructure->level + 1 : 1) . ') auf ' . $planetData->galaxy .':'. $planetData->system . ':' . $planetData->planet . ' wurde erfolgreich abgeschlossen.'
-                            ];
-                            Messages::create($message);
+                            $profile = Profile::where('user_id', Auth::id())->first();
+                            $sendMessage = true;
+
+                            if($profile->notifications == null) {
+                                $sendMessage = false;
+                            } else {
+                                $notification = json_decode($profile->notifications);
+                                if(!property_exists($notification, 'construction')) {
+                                    $sendMessage = false;
+                                }
+                            }
+
+                            if($sendMessage) {
+                                // emit system message to user
+                                $message = [
+                                    'user_id' => 0,
+                                    'receiver_id' => $user_id,
+                                    'subject' => 'Konstruktion Abgeschlossen',
+                                    'message' => 'Konstruktion von '. $buildingData->building_name .' (Stufe ' . ($infrastructure ? $infrastructure->level + 1 : 1) . ') auf ' . $planetData->galaxy .':'. $planetData->system . ':' . $planetData->planet . ' wurde erfolgreich abgeschlossen.'
+                                ];
+                                Messages::create($message);
+                            }
                         }
                     }
                 }
@@ -314,18 +327,31 @@ class Controller extends BaseController
 
                         if($cleanResearchProcesses)
                         {
-                            // pick last needed Info
-                            $researchData = Research::find($process->research_id);
-                            $planetData = Planet::find($planet_id->id);
+                            $profile = Profile::where('user_id', Auth::id())->first();
+                            $sendMessage = true;
 
-                            // emit system message to user
-                            $message = [
-                                'user_id' => 0,
-                                'receiver_id' => $user_id,
-                                'subject' => 'Forschung Abgeschlossen',
-                                'message' => 'Forschung von '. $researchData->research_name .' (Stufe ' . ($knowledge ? $knowledge->level + 1 : 1) . ') auf ' . $planetData->galaxy .':'. $planetData->system . ':' . $planetData->planet . ' wurde erfolgreich abgeschlossen.'
-                            ];
-                            Messages::create($message);
+                            if($profile->notifications == null) {
+                                $sendMessage = false;
+                            } else {
+                                $notification = json_decode($profile->notifications);
+                                if(!property_exists($notification, 'research')) {
+                                    $sendMessage = false;
+                                }
+                            }
+                            if($sendMessage) {
+                                // pick last needed Info
+                                $researchData = Research::find($process->research_id);
+                                $planetData = Planet::find($planet_id->id);
+
+                                // emit system message to user
+                                $message = [
+                                    'user_id' => 0,
+                                    'receiver_id' => $user_id,
+                                    'subject' => 'Forschung Abgeschlossen',
+                                    'message' => 'Forschung von ' . $researchData->research_name . ' (Stufe ' . ($knowledge ? $knowledge->level + 1 : 1) . ') auf ' . $planetData->galaxy . ':' . $planetData->system . ':' . $planetData->planet . ' wurde erfolgreich abgeschlossen.'
+                                ];
+                                Messages::create($message);
+                            }
                         }
                     }
                 }
