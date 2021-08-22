@@ -20,30 +20,31 @@ import {SimulationComponent} from "./ingame/simulation/simulation.component";
 import {HighscoreComponent} from "./ingame/highscore/highscore.component";
 import {SettingsComponent} from "./ingame/settings/settings.component";
 import {AllianceComponent} from "./ingame/alliance/alliance.component";
+import {AuthGuard} from "./auth.guard";
 
 const routes: Routes = [
   {path: '', component: HomeComponent, pathMatch: 'full'},
   {path: 'login', component: LoginComponent},
   {path: 'register', component: RegisterComponent},
-  {path: 'overview', component: OverviewComponent},
-  {path: 'construction', component: ConstructionComponent},
-  {path: 'construction/:building_id', component: ConstructionComponent},
-  {path: 'shipyard', component: ShipyardComponent},
-  {path: 'defense', component: DefenseComponent},
-  {path: 'research', component: ResearchComponent},
-  {path: 'mission', component: MissionComponent},
-  {path: 'fleetlist', component: FleetlistComponent},
-  {path: 'resources', component: ResourceviewComponent},
+  {path: 'overview', component: OverviewComponent, canActivate: [AuthGuard], data: {role: 'PLAYER'}},
+  {path: 'construction', component: ConstructionComponent, canActivate: [AuthGuard], data: {role: 'PLAYER'}},
+  {path: 'construction/:building_id', component: ConstructionComponent, canActivate: [AuthGuard], data: {role: 'PLAYER'}},
+  {path: 'shipyard', component: ShipyardComponent, canActivate: [AuthGuard], data: {role: 'PLAYER'}},
+  {path: 'defense', component: DefenseComponent, canActivate: [AuthGuard], data: {role: 'PLAYER'}},
+  {path: 'research', component: ResearchComponent, canActivate: [AuthGuard], data: {role: 'PLAYER'}},
+  {path: 'mission', component: MissionComponent, canActivate: [AuthGuard], data: {role: 'PLAYER'}},
+  {path: 'fleetlist', component: FleetlistComponent, canActivate: [AuthGuard], data: {role: 'PLAYER'}},
+  {path: 'resources', component: ResourceviewComponent, canActivate: [AuthGuard], data: {role: 'PLAYER'}},
   {path: 'messages', redirectTo: 'messages/new'},
-  {path: 'messages/new', component: MessagesComponent},
-  {path: 'universe', component: UniverseComponent},
-  {path: 'search', component: SearchComponent},
-  {path: 'techtree', component: TechtreeComponent},
-  {path: 'database', component: DatabaseComponent},
-  {path: 'simulation', component: SimulationComponent},
-  {path: 'highscore', component: HighscoreComponent},
-  {path: 'settings', component: SettingsComponent},
-  {path: 'alliance', component: AllianceComponent},
+  {path: 'messages/new', component: MessagesComponent, canActivate: [AuthGuard], data: {role: 'PLAYER'}},
+  {path: 'universe', component: UniverseComponent, canActivate: [AuthGuard], data: {role: 'PLAYER'}},
+  {path: 'search', component: SearchComponent, canActivate: [AuthGuard], data: {role: 'PLAYER'}},
+  {path: 'techtree', component: TechtreeComponent, canActivate: [AuthGuard], data: {role: 'PLAYER'}},
+  {path: 'database', component: DatabaseComponent, canActivate: [AuthGuard], data: {role: 'PLAYER'}},
+  {path: 'simulation', component: SimulationComponent, canActivate: [AuthGuard], data: {role: 'PLAYER'}},
+  {path: 'highscore', component: HighscoreComponent, canActivate: [AuthGuard], data: {role: 'PLAYER'}},
+  {path: 'settings', component: SettingsComponent, canActivate: [AuthGuard], data: {role: 'PLAYER'}},
+  {path: 'alliance', component: AllianceComponent, canActivate: [AuthGuard], data: {role: 'PLAYER'}},
   ];
 
 @NgModule({

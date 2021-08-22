@@ -138,6 +138,6 @@
     <li class="heading">Account</li>
     <li><a [routerLinkActive]="['active']" [routerLink]="['/settings']">Einstellungen</a></li>
     <li><a [routerLinkActive]="['active']" [routerLink]="['/alliance']">Meine Allianz</a></li>
-    <li><a href="#" (click)="signOut()" *ngIf="isSignedIn">Logout</a></li>
+    <li><span style="cursor: pointer;" (click)="signOut()" *ngIf="isSignedIn">Logout</span></li>
   </ul>
 </div>

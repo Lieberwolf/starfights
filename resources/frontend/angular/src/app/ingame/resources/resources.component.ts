@@ -6,6 +6,7 @@ import {ResourceEntryDataInterface} from "../../shared/interfaces/resource-entry
   selector: 'sf-resources',
   templateUrl: './resources.component.html',
   styleUrls: ['./resources.component.scss'],
+  providers: [GlobalVars],
 })
 export class ResourcesComponent implements OnInit {
   resources: ResourceEntryDataInterface;

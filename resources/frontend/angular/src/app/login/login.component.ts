@@ -46,6 +46,7 @@ export class LoginComponent implements OnInit {
       result => {
         this.responseHandler(result.access_token);
         this.globalVars.setUser(result.user);
+        this.globalVars.setRole("PLAYER");
       },
       error => {
         this.errors = error.error;

@@ -92,9 +92,9 @@ export class AppModule {
     public globalVars: GlobalVars,
   ) {
     registerLocaleData(localeDe);
-    this.globalVars.getPlanetId().subscribe(val => {
-      console.log('from AppModule: ', val);
-    });
     this.globalVars.enableCounters();
+    this.globalVars.getGlobalProcesses().subscribe((data) => {
+      console.log(data);
+    });
   }
 }

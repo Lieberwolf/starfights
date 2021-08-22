@@ -10,7 +10,8 @@ import {GlobalVars} from "../../shared/globalVars";
 @Component({
   selector: 'sf-construction',
   templateUrl: './construction.component.html',
-  styleUrls: ['./construction.component.scss']
+  styleUrls: ['./construction.component.scss'],
+  providers: [GlobalVars],
 })
 export class ConstructionComponent implements OnInit {
   planet_id?: number;

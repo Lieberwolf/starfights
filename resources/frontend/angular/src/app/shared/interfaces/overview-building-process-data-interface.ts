@@ -1,4 +1,5 @@
 export interface OverviewBuildingProcessDataInterface {
+  planet_id: number,
   building_name: string,
   galaxy: number,
   system: number,

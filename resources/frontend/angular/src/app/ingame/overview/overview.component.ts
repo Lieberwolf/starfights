@@ -6,7 +6,8 @@ import {OverviewBuildingProcessDataInterface} from "../../shared/interfaces/over
 @Component({
   selector: 'sf-overview',
   templateUrl: './overview.component.html',
-  styleUrls: ['./overview.component.scss']
+  styleUrls: ['./overview.component.scss'],
+  providers: [GlobalVars]
 })
 export class OverviewComponent implements OnInit {
   date?: String;

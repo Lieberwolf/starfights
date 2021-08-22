@@ -69,13 +69,20 @@ export class GlobalVars {
 
   // GETTERS AND SETTERS
   getUser(): BehaviorSubject<User> {
-    console.log('user', this.user.observers);
     return this.user;
   }
 
   setUser(value: User): void {
     this.localStorage.setItem('user', JSON.stringify(value));
     this.user.next(value);
+  }
+
+  getRole(): string {
+    return this.localStorage.getItem('ROLE')
+  }
+
+  setRole(val: string): void {
+    this.localStorage.setItem('ROLE', val)
   }
 
   getProfile(): BehaviorSubject<object> {
@@ -106,7 +113,6 @@ export class GlobalVars {
   }
 
   getResources(): BehaviorSubject<ResourceEntryDataInterface> {
-    console.log('res', this.resources.observers);
     return this.resources;
   }
 

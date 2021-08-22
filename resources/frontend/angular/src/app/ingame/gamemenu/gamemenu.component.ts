@@ -120,7 +120,7 @@ export class GamemenuComponent implements OnInit {
     this.auth.setAuthState(false);
     this.token.removeToken();
     this.localStorage.clear();
-    this.router.navigate(['']);
+    this.router.navigateByUrl('/');
   }
 
 }
