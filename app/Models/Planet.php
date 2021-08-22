@@ -35,6 +35,11 @@ class Planet extends Model
         return Planet::find($id);
     }
 
+    public static function getOneByIdAsJSON($id)
+    {
+        return response()->json(Planet::find($id));
+    }
+
     public static function colonizePlanetForStart($user_id, $galaxy)
     {
         $freePlanets = Planet::all()->where('user_id', '=', null)->where('galaxy', '=', $galaxy);
@@ -88,12 +93,12 @@ class Planet extends Model
 
     public static function getAllUserPlanets($user_id)
     {
-        return DB::table('planets')->where('user_id', $user_id)->get(['id', 'galaxy', 'system', 'planet']);
+        return DB::table('planets')->where('user_id', $user_id)->get(['id', 'galaxy', 'system', 'planet', 'planet_name']);
     }
 
     public static function getAllUserPlanetsAsJSON($user_id)
     {
-        return response()->json(DB::table('planets')->where('user_id', $user_id)->get(['id', 'galaxy', 'system', 'planet']));
+        return response()->json(DB::table('planets')->where('user_id', $user_id)->get(['id', 'galaxy', 'system', 'planet', 'planet_name']));
     }
 
     public static function getPlanetaryResourcesByPlanetId($planet_id, $user_id, $buildings = false)

@@ -4,10 +4,10 @@ import {BehaviorSubject, Observable} from "rxjs";
 import {LocalStorageService} from "./local-storage.service";
 
 export class PlanetBaseData {
-  id?: Number;
-  galaxy?: Number;
-  system?: Number;
-  planet?: Number;
+  id?: number;
+  galaxy?: number;
+  system?: number;
+  planet?: number;
 }
 
 @Injectable({
@@ -29,6 +29,10 @@ export class PlanetService {
     this.planet_id_subject = new BehaviorSubject(this.planet_id);
   }
 
+  getUniverse(galaxy: number, system: number): Observable<any> {
+    return this.http.get('http://127.0.0.1:8000/api/data/universePart/' + galaxy+'/'+system );
+  }
+
   getAllUserPlanetsInit(user_id: number | undefined): Observable<any> {
     if(user_id) {
       return this.http.get('http://127.0.0.1:8000/api/data/getAllUserPlanets/' + user_id);
@@ -41,13 +45,9 @@ export class PlanetService {
     return this.planet_all_subject;
   }
 
-  getActivePlanet(): number {
-    return this.localStorage.getItem('planet_id');
+  getPlanetById(planet_id:number):Observable<PlanetBaseData>{
+    return this.http.get('http://127.0.0.1:8000/api/data/getPlanetById/' +planet_id);
   }
-/*
-  setActivePlanet(val: number): void {
-    this.localStorage.setItem('planet_id', val);
-    this.planet_id_subject.next(val);
-  }
-  */
+
+
 }

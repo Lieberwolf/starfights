@@ -1,1 +1,68 @@
-<p>universe works!</p>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <form [formGroup]="universeForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label for="galaxy">Galaxy</label>
+          <a (click)="prevGalaxy()"> << </a>
+          <input id="galaxy" name="galaxy" value="{{galaxy}}" formControlName="galaxy">
+          <a (click)="nextGalaxy()"> >> </a>
+        </div>
+        <div class="form-group">
+          <label for="system">System</label>
+          <a (click)="prevSystem()"> << </a>
+          <input id="system" name="system" value="{{system}}" formControlName="system">
+          <a (click)="nextSystem()"> >> </a>
+        </div>
+
+
+        <button id="showSystem" class="btn btn-secondary">Anzeigen</button>
+      </form>
+    </div>
+    <div class="col-12 col-md-6 offset-md-3">
+      <table width="100%">
+        <thead>
+        <tr>
+          <th colspan="4" class="title-line">
+            System {{galaxy}}:{{system}}
+          </th>
+        </tr>
+        <tr>
+          <th class="title-line">
+            Nr.
+          </th>
+          <th class="title-line">
+            Planeten
+          </th>
+          <th class="title-line">
+            Punkte
+          </th>
+          <th class="title-line">
+            Aktionen
+          </th>
+        </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngFor="let entry of planets ">
+            <tr>
+              <td class="title-line">{{entry.planet }}</td>
+              <td class="sub-line">{{entry.planet_name? entry.planet_name: "Unbekannter Planet"}} ({{entry.username? entry.username : "Freier Planet"}})<a href="alliance/{{profile.start_planet}}/{{entry.alliance_id}}">{{entry.alliance_tag? '['+entry.alliance_tag+']' : ""}}</a></td>
+              <td class="sub-line">{{entry.points | number : '0.0-0':'de'}}</td>
+              <td class="sub-line">
+                <a href="/mission/{{profile.start_planet}}/withdata/{{entry.galaxy}}/{{entry.system}}/{{entry.planet}}">
+                  [M]
+                </a>
+              </td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
