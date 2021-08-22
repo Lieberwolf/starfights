@@ -126,6 +126,7 @@ Route::get('/highscore/{planet_id}', [App\Http\Controllers\HighscoreController::
 // settings
 Route::get('/settings', [App\Http\Controllers\SettingsController::class, 'index']);
 Route::get('/settings/{planet_id}', [App\Http\Controllers\SettingsController::class, 'show']);
+Route::post('/settings/{planet_id}/updateN', [App\Http\Controllers\SettingsController::class, 'updateN']);
 Route::post('/settings/{planet_id}/updateE', [App\Http\Controllers\SettingsController::class, 'updateE']);
 Route::post('/settings/{planet_id}/updateP', [App\Http\Controllers\SettingsController::class, 'updateP']);
 Route::post('/settings/{planet_id}/delete', [App\Http\Controllers\SettingsController::class, 'delete']);

@@ -34,6 +34,15 @@ class SettingsController extends Controller
         $allUserPlanets = Controller::getAllUserPlanets($user_id);
         Controller::checkAllProcesses($allUserPlanets);
         $user = User::where('id', $user_id)->first();
+        $profile = Profile::where('user_id', Auth::id())->first();
+
+        if($profile->notifications) {
+            $notifications = json_decode($profile->notifications);
+        } else {
+            $notifications = new \stdClass();
+            $notifications->construction = "off";
+            $notifications->research = "off";
+        }
 
         if(count($planetaryResources)>0)
         {
@@ -44,6 +53,7 @@ class SettingsController extends Controller
                 'allUserPlanets' => $allUserPlanets,
                 'activePlanet' => $planet_id,
                 'user' => $user,
+                'notifications' => $notifications,
             ]);
         } else {
             return view('error.index');
@@ -72,6 +82,26 @@ class SettingsController extends Controller
         ]);
 
         return redirect('/settings/' . $planet_id)->with('status', 'Passwort wurde aktualisiert.');
+    }
+
+    public function updateN($planet_id)
+    {
+        $data = request()->validate([
+            'construction' => ['string'],
+            'research' => ['string']
+        ]);
+
+        if(count($data) > 0) {
+            Profile::where('user_id', Auth::id())->update([
+                'notifications' => json_encode($data)
+            ]);
+        } else {
+            Profile::where('user_id', Auth::id())->update([
+                'notifications' => null
+            ]);
+        }
+
+        return redirect('/settings/' . $planet_id)->with('status', 'Benachrichtigungen wurden aktualisiert.');
     }
 
     public function delete()
