@@ -10,21 +10,103 @@
             <div class="col-6 sub-line"><a href="/profile/{{$alliance->founder_id}}">{{$alliance->nickname}}</a></div>
             <div class="col-6 sub-line">Kampfstatistik</div>
             <div class="col-6 sub-line"><a href="/statistics/{{$activePlanet}}/ally/{{$alliance->alliance_id}}">ansehen</a></div>
-            <div class="col-12 title-line mt-3">Allianzlogo</div>
+            <div class="col-12 title-line mt-3">
+                <span>Allianzlogo</span>
+                @if($alliance->founder_id == Auth::id())
+                <span style="cursor: pointer;" data-toggle="modal" data-target="#logoModal">[bearbeiten]</span>
+                <div class="modal fade" id="logoModal" tabindex="-1" role="dialog" aria-labelledby="logoModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="logoModalLabel">Logo bearbeiten</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form action="/alliance/{{$activePlanet}}/logo/{{$alliance->id}}" method="post">
+                                    @csrf
+                                    <div class="form-group row">
+                                        <label for="logoUrl" class="col-md-4 col-form-label text-md-right">Logo URL:</label>
+
+                                        <div class="col-md-8">
+                                            <input value="{{$alliance->alliance_logo}}" id="logoUrl" type="text" class="form-control" name="logoUrl" required>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Abbrechen</button>
+                                        </div>
+                                        <div class="col-6">
+                                            @if($alliance->alliance_logo != null)
+                                            <a href="/alliance/{{$activePlanet}}/logo/{{$alliance->id}}/unset" class="btn btn-danger">Löschen</a>
+                                            @endif
+                                            <button type="submit" class="btn btn-primary">Speichern</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @endif
+            </div>
             <div class="col-12 sub-line">
                 @if($alliance->alliance_logo != null)
-                    <img class="img-fluid" src="{{$alliance->alliance_logo}}" alt="{{$alliance->alliance_name}} Logo"/>
+                    <img class="img-fluid p-2" src="{{$alliance->alliance_logo}}" alt="{{$alliance->alliance_name}} Logo"/>
                     @else
                     - keins -
                 @endif
             </div>
-            <div class="col-12 title-line mt-3">Allianzbeschreibung</div>
+            <div class="col-12 title-line mt-3">
+                <span>Allianzbeschreibung</span>
+                @if($alliance->founder_id == Auth::id())
+                <span style="cursor: pointer;" data-toggle="modal" data-target="#descriptionModal">[bearbeiten]</span>
+                <div class="modal fade" id="descriptionModal" tabindex="-1" role="dialog" aria-labelledby="descriptionModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="descriptionModalLabel">Beschreibung bearbeiten</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form action="/alliance/{{$activePlanet}}/description/{{$alliance->id}}" method="post">
+                                    @csrf
+                                    <div class="form-group">
+                                        <div class="col-12">
+                                            <textarea type="text" class="form-control" name="description" required>{{$alliance->alliance_description}}</textarea>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Abbrechen</button>
+                                        </div>
+                                        <div class="col-6">
+                                            @if($alliance->alliance_description != null)
+                                            <a href="/alliance/{{$activePlanet}}/description/{{$alliance->id}}/unset" class="btn btn-danger">Löschen</a>
+                                            @endif
+                                            <button type="submit" class="btn btn-primary">Speichern</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <i class="bi-info-circle"></i>
+                                <a target="_blank" href="https://github.com/PheRum/laravel-bbcode/blob/master/src/BBCodeParser.php">BBCodes</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @endif
+            </div>
             <div class="col-12 sub-line">
                 <div class="row">
                     <div class="col-12 col-sm-10 offset-sm-1">
                         @if($alliance->alliance_description != null)
                             <span>
-                                {{$alliance->alliance_description}}
+                                {!!$alliance->alliance_description_parsed!!}
                             </span>
                             @else
                             <span>- keine -</span>

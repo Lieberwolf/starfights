@@ -142,6 +142,10 @@ Route::post('/alliance/{planet_id}/send/{alliance_id}', [App\Http\Controllers\Al
 Route::post('/alliance/{planet_id}/apply/{alliance_id}', [App\Http\Controllers\AllianceController::class, 'apply']);
 Route::get('/alliance/{planet_id}/delete/{alliance_id}', [App\Http\Controllers\AllianceController::class, 'delete']);
 Route::get('/alliance/{planet_id}/leave/{alliance_id}', [App\Http\Controllers\AllianceController::class, 'leave']);
+Route::post('/alliance/{planet_id}/logo/{alliance_id}', [App\Http\Controllers\AllianceController::class, 'logo']);
+Route::post('/alliance/{planet_id}/description/{alliance_id}', [App\Http\Controllers\AllianceController::class, 'description']);
+Route::get('/alliance/{planet_id}/logo/{alliance_id}/unset', [App\Http\Controllers\AllianceController::class, 'logoUnset']);
+Route::get('/alliance/{planet_id}/description/{alliance_id}/unset', [App\Http\Controllers\AllianceController::class, 'descriptionUnset']);
 Route::post('/alliance/{planet_id}/accept/{alliance_id}/{user_id}', [App\Http\Controllers\AllianceController::class, 'accept']);
 Route::post('/alliance/{planet_id}/decline/{alliance_id}/{user_id}', [App\Http\Controllers\AllianceController::class, 'decline']);
 Route::get('/alliance/{planet_id}/{alliance_id}', [App\Http\Controllers\AllianceController::class, 'show']);
