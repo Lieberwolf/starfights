@@ -91,6 +91,7 @@ class RegisterController extends Controller
                     'user_id' => $user['id'],
                     'start_planet' => $startPlanet,
                     'nickname' => $user['username'],
+                    'notifications' => '{"construction":"on","research":"on"}',
                 ]);
 
                 if($profile)
