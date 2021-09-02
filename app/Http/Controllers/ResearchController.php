@@ -29,7 +29,7 @@ class ResearchController extends Controller
         // update session with new planet id
         session(['default_planet' => $planet_id]);
         $user_id = Auth::id();
-        $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
+        $planetaryResources = Planet::getResourcesForPlanet($planet_id);
         $planetInformation = Planet::getOneById($planet_id);
         $allUserPlanets = Controller::getAllUserPlanets($user_id);
         Controller::checkAllProcesses($allUserPlanets);
@@ -276,7 +276,7 @@ class ResearchController extends Controller
     public function edit($planet_id)
     {
         $user_id = Auth::id();
-        $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
+        $planetaryResources = Planet::getResourcesForPlanet($planet_id);
         $researchList = Research::getAllAvailableResearches($user_id, $planet_id);
         $currentResearch = Planet::getPlanetaryResearchProcess($planet_id, $user_id);
         $selectedResearch = $researchList->firstWhere('id', $currentResearch->research_id);

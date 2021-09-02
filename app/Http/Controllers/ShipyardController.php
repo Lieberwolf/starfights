@@ -29,7 +29,7 @@ class ShipyardController extends Controller
         // update session with new planet id
         session(['default_planet' => $planet_id]);
         $user_id = Auth::id();
-        $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
+        $planetaryResources = Planet::getResourcesForPlanet($planet_id);
         $allUserPlanets = Controller::getAllUserPlanets($user_id);
         Controller::checkAllProcesses($allUserPlanets);
         $nextShipIn = Controller::checkShipProcesses($allUserPlanets);
@@ -131,7 +131,7 @@ class ShipyardController extends Controller
         $data = request()->all();
         $shipsToBuild = $data["ship"];
         $user_id = Auth::id();
-        $availableResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
+        $availableResources = Planet::getResourcesForPlanet($planet_id);
         $availableShips = Ship::getAllAvailableShips($user_id, $planet_id);
         $shipyard = Building::getOneByNameWithData($planet_id, "Schiffswerft");
 

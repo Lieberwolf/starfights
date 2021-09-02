@@ -27,7 +27,7 @@ class MessagesController extends Controller
         // update session with new planet id
         session(['default_planet' => $planet_id]);
         $user_id = Auth::id();
-        $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
+        $planetaryResources = Planet::getResourcesForPlanet($planet_id);
         $allUserPlanets = Controller::getAllUserPlanets($user_id);
         Controller::checkAllProcesses($allUserPlanets);
         $messages = Messages::getAllUnreadMessages($user_id);
@@ -58,7 +58,7 @@ class MessagesController extends Controller
 
         Controller::checkBuildingProcesses($allUserPlanets);
 
-        $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
+        $planetaryResources = Planet::getResourcesForPlanet($planet_id);
 
         $messages = Messages::getAllReadMessages($user_id);
 
@@ -88,7 +88,7 @@ class MessagesController extends Controller
 
         Controller::checkBuildingProcesses($allUserPlanets);
 
-        $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
+        $planetaryResources = Planet::getResourcesForPlanet($planet_id);
 
         $messages = Messages::getAllSendMessages($user_id);
 
@@ -120,13 +120,16 @@ class MessagesController extends Controller
 
         foreach($request['toBeDeleted'] as $key => $index)
         {
-            if($messages->find($key)->receiver_id == $user_id)
-            {
-                $message = $messages->find($key);
-                $message->receiver_deleted = 1;
-                unset($message->sender);
-                $message->save();
+            if($messages->find($key)) {
+                if($messages->find($key)->receiver_id == $user_id)
+                {
+                    $message = $messages->find($key);
+                    $message->receiver_deleted = 1;
+                    unset($message->sender);
+                    $message->save();
+                }
             }
+
         }
 
         return redirect('messages/inbox/' . session('default_planet'));
@@ -145,12 +148,13 @@ class MessagesController extends Controller
 
         foreach($request['toBeDeleted'] as $key => $index)
         {
-            if($messages->find($key)->user_id == $user_id)
-            {
-                $message = $messages->find($key);
-                $message->sender_deleted = 1;
-                unset($message->receiver);
-                $message->save();
+            if($messages->find($key)) {
+                if ($messages->find($key)->user_id == $user_id) {
+                    $message = $messages->find($key);
+                    $message->sender_deleted = 1;
+                    unset($message->receiver);
+                    $message->save();
+                }
             }
         }
 
@@ -168,7 +172,7 @@ class MessagesController extends Controller
 
         Controller::checkBuildingProcesses($allUserPlanets);
 
-        $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
+        $planetaryResources = Planet::getResourcesForPlanet($planet_id);
 
         $messages = Messages::getAllSendMessages($user_id);
 
@@ -214,7 +218,7 @@ class MessagesController extends Controller
 
             Controller::checkBuildingProcesses($allUserPlanets);
 
-            $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
+            $planetaryResources = Planet::getResourcesForPlanet($planet_id);
 
             if(count($planetaryResources)>0)
             {

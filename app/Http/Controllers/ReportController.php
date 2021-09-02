@@ -22,7 +22,7 @@ class ReportController extends Controller
 
         if($user_id != null) {
         $planet_id = session('default_planet');
-        $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
+        $planetaryResources = Planet::getResourcesForPlanet($planet_id);
         $allUserPlanets = Controller::getAllUserPlanets($user_id);
         Controller::checkAllProcesses($allUserPlanets);
 

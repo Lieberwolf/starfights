@@ -34,7 +34,7 @@ class ProfileController extends Controller
 
         if($user_id == Auth::id())
         {
-            $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
+            $planetaryResources = Planet::getResourcesForPlanet($planet_id);
             // my own profile
             $proof = true;
             $allUserPlanets = Controller::getAllUserPlanets($user_id);

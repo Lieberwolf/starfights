@@ -28,7 +28,7 @@ class ResourcesController extends Controller
         // update session with new planet id
         session(['default_planet' => $planet_id]);
         $user_id = Auth::id();
-        $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
+        $planetaryResources = Planet::getResourcesForPlanet($planet_id);
         $allUserPlanets = Controller::getAllUserPlanets($user_id);
         $planetInfo = Planet::getOneById($planet_id);
         Controller::checkAllProcesses($allUserPlanets);

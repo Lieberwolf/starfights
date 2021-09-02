@@ -46,70 +46,76 @@ class Controller extends BaseController
 
     public static function checkBuildingProcesses($planet_ids)
     {
+        $ids = [];
+        foreach($planet_ids as $planet_id) {
+            $ids[] = $planet_id->id;
+        }
+
+        $processes = DB::table('building_process AS bp')
+            ->whereIn('planet_id', $ids)
+            ->get();
         $user_id = Auth::id();
-        foreach($planet_ids as $planet_id)
-        {
-            $process = DB::table('building_process AS bp')
-                         ->where('planet_id', $planet_id->id)
-                         ->first();
-
-            if($process)
+        if($processes) {
+            foreach($processes as $process)
             {
-                if(strtotime($process->finished_at) < now()->timestamp)
+                if($process)
                 {
-                    $infrastructure = Controller::getLevelForBuildingOnPlanet($planet_id->id, $process->building_id);
-
-                    if(!$infrastructure)
+                    if(strtotime($process->finished_at) < now()->timestamp)
                     {
-                        // first build of this type
-                        $levelUp = DB::table('infrastructures')
-                                     ->insert([
-                                         'planet_id' => $planet_id->id,
-                                         'building_id' => $process->building_id,
-                                         'level' => 1
-                                     ]);
-                    } else {
-                        // at least lvl 1
-                        $levelUp = DB::table('infrastructures')
-                                     ->where('planet_id', $planet_id->id)
-                                     ->where('building_id', $process->building_id)
-                                     ->update(['level' => ($infrastructure->level + 1)]);
-                    }
+                        $infrastructure = Controller::getLevelForBuildingOnPlanet($process->planet_id, $process->building_id);
 
-                    if($levelUp)
-                    {
-                        $cleanBuildProcesses = DB::table('building_process')
-                                                 ->where('planet_id', $planet_id->id)
-                                                 ->delete();
-                        if($cleanBuildProcesses)
+                        if(!$infrastructure)
                         {
-                            // pick last needed Info
-                            $buildingData = Building::find($process->building_id);
-                            $planetData = Planet::find($planet_id->id);
+                            // first build of this type
+                            $levelUp = DB::table('infrastructures')
+                                ->insert([
+                                    'planet_id' => $process->planet_id,
+                                    'building_id' => $process->building_id,
+                                    'level' => 1
+                                ]);
+                        } else {
+                            // at least lvl 1
+                            $levelUp = DB::table('infrastructures')
+                                ->where('planet_id', $process->planet_id)
+                                ->where('building_id', $process->building_id)
+                                ->update(['level' => ($infrastructure->level + 1)]);
+                        }
 
-                            self::calcResourceRatesForPlanet($planet_id->id);
+                        if($levelUp)
+                        {
+                            $cleanBuildProcesses = DB::table('building_process')
+                                ->where('planet_id', $process->planet_id)
+                                ->delete();
+                            if($cleanBuildProcesses)
+                            {
+                                // pick last needed Info
+                                $buildingData = Building::find($process->building_id);
+                                $planetData = Planet::find($process->planet_id);
 
-                            $profile = Profile::where('user_id', Auth::id())->first();
-                            $sendMessage = true;
+                                self::calcResourceRatesForPlanet($process->planet_id);
 
-                            if($profile->notifications == null) {
-                                $sendMessage = false;
-                            } else {
-                                $notification = json_decode($profile->notifications);
-                                if(!property_exists($notification, 'construction')) {
+                                $profile = Profile::where('user_id', Auth::id())->first();
+                                $sendMessage = true;
+
+                                if($profile->notifications == null) {
                                     $sendMessage = false;
+                                } else {
+                                    $notification = json_decode($profile->notifications);
+                                    if(!property_exists($notification, 'construction')) {
+                                        $sendMessage = false;
+                                    }
                                 }
-                            }
 
-                            if($sendMessage) {
-                                // emit system message to user
-                                $message = [
-                                    'user_id' => 0,
-                                    'receiver_id' => $user_id,
-                                    'subject' => 'Konstruktion Abgeschlossen',
-                                    'message' => 'Konstruktion von '. $buildingData->building_name .' (Stufe ' . ($infrastructure ? $infrastructure->level + 1 : 1) . ') auf ' . $planetData->galaxy .':'. $planetData->system . ':' . $planetData->planet . ' wurde erfolgreich abgeschlossen.'
-                                ];
-                                Messages::create($message);
+                                if($sendMessage) {
+                                    // emit system message to user
+                                    $message = [
+                                        'user_id' => 0,
+                                        'receiver_id' => $user_id,
+                                        'subject' => 'Konstruktion Abgeschlossen',
+                                        'message' => 'Konstruktion von '. $buildingData->building_name .' (Stufe ' . ($infrastructure ? $infrastructure->level + 1 : 1) . ') auf ' . $planetData->galaxy .':'. $planetData->system . ':' . $planetData->planet . ' wurde erfolgreich abgeschlossen.'
+                                    ];
+                                    Messages::create($message);
+                                }
                             }
                         }
                     }
@@ -286,11 +292,19 @@ class Controller extends BaseController
 
     public static function checkResearchProcesses($planet_ids)
     {
+        $ids = [];
+        foreach($planet_ids as $planet_id) {
+            $ids[] = $planet_id->id;
+        }
+
+        $processes = DB::table('research_process')
+            ->whereIn('planet_id', $ids)
+            ->get();
         $user_id = Auth::id();
-        foreach($planet_ids as $planet_id)
+        foreach($processes as $process)
         {
             $process = DB::table('research_process')
-                         ->where('planet_id', $planet_id->id)
+                         ->where('planet_id', $process->planet_id)
                          ->first();
             if($process)
             {
@@ -322,7 +336,7 @@ class Controller extends BaseController
                     if($levelUp)
                     {
                         $cleanResearchProcesses = DB::table('research_process')
-                                                 ->where('planet_id', $planet_id->id)
+                                                 ->where('planet_id', $process->planet_id)
                                                  ->delete();
 
                         if($cleanResearchProcesses)
@@ -341,7 +355,7 @@ class Controller extends BaseController
                             if($sendMessage) {
                                 // pick last needed Info
                                 $researchData = Research::find($process->research_id);
-                                $planetData = Planet::find($planet_id->id);
+                                $planetData = Planet::find($process->planet_id);
 
                                 // emit system message to user
                                 $message = [
@@ -2261,7 +2275,11 @@ class Controller extends BaseController
 
     public static function checkAllProcesses($planet_ids)
     {
-        Planet::getAllPlanetaryResourcesByIds($planet_ids);
+        $count = 0;
+        DB::listen(function ($query) use (&$count) {
+            $count++;
+        });
+        Planet::getResourcesForAllPlanets($planet_ids);
         self::checkBuildingProcesses($planet_ids);
         self::checkResearchProcesses($planet_ids);
         self::checkShipProcesses($planet_ids);
@@ -2269,5 +2287,6 @@ class Controller extends BaseController
         self::checkFleetProcesses($planet_ids);
         self::checkForLostFleets($planet_ids);
         self::checkForLostTurrets($planet_ids);
+        //dd($count);
     }
 }

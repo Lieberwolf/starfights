@@ -32,7 +32,7 @@ class MissionController extends Controller
         $user_id = Auth::id();
         $allUserPlanets = Controller::getAllUserPlanets($user_id);
         Controller::checkAllProcesses($allUserPlanets);
-        $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
+        $planetaryResources = Planet::getResourcesForPlanet($planet_id);
         $shipsAtPlanet = Fleet::getShipsAtPlanet($planet_id);
         $target = session('target');
         $koords = Planet::getOneById($planet_id);
@@ -69,7 +69,7 @@ class MissionController extends Controller
     {
         $user_id = Auth::id();
         $allUserPlanets = Controller::getAllUserPlanets($user_id);
-        $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
+        $planetaryResources = Planet::getResourcesForPlanet($planet_id);
         Controller::checkAllProcesses($allUserPlanets);
         $data = request()->validate([
             'galaxy' => 'required|integer',
@@ -400,7 +400,7 @@ class MissionController extends Controller
     public function liftoff($planet_id)
     {
         $user_id = Auth::id();
-        Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
+        Planet::getResourcesForPlanet($planet_id);
         $data = request()->validate([
             'mission' => ''
         ]);

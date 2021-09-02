@@ -45,28 +45,23 @@ class OverviewController extends Controller
         // update session with new planet id
         session(['default_planet' => $planet_id]);
         $user_id = Auth::id();
-        $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
-
-        $planetInformation = Planet::getOneById($planet_id);
-        $allUserPlanets = Controller::getAllUserPlanets($user_id);
-
-
+        /*
         $count = 0;
         DB::listen(function($query) use (&$count) {
             $count++;
         });
-
+        */
+        $planetaryResources = Planet::getResourcesForPlanet($planet_id);
+        $planetInformation = Planet::getOneById($planet_id);
+        $allUserPlanets = Controller::getAllUserPlanets($user_id);
         Controller::checkAllProcesses($allUserPlanets);
-
-
-        //dd($count);
-
         $planetaryBuildingProcesses = Planet::getAllPlanetaryBuildingProcess($allUserPlanets);
         $planetaryResearchProcesses = Planet::getAllPlanetaryResearchProcess($allUserPlanets, $user_id);
         $shipsAtPlanet = Fleet::getShipsAtPlanet($planet_id);
         $turretsAtPlanet = Defense::getTurretsAtPlanet($planet_id);
         $fleetsOnMission = Fleet::getFleetsOnMission($allUserPlanets);
         $knowledge = Research::getAllAvailableResearches($user_id, $planet_id);
+        //dd($count);
         $maxPlanets = 10;
 
         if($shipsAtPlanet)

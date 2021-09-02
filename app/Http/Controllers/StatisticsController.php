@@ -34,7 +34,7 @@ class StatisticsController extends Controller
             $users_id = Auth::id();
         }
         $user_id = Auth::id();
-        $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
+        $planetaryResources = Planet::getResourcesForPlanet($planet_id);
         $allUserPlanets = Controller::getAllUserPlanets($user_id);
         Controller::checkAllProcesses($allUserPlanets);
         $stats = Statistics::where('statistics.user_id', $users_id)->leftJoin('profiles as p','p.user_id', '=', 'statistics.user_id')->first();
@@ -64,7 +64,7 @@ class StatisticsController extends Controller
             return redirect('/overview/' . $planet_id);
         }
         $user_id = Auth::id();
-        $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, $user_id);
+        $planetaryResources = Planet::getResourcesForPlanet($planet_id);
         $allUserPlanets = Controller::getAllUserPlanets($user_id);
         Controller::checkAllProcesses($allUserPlanets);
         $stats = Statistics::where('statistics.alliance_id', $ally_id)->leftJoin('alliances as a','a.id', '=', 'statistics.alliance_id')->first();

@@ -32,7 +32,7 @@ class Alliances extends Model
             ->first();
     }
 
-    public static function getAllianceByAllyid($ally_id)
+    public static function getAllianceByAllyId($ally_id)
     {
         // add join to alliances table
         return DB::table('alliances as a')
@@ -74,7 +74,7 @@ class Alliances extends Model
         // pickup members
         $members = DB::table('profiles as p')->where('p.alliance_id', $alliance_id)->get();
         //get alliance data
-        $alliance = DB::table('alliances as a')->where('a.id', $alliance_id)->first();
+        $alliance = DB::table('alliances as a')->where('a.id', $alliance_id)->first('alliance_name');
         // add members to alliance data
         $alliance->members = $members;
 

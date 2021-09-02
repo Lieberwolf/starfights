@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class Building extends Model
@@ -117,6 +118,46 @@ class Building extends Model
         return Building::where('building_name', $name)->first();
     }
 
+    public static function getAllBuildingsForPlanet($planet_id) {
+
+        return $buildings = DB::table('infrastructures AS i')
+            ->leftJoin('buildtimefactors AS btf', 'btf.building_id', '=', 'i.building_id')
+            ->leftJoin('resourcefactors AS rf', 'rf.building_id', '=', 'i.building_id')
+            ->leftJoin('buildings AS b', 'b.id', '=', 'i.building_id')
+            ->where('i.planet_id', '=', $planet_id)->where('b.prod_fe', '>', 0)
+            ->orWhere('i.planet_id', '=', $planet_id)->where('b.prod_lut', '>', 0)
+            ->orWhere('i.planet_id', '=', $planet_id)->where('b.prod_cry', '>', 0)
+            ->orWhere('i.planet_id', '=', $planet_id)->where('b.prod_h2o', '>', 0)
+            ->orWhere('i.planet_id', '=', $planet_id)->where('b.prod_h2', '>', 0)
+            ->orWhere('i.planet_id', '=', $planet_id)->where('b.store_lut', '>', 0)
+            ->orWhere('i.planet_id', '=', $planet_id)->where('b.store_cry', '>', 0)
+            ->orWhere('i.planet_id', '=', $planet_id)->where('b.store_h2o', '>', 0)
+            ->orWhere('i.planet_id', '=', $planet_id)->where('b.store_h2', '>', 0)
+            ->orWhere('i.planet_id', '=', $planet_id)->where('b.store_h2', '>', 0)
+            ->orderBy('i.planet_id')
+            ->get();
+    }
+
+    public static function getAllBuildingsForPlanets($planet_ids) {
+
+        return $buildings = DB::table('infrastructures AS i')
+            ->leftJoin('buildtimefactors AS btf', 'btf.building_id', '=', 'i.building_id')
+            ->leftJoin('resourcefactors AS rf', 'rf.building_id', '=', 'i.building_id')
+            ->leftJoin('buildings AS b', 'b.id', '=', 'i.building_id')
+            ->whereIn('i.planet_id', $planet_ids)->where('b.prod_fe', '>', 0)
+            ->orWhereIn('i.planet_id', $planet_ids)->where('b.prod_lut', '>', 0)
+            ->orWhereIn('i.planet_id', $planet_ids)->where('b.prod_cry', '>', 0)
+            ->orWhereIn('i.planet_id', $planet_ids)->where('b.prod_h2o', '>', 0)
+            ->orWhereIn('i.planet_id', $planet_ids)->where('b.prod_h2', '>', 0)
+            ->orWhereIn('i.planet_id', $planet_ids)->where('b.store_lut', '>', 0)
+            ->orWhereIn('i.planet_id', $planet_ids)->where('b.store_cry', '>', 0)
+            ->orWhereIn('i.planet_id', $planet_ids)->where('b.store_h2o', '>', 0)
+            ->orWhereIn('i.planet_id', $planet_ids)->where('b.store_h2', '>', 0)
+            ->orWhereIn('i.planet_id', $planet_ids)->where('b.store_h2', '>', 0)
+            ->orderBy('i.planet_id')
+            ->get();
+    }
+
     public static function getAllAvailableBuildings($planet_id, $user_id, $buildings = false)
     {
         // get all buildings
@@ -173,17 +214,21 @@ class Building extends Model
             $researches[$key] = $research;
         }
 
+        $infra = DB::table('infrastructures AS i')->where('i.planet_id', $planet_id)->get();
+
         // get infrastructure
         foreach($buildings as $key => $building)
         {
-            $temp = DB::table('infrastructures AS i')
-                      ->where('i.building_id', '=', $building->id)
-                      ->where('i.planet_id', '=', $planet_id)
-                      ->first();
-
             $buildings[$key]->buildable = true;
-            $buildings[$key]->infrastructure = $temp;
-            $infrastructure[$building->building_name] = $temp;
+            $buildings[$key]->infrastructure = null;
+            $infrastructure[$building->building_name] = null;
+            foreach($infra as $data) {
+                if($building->id == $data->building_id) {
+                    $buildings[$key]->infrastructure = $data;
+                    $infrastructure[$building->building_name] = $data;
+                }
+            }
+
 
             foreach(json_decode($building->building_requirements) as $keyB => $req)
             {
@@ -191,40 +236,42 @@ class Building extends Model
             }
         }
 
-        foreach($buildings as $key => $building)
-        {
-            foreach(json_decode($building->building_requirements) as $keyB => $req)
-            {
-                if($req > 0)
-                {
-                    foreach($buildings as $keyC => $compareItem)
-                    {
-                        if($compareItem->building_name == $keyB)
-                        {
-                            if($compareItem->infrastructure)
-                            {
-                                if($compareItem->infrastructure->level >= $req)
-                                {
-                                    if($buildings[$key]->buildable != false)
-                                    {
+        $tempBuildings = new Collection();
+
+        foreach($buildings as $key => $building) {
+            foreach (json_decode($building->building_requirements) as $keyB => $req) {
+                if ($req > 0) {
+                    foreach ($buildings as $keyC => $compareItem) {
+                        if ($compareItem->building_name == $keyB) {
+                            if ($compareItem->infrastructure) {
+                                if ($compareItem->infrastructure->level >= $req) {
+                                    if ($buildings[$key]->buildable) {
                                         $buildings[$key]->buildable = true;
+                                        $tempBuildings[$key] = $buildings[$key];
                                     }
                                 } else {
                                     $buildings[$key]->buildable = false;
+                                    unset($tempBuildings[$key]);
+                                    break;
                                 }
                             } else {
                                 $buildings[$key]->buildable = false;
+                                unset($tempBuildings[$key]);
+                                break;
                             }
                         }
                     }
                 } else {
-                    if($buildings[$key]->buildable != false)
-                    {
+                    if ($buildings[$key]->buildable) {
                         $buildings[$key]->buildable = true;
+                        $tempBuildings[$key] = $buildings[$key];
                     }
                 }
             }
+        }
 
+        foreach($tempBuildings as $key => $building)
+        {
             foreach(json_decode($building->research_requirements) as $keyB => $req)
             {
                 if($req > 0)
@@ -237,28 +284,32 @@ class Building extends Model
                             {
                                 if($compareItem->knowledge->level >= $req)
                                 {
-                                    if($buildings[$key]->buildable != false)
+                                    if($building->buildable != false)
                                     {
-                                        $buildings[$key]->buildable = true;
+                                        $building->buildable = true;
                                     }
                                 } else {
-                                    $buildings[$key]->buildable = false;
+                                    $building->buildable = false;
+                                    unset($tempBuildings[$key]);
+                                    break;
                                 }
                             } else {
-                                $buildings[$key]->buildable = false;
+                                $building->buildable = false;
+                                unset($tempBuildings[$key]);
+                                break;
                             }
                         }
                     }
                 } else {
-                    if($buildings[$key]->buildable != false)
+                    if($building->buildable != false)
                     {
-                        $buildings[$key]->buildable = true;
+                        $building->buildable = true;
                     }
                 }
             }
         }
         // return list
-        return $buildings;
+        return $tempBuildings;
     }
 
     public static function startBuilding($building, $planet)
