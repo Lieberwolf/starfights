@@ -247,7 +247,7 @@ class Planet extends Model
         $storage->cry = 100;
         $storage->h2o = 10000;
         $storage->h2 = 1000;
-
+//dd($buildingsList);
         foreach($buildingsList as $building) {
             if($building->store_fe > 0) {
                 if($building->level > 0) {

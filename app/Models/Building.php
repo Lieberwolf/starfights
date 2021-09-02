@@ -130,9 +130,9 @@ class Building extends Model
             ->orWhere('i.planet_id', '=', $planet_id)->where('b.prod_h2o', '>', 0)
             ->orWhere('i.planet_id', '=', $planet_id)->where('b.prod_h2', '>', 0)
             ->orWhere('i.planet_id', '=', $planet_id)->where('b.store_lut', '>', 0)
+            ->orWhere('i.planet_id', '=', $planet_id)->where('b.store_fe', '>', 0)
             ->orWhere('i.planet_id', '=', $planet_id)->where('b.store_cry', '>', 0)
             ->orWhere('i.planet_id', '=', $planet_id)->where('b.store_h2o', '>', 0)
-            ->orWhere('i.planet_id', '=', $planet_id)->where('b.store_h2', '>', 0)
             ->orWhere('i.planet_id', '=', $planet_id)->where('b.store_h2', '>', 0)
             ->orderBy('i.planet_id')
             ->get();
@@ -149,10 +149,10 @@ class Building extends Model
             ->orWhereIn('i.planet_id', $planet_ids)->where('b.prod_cry', '>', 0)
             ->orWhereIn('i.planet_id', $planet_ids)->where('b.prod_h2o', '>', 0)
             ->orWhereIn('i.planet_id', $planet_ids)->where('b.prod_h2', '>', 0)
+            ->orWhereIn('i.planet_id', $planet_ids)->where('b.store_fe', '>', 0)
             ->orWhereIn('i.planet_id', $planet_ids)->where('b.store_lut', '>', 0)
             ->orWhereIn('i.planet_id', $planet_ids)->where('b.store_cry', '>', 0)
             ->orWhereIn('i.planet_id', $planet_ids)->where('b.store_h2o', '>', 0)
-            ->orWhereIn('i.planet_id', $planet_ids)->where('b.store_h2', '>', 0)
             ->orWhereIn('i.planet_id', $planet_ids)->where('b.store_h2', '>', 0)
             ->orderBy('i.planet_id')
             ->get();
