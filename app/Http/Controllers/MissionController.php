@@ -76,7 +76,7 @@ class MissionController extends Controller
             'system' => 'required|integer',
             'planet' => 'required|integer',
             'speed' => 'required|integer',
-            'fleet' => ''
+            'fleet' => 'required'
         ]);
 
         $source = Planet::getOneById($planet_id);
@@ -402,7 +402,7 @@ class MissionController extends Controller
         $user_id = Auth::id();
         Planet::getResourcesForPlanet($planet_id);
         $data = request()->validate([
-            'mission' => ''
+            'mission' => 'required'
         ]);
 
         $data['duration'] = session('duration');
