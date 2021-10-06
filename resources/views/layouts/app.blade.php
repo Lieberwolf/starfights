@@ -19,6 +19,7 @@
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}?t={{now()->timestamp}}" rel="stylesheet">
     <script src="https://kit.fontawesome.com/c0e80dded8.js" crossorigin="anonymous"></script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4240930974597112" crossorigin="anonymous"></script>
 </head>
 <body>
     <div id="app" class="pb-5">
