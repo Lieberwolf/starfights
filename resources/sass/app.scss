@@ -19,7 +19,9 @@ body {
     background-color: #0b101b;
     color: #f2f2f2;
     .card {
-        color: #1a202c;
+        border-radius: initial;
+        border-color: #000;
+        background-color: transparent;
     }
     a {
         color: #f2f2f2;

@@ -24,7 +24,7 @@
 <body>
     <div id="app" class="pb-5">
         @if(!Auth::user())
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <nav class="navbar navbar-expand-lg navbar-dark title-line">
             <a class="navbar-brand" href="/">Starfights</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -88,11 +88,17 @@
         <a href="/researchdashboard" title="{{ __('Research Dashboard') }}">{{ __('Research Dashboard') }}</a>
     </div>
     @endif
-    @if(isset($senate))
-    <script src="{{ asset('js/senate.js') }}?t={{now()->timestamp}}" defer></script>
-    @endif
-<div class="">
-    This page took {{ (microtime(true) - LARAVEL_START) }} seconds to render
-</div>
+    <div class="container-fluid" style="position: static; bottom: 0;">
+        <div class="row">
+            <div class="col-12">
+                <p class="text-center" style="color: #ccc;">
+                    This page took {{ (microtime(true) - LARAVEL_START) }} seconds to render
+                </p>
+            </div>
+            <div class="col-12 text-center p-2">
+                <a href="">Datenschutz</a> | <a href="">Impressum</a> | <a href="">Regeln</a>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

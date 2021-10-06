@@ -5,9 +5,15 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header">{{ __('Login') }}</div>
+                <div class="card-header title-line">{{ __('Login') }}</div>
 
-                <div class="card-body">
+                <div class="card-body sub-line">
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <p class="text-light">Logge dich hier, mit deinem Account ein und stürze dich in das Gefecht. Freund und Feind warten auf dich und deine Flotten.</p>
+                            <p class="text-light">Noch keinen Account? <a href="/register">>> Zur Anmeldung <<</a></p>
+                        </div>
+                    </div>
                     <form method="POST" action="{{ route('login') }}">
                         @csrf
 

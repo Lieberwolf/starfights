@@ -5,9 +5,15 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header">{{ __('Register') }}</div>
+                <div class="card-header title-line">{{ __('Register') }}</div>
 
-                <div class="card-body">
+                <div class="card-body sub-line">
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <p class="text-light">Du möchtest dein können unter Beweis stellen und das Kommando übernehmen? Hier kannst du dich registrieren. Viele Spieler warten schon auf dich. Wirst du das Universum mit Angst und Schrecken untertjochen oder dich mit einer Allianz mit Ruhm und Ehre geschmückt an die Spitze der Highscore Liste setzen?</p>
+                            <p class="text-light">Du hast bereits einen Account? <a href="/login">>> Zum Login <<</a></p>
+                        </div>
+                    </div>
                     <form method="POST" action="{{ route('register') }}">
                         @csrf
 
