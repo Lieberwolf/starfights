@@ -30,8 +30,7 @@ class Fleet extends Model
         $newFleet = array();
         $ships = Ship::all();
         $planet = self::getOneById($planet_id);
-        foreach($ships as $key => $ship)
-        {
+        foreach ($ships as $key => $ship) {
             $fleetPart = new \stdClass();
             $fleetPart->ship_id = $ship->id;
             $fleetPart->ship_name = $ship->ship_name;
@@ -40,10 +39,8 @@ class Fleet extends Model
             array_push($newFleet, $fleetPart);
         }
 
-        foreach($newFleet as $key => $fleet)
-        {
-            if($fleet->ship_id == $ship_id)
-            {
+        foreach ($newFleet as $key => $fleet) {
+            if ($fleet->ship_id == $ship_id) {
                 $fleet->amount += $amount;
             }
         }
@@ -63,43 +60,39 @@ class Fleet extends Model
         ])->first();
     }
 
-    public static function getFleetsOnMission($allUserPlanets)
+    public static function getFleetsOnMission($planet_ids)
     {
 
-        $list = false;
-        foreach($allUserPlanets as $planet)
-        {
-            $temp = Fleet::whereNotNull('mission')
-                           ->where('planet_id', $planet->id)
-                           ->get();
-            if(count($temp) > 0)
-            {
-                foreach($temp as $key => $tempChild)
-                {
-                    $temp[$key]->readableSource = Planet::getOneById($tempChild->planet_id);
-                    $temp[$key]->readableTarget = Planet::getOneById($tempChild->target);
-                }
-                $list[] = $temp;
-            }
+        $ids = [];
+        foreach ($planet_ids as $planet_id) {
+            $ids[] = $planet_id->id;
         }
 
-        return $list;
+        return DB::table('fleets AS f')
+            ->leftJoin('planets AS p1', 'f.planet_id', '=', 'p1.id')
+            ->leftJoin('planets AS p2', 'f.target', '=', 'p2.id')
+            ->whereIn('f.planet_id', $ids)->whereNotNull('mission')
+            ->get([
+                'f.*',
+                'p1.galaxy AS sourceGalaxy',
+                'p1.system AS sourceSystem',
+                'p1.planet AS sourcePlanet',
+                'p2.galaxy AS targetGalaxy',
+                'p2.system AS targetSystem',
+                'p2.planet AS targetPlanet',
+            ]);
     }
 
     public static function getShipsAtPlanetWithData($planet_id)
     {
-        $fleet = Fleet::where('mission',null)->where('planet_id', $planet_id)->first();
+        $fleet = Fleet::where('mission', null)->where('planet_id', $planet_id)->first();
         $shipList = Ship::all();
         $fleet->ship_types = json_decode($fleet->ship_types);
 
-        foreach($fleet->ship_types as $key => $ship)
-        {
-            if($ship->amount > 0)
-            {
-                foreach($shipList as $keyB => $item)
-                {
-                    if($ship->ship_id == $item->id)
-                    {
+        foreach ($fleet->ship_types as $key => $ship) {
+            if ($ship->amount > 0) {
+                foreach ($shipList as $keyB => $item) {
+                    if ($ship->ship_id == $item->id) {
                         $ship->baseData = $item;
                     }
                 }
@@ -118,21 +111,17 @@ class Fleet extends Model
     {
         $planet_ids = [];
 
-        foreach($allUserPlanets as $planet)
-        {
+        foreach ($allUserPlanets as $planet) {
             $planet_ids[] = $planet->id;
         }
 
         $list = [];
-        foreach($allUserPlanets as $planet)
-        {
+        foreach ($allUserPlanets as $planet) {
             $temp = self::where('target', $planet->id)->whereNotIn('planet_id', $planet_ids)->leftJoin('planets', 'planets.id', '=', 'fleets.planet_id')->orderBy('fleets.arrival', 'ASC')->get();
-            foreach($temp as $key => $tmp)
-            {
+            foreach ($temp as $key => $tmp) {
                 $temp[$key]->targetPlanet = Planet::getOneById($planet->id);
             }
-            if(count($temp) > 0)
-            {
+            if (count($temp) > 0) {
                 $list[] = $temp;
             }
         }

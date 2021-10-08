@@ -423,27 +423,6 @@ class UpdateShipsTableInsertBasicData extends Migration
                 'h2' => 37500,
                 'initial_buildtime' => 1200
             ],
-            // Invasionseinheit
-            [
-                'order' => 19,
-                'ship_name' => 'Invasionseinheit',
-                'speed' => 10000,
-                'attack' => 2000,
-                'defend' => 500,
-                'cargo' => 35000,
-                'consumption' => 175,
-                'invasion' => 1,
-                'spy' => 0,
-                'stealth' => 0,
-                'delta_scan' => 0,
-                'colonization' => 0,
-                'fe' => 95000,
-                'lut' => 50000,
-                'cry' => 35,
-                'h2o' => 15000,
-                'h2' => 35000,
-                'initial_buildtime' => 1200
-            ]
         ]);
     }
 

@@ -19,7 +19,7 @@ class Profile extends Model
 
     public static function getStartPlanetByUserId($id)
     {
-        return DB::table('profiles')->where('user_id', $id)->get('start_planet');
+        return DB::table('profiles')->where('user_id', $id)->first('start_planet');
     }
 
     public static function getUsersProfileById($user_id)

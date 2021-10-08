@@ -578,121 +578,285 @@ class Controller extends BaseController
         $allfleets = Fleet::getFleetsOnMission($planet_ids);
         if($allfleets)
         {
-            foreach($allfleets as $fleets)
+            foreach($allfleets as $fleet)
             {
-                foreach($fleets as $fleet)
+                $noReturn = false;
+
+                if(strtotime($fleet->arrival) <= now()->timestamp && $fleet->arrived == false)
                 {
-                    $noReturn = false;
-
-                    if(strtotime($fleet->arrival) <= now()->timestamp && $fleet->arrived == false)
+                    // get defenders ship process
+                    $targetPlanet = Planet::getOneById($fleet->target);
+                    if($targetPlanet && $targetPlanet->user_id != null)
                     {
-                        // get defenders ship process
-                        $targetPlanet = Planet::getOneById($fleet->target);
-                        if($targetPlanet && $targetPlanet->user_id != null)
-                        {
-                           $planet_ids = Planet::getAllUserPlanets($targetPlanet->user_id);
-                            self::checkShipProcesses($planet_ids);
-                            self::checkTurretProcesses($planet_ids);
-                        }
-                        // ships are at target
-                        switch ($fleet->mission)
-                        {
-                            case 1:
-                                $target = Planet::getOneById($fleet->target);
+                       $planet_ids = Planet::getAllUserPlanets($targetPlanet->user_id);
+                        self::checkShipProcesses($planet_ids);
+                        self::checkTurretProcesses($planet_ids);
+                    }
+                    // ships are at target
+                    switch ($fleet->mission)
+                    {
+                        case 1:
+                            $target = Planet::getOneById($fleet->target);
 
-                                $targetShips = Fleet::getShipsAtPlanet($fleet->target);
-                                if($targetShips)
+                            $targetShips = Fleet::getShipsAtPlanet($fleet->target);
+                            if($targetShips)
+                            {
+                                $targetFleet = json_decode($targetShips->ship_types);
+                            } else {
+                                $targetFleet = json_decode('[{"ship_id":1,"ship_name":"Spionagesonde","amount":0},{"ship_id":2,"ship_name":"Warpsonde","amount":0},{"ship_id":3,"ship_name":"Delta Dancer","amount":0},{"ship_id":4,"ship_name":"Crusader","amount":0},{"ship_id":5,"ship_name":"Sternenj\u00e4ger","amount":0},{"ship_id":6,"ship_name":"Tarnbomber","amount":0},{"ship_id":7,"ship_name":"Kolonisationsschiff","amount":0},{"ship_id":8,"ship_name":"Kleines Handelsschiff","amount":0},{"ship_id":9,"ship_name":"Gro\u00dfes Handelsschiff","amount":0},{"ship_id":10,"ship_name":"Akira","amount":0},{"ship_id":11,"ship_name":"Cobra","amount":0},{"ship_id":12,"ship_name":"Pegasus","amount":0},{"ship_id":13,"ship_name":"Phoenix","amount":0},{"ship_id":14,"ship_name":"Aurora","amount":0},{"ship_id":15,"ship_name":"Lavi","amount":0},{"ship_id":16,"ship_name":"Moskito","amount":0},{"ship_id":17,"ship_name":"Vega","amount":0},{"ship_id":18,"ship_name":"Black Dragon","amount":0},{"ship_id":19,"ship_name":"Invasionseinheit","amount":0}]');
+                            }
+                            // optional resource transport
+                            if($fleet->cargo != null) {
+                                $resources = json_decode($fleet->cargo);
+
+                                $target->fe += $resources->fe;
+                                $target->lut += $resources->lut;
+                                $target->cry += $resources->cry;
+                                $target->h2o += $resources->h2o;
+                                $target->h2 += $resources->h2;
+                                $target->save();
+                            }
+
+                            foreach(json_decode($fleet->ship_types) as $fleetShipType)
+                            {
+                                foreach($targetFleet as $key => $targetShipType)
                                 {
-                                    $targetFleet = json_decode($targetShips->ship_types);
-                                } else {
-                                    $targetFleet = json_decode('[{"ship_id":1,"ship_name":"Spionagesonde","amount":0},{"ship_id":2,"ship_name":"Warpsonde","amount":0},{"ship_id":3,"ship_name":"Delta Dancer","amount":0},{"ship_id":4,"ship_name":"Crusader","amount":0},{"ship_id":5,"ship_name":"Sternenj\u00e4ger","amount":0},{"ship_id":6,"ship_name":"Tarnbomber","amount":0},{"ship_id":7,"ship_name":"Kolonisationsschiff","amount":0},{"ship_id":8,"ship_name":"Kleines Handelsschiff","amount":0},{"ship_id":9,"ship_name":"Gro\u00dfes Handelsschiff","amount":0},{"ship_id":10,"ship_name":"Akira","amount":0},{"ship_id":11,"ship_name":"Cobra","amount":0},{"ship_id":12,"ship_name":"Pegasus","amount":0},{"ship_id":13,"ship_name":"Phoenix","amount":0},{"ship_id":14,"ship_name":"Aurora","amount":0},{"ship_id":15,"ship_name":"Lavi","amount":0},{"ship_id":16,"ship_name":"Moskito","amount":0},{"ship_id":17,"ship_name":"Vega","amount":0},{"ship_id":18,"ship_name":"Black Dragon","amount":0},{"ship_id":19,"ship_name":"Invasionseinheit","amount":0}]');
-                                }
-                                // optional resource transport
-                                if($fleet->cargo != null) {
-                                    $resources = json_decode($fleet->cargo);
-
-                                    $target->fe += $resources->fe;
-                                    $target->lut += $resources->lut;
-                                    $target->cry += $resources->cry;
-                                    $target->h2o += $resources->h2o;
-                                    $target->h2 += $resources->h2;
-                                    $target->save();
-                                }
-
-                                foreach(json_decode($fleet->ship_types) as $fleetShipType)
-                                {
-                                    foreach($targetFleet as $key => $targetShipType)
+                                    if($targetShipType->ship_id == $fleetShipType->ship_id)
                                     {
-                                        if($targetShipType->ship_id == $fleetShipType->ship_id)
-                                        {
-                                            $targetFleet[$key]->amount += $fleetShipType->amount;
-                                        }
+                                        $targetFleet[$key]->amount += $fleetShipType->amount;
                                     }
                                 }
+                            }
 
-                                if($targetShips)
-                                {
-                                    $targetShips->ship_types = json_encode($targetFleet);
-                                    $targetShips->save();
-                                } else {
-                                    Fleet::create([
-                                        'planet_id' => $fleet->target,
-                                        'ship_types' => json_encode($targetFleet)
-                                    ]);
-                                }
+                            if($targetShips)
+                            {
+                                $targetShips->ship_types = json_encode($targetFleet);
+                                $targetShips->save();
+                            } else {
+                                Fleet::create([
+                                    'planet_id' => $fleet->target,
+                                    'ship_types' => json_encode($targetFleet)
+                                ]);
+                            }
 
-                                // process done write message
+                            // process done write message
+                            // emit system message to user
+                            $message = [
+                                'user_id' => 0,
+                                'receiver_id' => Auth::id(),
+                                'subject' => 'Stationierung',
+                                'message' => 'Flotte von ' . $fleet->readableSource->galaxy .':'. $fleet->readableSource->system . ':' . $fleet->readableSource->planet . ' wurde auf ' . $fleet->readableTarget->galaxy .':'. $fleet->readableTarget->system . ':' . $fleet->readableTarget->planet . ' stationiert.',
+                            ];
+                            Messages::create($message);
+                            $fleet->delete();
+
+                            break;
+                        case 2:
+                            if($fleet->cargo != null)
+                            {
+                                $resources = json_decode($fleet->cargo);
+
+                                $target = Planet::getOneById($fleet->target);
+                                $target->fe += $resources->fe;
+                                $target->lut += $resources->lut;
+                                $target->cry += $resources->cry;
+                                $target->h2o += $resources->h2o;
+                                $target->h2 += $resources->h2;
+                                $target->save();
+
+                                $resourcesList = $resources->fe > 0 ? 'Eisen: ' . $resources->fe . '<br/>' : '';
+                                $resourcesList .= $resources->lut > 0 ? 'Lutinum: ' . $resources->lut . '<br/>' : '';
+                                $resourcesList .= $resources->cry > 0 ? 'Kristalle: ' . $resources->cry . '<br/>' : '';
+                                $resourcesList .= $resources->h2o > 0 ? 'Wasser: ' . $resources->h2o . '<br/>' : '';
+                                $resourcesList .= $resources->h2 > 0 ? 'Wasserstoff: ' . $resources->h2 . '<br/>' : '';
+
                                 // emit system message to user
                                 $message = [
                                     'user_id' => 0,
                                     'receiver_id' => Auth::id(),
-                                    'subject' => 'Stationierung',
-                                    'message' => 'Flotte von ' . $fleet->readableSource->galaxy .':'. $fleet->readableSource->system . ':' . $fleet->readableSource->planet . ' wurde auf ' . $fleet->readableTarget->galaxy .':'. $fleet->readableTarget->system . ':' . $fleet->readableTarget->planet . ' stationiert.',
+                                    'subject' => 'Transportbericht',
+                                    'message' => 'Flotte von ' . $fleet->readableSource->galaxy .':'. $fleet->readableSource->system . ':' . $fleet->readableSource->planet . ' lieferte an ' . $fleet->readableTarget->galaxy .':'. $fleet->readableTarget->system . ':' . $fleet->readableTarget->planet . ' folgende Rohstoffe:<br/>' . $resourcesList,
                                 ];
                                 Messages::create($message);
-                                $fleet->delete();
 
-                                break;
-                            case 2:
-                                if($fleet->cargo != null)
+                                unset($fleet->readableSource);
+                                unset($fleet->readableTarget);
+                                $fleet->cargo = null;
+                                $fleet->save();
+                            }
+                            break;
+                        case 3:
+                            $research = Research::all();
+                            $attackerResearch = Research::getUsersKnowledge(Auth::id());
+                            $attackerSpyIncrements = [];
+                            $defenderResearch = Research::getUsersKnowledge($fleet->readableTarget->user_id);
+                            $defenderCounterSpyIncrements = [];
+
+                            foreach($attackerResearch as $key => $attacker_research)
+                            {
+                                foreach($research as $keyB => $originalResearch)
                                 {
-                                    $resources = json_decode($fleet->cargo);
-
-                                    $target = Planet::getOneById($fleet->target);
-                                    $target->fe += $resources->fe;
-                                    $target->lut += $resources->lut;
-                                    $target->cry += $resources->cry;
-                                    $target->h2o += $resources->h2o;
-                                    $target->h2 += $resources->h2;
-                                    $target->save();
-
-                                    $resourcesList = $resources->fe > 0 ? 'Eisen: ' . $resources->fe . '<br/>' : '';
-                                    $resourcesList .= $resources->lut > 0 ? 'Lutinum: ' . $resources->lut . '<br/>' : '';
-                                    $resourcesList .= $resources->cry > 0 ? 'Kristalle: ' . $resources->cry . '<br/>' : '';
-                                    $resourcesList .= $resources->h2o > 0 ? 'Wasser: ' . $resources->h2o . '<br/>' : '';
-                                    $resourcesList .= $resources->h2 > 0 ? 'Wasserstoff: ' . $resources->h2 . '<br/>' : '';
-
-                                    // emit system message to user
-                                    $message = [
-                                        'user_id' => 0,
-                                        'receiver_id' => Auth::id(),
-                                        'subject' => 'Transportbericht',
-                                        'message' => 'Flotte von ' . $fleet->readableSource->galaxy .':'. $fleet->readableSource->system . ':' . $fleet->readableSource->planet . ' lieferte an ' . $fleet->readableTarget->galaxy .':'. $fleet->readableTarget->system . ':' . $fleet->readableTarget->planet . ' folgende Rohstoffe:<br/>' . $resourcesList,
-                                    ];
-                                    Messages::create($message);
-
-                                    unset($fleet->readableSource);
-                                    unset($fleet->readableTarget);
-                                    $fleet->cargo = null;
-                                    $fleet->save();
+                                    if($attacker_research->research_id == $originalResearch->id && $originalResearch->increase_spy > 0)
+                                    {
+                                        $originalResearch->level = $attacker_research->level;
+                                        $attackerSpyIncrements[] = $originalResearch;
+                                    }
                                 }
-                                break;
-                            case 3:
+                            }
+
+                            foreach($defenderResearch as $key => $defender_research)
+                            {
+                                foreach($research as $keyB => $originalResearch)
+                                {
+                                    if($defender_research->research_id == $originalResearch->id && $originalResearch->increase_counter_spy > 0)
+                                    {
+                                        $originalResearch->level = $defender_research->level;
+                                        $defenderCounterSpyIncrements[] = $originalResearch;
+                                    }
+                                }
+                            }
+
+
+                            if(count($defenderCounterSpyIncrements) == 0)
+                            {
+                                $success = true;
+                            } else {
+                                if(count($attackerSpyIncrements) == 0) {
+                                    // defender auto wins, because attacker has no improvements (which never can happen cause a spy drone needs spionagetechnologie)
+                                    $success = false;
+                                } else {
+                                    $attackerValue = 1200;
+                                    $defenderValue = 1200;
+                                    foreach($attackerSpyIncrements as $increment)
+                                    {
+                                        for($i = 0; $i <= $increment->level; $i++)
+                                        {
+                                            $attackerValue += $attackerValue * ($increment->increase_spy/100);
+                                        }
+                                    }
+                                    foreach($defenderCounterSpyIncrements as $increment)
+                                    {
+                                        for($i = 0; $i <= $increment->level; $i++)
+                                        {
+                                            $defenderValue += $defenderValue * ($increment->increase_counter_spy/100);
+                                        }
+                                    }
+                                    if($attackerValue >= $defenderValue)
+                                    {
+                                        $success = true;
+                                    } else {
+                                        $success = false;
+                                    }
+                                }
+                            }
+
+                            if($success)
+                            {
+                                $defenderFleet = Fleet::getShipsAtPlanet($fleet->target);
+                                if($defenderFleet == null)
+                                {
+                                    $defenderShips = null;
+                                } else {
+                                    $defenderShips = $defenderFleet->ship_types;
+                                }
+
+                                $defenderTurrets = Defense::getTurretsAtPlanet($fleet->target);
+                                if($defenderTurrets == null)
+                                {
+                                    $defenderTurrets = null;
+                                } else {
+                                    $defenderTurrets = $defenderTurrets->turret_types;
+                                }
+
+                                $defenderResourcesRaw = Planet::getPlanetaryResourcesByPlanetId($fleet->target, $fleet->readableTarget->user_id);
+                                $defenderResources = $defenderResourcesRaw[0];
+
+                                $resourceJson = [
+                                    "fe" => ceil($defenderResources->fe),
+                                    "lut" => ceil($defenderResources->lut),
+                                    "cry" => ceil($defenderResources->cry),
+                                    "h2o" => ceil($defenderResources->h2o),
+                                    "h2" => ceil($defenderResources->h2),
+                                ];
+
+                                // create report
+                                $report = Report::create([
+                                    'link' => Uuid::uuid4(),
+                                    'attacker_id' => $fleet->readableSource->user_id,
+                                    'defender_id' => $fleet->readableTarget->user_id,
+                                    'attacker_fleet' => null,
+                                    'defender_fleet' => $defenderShips,
+                                    'defender_defense' => $defenderTurrets,
+                                    'resources' => json_encode($resourceJson),
+                                    'attacker_planet_id' => $fleet->readableSource->id,
+                                    'defender_planet_id' => $fleet->readableTarget->id,
+                                    'report_type' => 2,
+                                ]);
+
+                                $link = Report::where('id', $report->id)->first();
+                                // emit system message to users
+                                $message = [
+                                    'user_id' => 0,
+                                    'receiver_id' => $fleet->readableSource->user_id,
+                                    'subject' => 'Spionagebericht',
+                                    'message' => 'Spionagemission von ' . $fleet->readableSource->galaxy .':'. $fleet->readableSource->system . ':' . $fleet->readableSource->planet . ' erfolgte auf ' . $fleet->readableTarget->galaxy .':'. $fleet->readableTarget->system . ':' . $fleet->readableTarget->planet . ' (<a href="/report/' . $link->link . '">Zum Bericht</a>)',
+                                ];
+                                Messages::create($message);
+                                $message = [
+                                    'user_id' => 0,
+                                    'receiver_id' => $fleet->readableTarget->user_id,
+                                    'subject' => 'Spionagebericht',
+                                    'message' => 'Spionagemission von ' . $fleet->readableSource->galaxy .':'. $fleet->readableSource->system . ':' . $fleet->readableSource->planet . ' erfolgte auf ' . $fleet->readableTarget->galaxy .':'. $fleet->readableTarget->system . ':' . $fleet->readableTarget->planet . ' (<a href="/report/' . $link->link . '">Zum Bericht</a>)',
+                                ];
+                                Messages::create($message);
+                            } else {
+                                // create report
+                                $report = Report::create([
+                                    'link' => Uuid::uuid4(),
+                                    'attacker_id' => $fleet->readableSource->user_id,
+                                    'defender_id' => $fleet->readableTarget->user_id,
+                                    'attacker_fleet' => null,
+                                    'defender_fleet' => null,
+                                    'defender_defense' => null,
+                                    'resources' => null,
+                                    'attacker_planet_id' => $fleet->readableSource->id,
+                                    'defender_planet_id' => $fleet->readableTarget->id,
+                                    'report_type' => 0,
+                                ]);
+
+                                $link = Report::where('id', $report->id)->first();
+                                // emit system message to users
+                                $message = [
+                                    'user_id' => 0,
+                                    'receiver_id' => $fleet->readableSource->user_id,
+                                    'subject' => 'Spionagebericht',
+                                    'message' => 'Spionagemission von ' . $fleet->readableSource->galaxy .':'. $fleet->readableSource->system . ':' . $fleet->readableSource->planet . ' auf ' . $fleet->readableTarget->galaxy .':'. $fleet->readableTarget->system . ':' . $fleet->readableTarget->planet . ' schlug fehl. (<a href="/report/' . $link->link . '">Zum Bericht</a>)',
+                                ];
+                                Messages::create($message);
+                                $message = [
+                                    'user_id' => 0,
+                                    'receiver_id' => $fleet->readableTarget->user_id,
+                                    'subject' => 'Spionagebericht',
+                                    'message' => 'Spionagemission von ' . $fleet->readableSource->galaxy .':'. $fleet->readableSource->system . ':' . $fleet->readableSource->planet . ' auf ' . $fleet->readableTarget->galaxy .':'. $fleet->readableTarget->system . ':' . $fleet->readableTarget->planet . ' erfolgreich verhindert. (<a href="/report/' . $link->link . '">Zum Bericht</a>)',
+                                ];
+                                Messages::create($message);
+                            }
+
+
+                            // drones die, so delete fleet
+                            $fleet->delete();
+                            break;
+                        case 4:
+                            // is planet occupied by another user?
+                            if($fleet->readableTarget->user_id != null)
+                            {
                                 $research = Research::all();
                                 $attackerResearch = Research::getUsersKnowledge(Auth::id());
                                 $attackerSpyIncrements = [];
                                 $defenderResearch = Research::getUsersKnowledge($fleet->readableTarget->user_id);
                                 $defenderCounterSpyIncrements = [];
+                                $defenderFullResearchList = [];
+                                $defenderFullBuildingList = [];
 
                                 foreach($attackerResearch as $key => $attacker_research)
                                 {
@@ -714,6 +878,13 @@ class Controller extends BaseController
                                         {
                                             $originalResearch->level = $defender_research->level;
                                             $defenderCounterSpyIncrements[] = $originalResearch;
+                                        }
+                                        if($defender_research->research_id == $originalResearch->id)
+                                        {
+                                            $tempResearch = new \stdClass();
+                                            $tempResearch->research_name = $originalResearch->research_name;
+                                            $tempResearch->level = $defender_research->level;
+                                            $defenderFullResearchList[] = $tempResearch;
                                         }
                                     }
                                 }
@@ -781,6 +952,32 @@ class Controller extends BaseController
                                         "h2" => ceil($defenderResources->h2),
                                     ];
 
+                                    $planetInfo = Planet::getOneById($fleet->target);
+
+                                    $infoJson = [
+                                        'diameter' => $planetInfo->diameter,
+                                        'temperature' => $planetInfo->temperature,
+                                        'atmosphere' => $planetInfo->atmosphere,
+                                        'resource_bonus' => $planetInfo->resource_bonus,
+                                    ];
+
+                                    $allBuildings = Building::all();
+                                    $rawInfrastructure = DB::table('infrastructures')->where('planet_id', $fleet->target)->get();
+
+                                    foreach($allBuildings as $building)
+                                    {
+                                        foreach($rawInfrastructure as $infra)
+                                        {
+                                            if($infra->building_id == $building->id)
+                                            {
+                                                $tempBuilding = new \stdClass();
+                                                $tempBuilding->building_name = $building->building_name;
+                                                $tempBuilding->level = $infra->level;
+                                                $defenderFullBuildingList[] = $tempBuilding;
+                                            }
+                                        }
+                                    }
+
                                     // create report
                                     $report = Report::create([
                                         'link' => Uuid::uuid4(),
@@ -792,7 +989,10 @@ class Controller extends BaseController
                                         'resources' => json_encode($resourceJson),
                                         'attacker_planet_id' => $fleet->readableSource->id,
                                         'defender_planet_id' => $fleet->readableTarget->id,
-                                        'report_type' => 2,
+                                        'report_type' => 1,
+                                        'planet_info' => json_encode($infoJson),
+                                        'planet_infrastructure' => json_encode($defenderFullBuildingList),
+                                        'defender_knowledge' => json_encode($defenderFullResearchList),
                                     ]);
 
                                     $link = Report::where('id', $report->id)->first();
@@ -800,15 +1000,15 @@ class Controller extends BaseController
                                     $message = [
                                         'user_id' => 0,
                                         'receiver_id' => $fleet->readableSource->user_id,
-                                        'subject' => 'Spionagebericht',
-                                        'message' => 'Spionagemission von ' . $fleet->readableSource->galaxy .':'. $fleet->readableSource->system . ':' . $fleet->readableSource->planet . ' erfolgte auf ' . $fleet->readableTarget->galaxy .':'. $fleet->readableTarget->system . ':' . $fleet->readableTarget->planet . ' (<a href="/report/' . $link->link . '">Zum Bericht</a>)',
+                                        'subject' => 'Delta Scan',
+                                        'message' => 'Delta Scan von ' . $fleet->readableSource->galaxy .':'. $fleet->readableSource->system . ':' . $fleet->readableSource->planet . ' erfolgte auf ' . $fleet->readableTarget->galaxy .':'. $fleet->readableTarget->system . ':' . $fleet->readableTarget->planet . ' (<a href="/report/' . $link->link . '">Zum Bericht</a>)',
                                     ];
                                     Messages::create($message);
                                     $message = [
                                         'user_id' => 0,
                                         'receiver_id' => $fleet->readableTarget->user_id,
-                                        'subject' => 'Spionagebericht',
-                                        'message' => 'Spionagemission von ' . $fleet->readableSource->galaxy .':'. $fleet->readableSource->system . ':' . $fleet->readableSource->planet . ' erfolgte auf ' . $fleet->readableTarget->galaxy .':'. $fleet->readableTarget->system . ':' . $fleet->readableTarget->planet . ' (<a href="/report/' . $link->link . '">Zum Bericht</a>)',
+                                        'subject' => 'Delta Scan',
+                                        'message' => 'Delta Scan von ' . $fleet->readableSource->galaxy .':'. $fleet->readableSource->system . ':' . $fleet->readableSource->planet . ' erfolgte auf ' . $fleet->readableTarget->galaxy .':'. $fleet->readableTarget->system . ':' . $fleet->readableTarget->planet . ' (<a href="/report/' . $link->link . '">Zum Bericht</a>)',
                                     ];
                                     Messages::create($message);
                                 } else {
@@ -831,322 +1031,295 @@ class Controller extends BaseController
                                     $message = [
                                         'user_id' => 0,
                                         'receiver_id' => $fleet->readableSource->user_id,
-                                        'subject' => 'Spionagebericht',
-                                        'message' => 'Spionagemission von ' . $fleet->readableSource->galaxy .':'. $fleet->readableSource->system . ':' . $fleet->readableSource->planet . ' auf ' . $fleet->readableTarget->galaxy .':'. $fleet->readableTarget->system . ':' . $fleet->readableTarget->planet . ' schlug fehl. (<a href="/report/' . $link->link . '">Zum Bericht</a>)',
+                                        'subject' => 'Delta Scan',
+                                        'message' => 'Delta Scan von ' . $fleet->readableSource->galaxy .':'. $fleet->readableSource->system . ':' . $fleet->readableSource->planet . ' auf ' . $fleet->readableTarget->galaxy .':'. $fleet->readableTarget->system . ':' . $fleet->readableTarget->planet . ' schlug fehl. (<a href="/report/' . $link->link . '">Zum Bericht</a>)',
                                     ];
                                     Messages::create($message);
                                     $message = [
                                         'user_id' => 0,
                                         'receiver_id' => $fleet->readableTarget->user_id,
-                                        'subject' => 'Spionagebericht',
-                                        'message' => 'Spionagemission von ' . $fleet->readableSource->galaxy .':'. $fleet->readableSource->system . ':' . $fleet->readableSource->planet . ' auf ' . $fleet->readableTarget->galaxy .':'. $fleet->readableTarget->system . ':' . $fleet->readableTarget->planet . ' erfolgreich verhindert. (<a href="/report/' . $link->link . '">Zum Bericht</a>)',
-                                    ];
-                                    Messages::create($message);
-                                }
-
-
-                                // drones die, so delete fleet
-                                $fleet->delete();
-                                break;
-                            case 4:
-                                // is planet occupied by another user?
-                                if($fleet->readableTarget->user_id != null)
-                                {
-                                    $research = Research::all();
-                                    $attackerResearch = Research::getUsersKnowledge(Auth::id());
-                                    $attackerSpyIncrements = [];
-                                    $defenderResearch = Research::getUsersKnowledge($fleet->readableTarget->user_id);
-                                    $defenderCounterSpyIncrements = [];
-                                    $defenderFullResearchList = [];
-                                    $defenderFullBuildingList = [];
-
-                                    foreach($attackerResearch as $key => $attacker_research)
-                                    {
-                                        foreach($research as $keyB => $originalResearch)
-                                        {
-                                            if($attacker_research->research_id == $originalResearch->id && $originalResearch->increase_spy > 0)
-                                            {
-                                                $originalResearch->level = $attacker_research->level;
-                                                $attackerSpyIncrements[] = $originalResearch;
-                                            }
-                                        }
-                                    }
-
-                                    foreach($defenderResearch as $key => $defender_research)
-                                    {
-                                        foreach($research as $keyB => $originalResearch)
-                                        {
-                                            if($defender_research->research_id == $originalResearch->id && $originalResearch->increase_counter_spy > 0)
-                                            {
-                                                $originalResearch->level = $defender_research->level;
-                                                $defenderCounterSpyIncrements[] = $originalResearch;
-                                            }
-                                            if($defender_research->research_id == $originalResearch->id)
-                                            {
-                                                $tempResearch = new \stdClass();
-                                                $tempResearch->research_name = $originalResearch->research_name;
-                                                $tempResearch->level = $defender_research->level;
-                                                $defenderFullResearchList[] = $tempResearch;
-                                            }
-                                        }
-                                    }
-
-
-                                    if(count($defenderCounterSpyIncrements) == 0)
-                                    {
-                                        $success = true;
-                                    } else {
-                                        if(count($attackerSpyIncrements) == 0) {
-                                            // defender auto wins, because attacker has no improvements (which never can happen cause a spy drone needs spionagetechnologie)
-                                            $success = false;
-                                        } else {
-                                            $attackerValue = 1200;
-                                            $defenderValue = 1200;
-                                            foreach($attackerSpyIncrements as $increment)
-                                            {
-                                                for($i = 0; $i <= $increment->level; $i++)
-                                                {
-                                                    $attackerValue += $attackerValue * ($increment->increase_spy/100);
-                                                }
-                                            }
-                                            foreach($defenderCounterSpyIncrements as $increment)
-                                            {
-                                                for($i = 0; $i <= $increment->level; $i++)
-                                                {
-                                                    $defenderValue += $defenderValue * ($increment->increase_counter_spy/100);
-                                                }
-                                            }
-                                            if($attackerValue >= $defenderValue)
-                                            {
-                                                $success = true;
-                                            } else {
-                                                $success = false;
-                                            }
-                                        }
-                                    }
-
-                                    if($success)
-                                    {
-                                        $defenderFleet = Fleet::getShipsAtPlanet($fleet->target);
-                                        if($defenderFleet == null)
-                                        {
-                                            $defenderShips = null;
-                                        } else {
-                                            $defenderShips = $defenderFleet->ship_types;
-                                        }
-
-                                        $defenderTurrets = Defense::getTurretsAtPlanet($fleet->target);
-                                        if($defenderTurrets == null)
-                                        {
-                                            $defenderTurrets = null;
-                                        } else {
-                                            $defenderTurrets = $defenderTurrets->turret_types;
-                                        }
-
-                                        $defenderResourcesRaw = Planet::getPlanetaryResourcesByPlanetId($fleet->target, $fleet->readableTarget->user_id);
-                                        $defenderResources = $defenderResourcesRaw[0];
-
-                                        $resourceJson = [
-                                            "fe" => ceil($defenderResources->fe),
-                                            "lut" => ceil($defenderResources->lut),
-                                            "cry" => ceil($defenderResources->cry),
-                                            "h2o" => ceil($defenderResources->h2o),
-                                            "h2" => ceil($defenderResources->h2),
-                                        ];
-
-                                        $planetInfo = Planet::getOneById($fleet->target);
-
-                                        $infoJson = [
-                                            'diameter' => $planetInfo->diameter,
-                                            'temperature' => $planetInfo->temperature,
-                                            'atmosphere' => $planetInfo->atmosphere,
-                                            'resource_bonus' => $planetInfo->resource_bonus,
-                                        ];
-
-                                        $allBuildings = Building::all();
-                                        $rawInfrastructure = DB::table('infrastructures')->where('planet_id', $fleet->target)->get();
-
-                                        foreach($allBuildings as $building)
-                                        {
-                                            foreach($rawInfrastructure as $infra)
-                                            {
-                                                if($infra->building_id == $building->id)
-                                                {
-                                                    $tempBuilding = new \stdClass();
-                                                    $tempBuilding->building_name = $building->building_name;
-                                                    $tempBuilding->level = $infra->level;
-                                                    $defenderFullBuildingList[] = $tempBuilding;
-                                                }
-                                            }
-                                        }
-
-                                        // create report
-                                        $report = Report::create([
-                                            'link' => Uuid::uuid4(),
-                                            'attacker_id' => $fleet->readableSource->user_id,
-                                            'defender_id' => $fleet->readableTarget->user_id,
-                                            'attacker_fleet' => null,
-                                            'defender_fleet' => $defenderShips,
-                                            'defender_defense' => $defenderTurrets,
-                                            'resources' => json_encode($resourceJson),
-                                            'attacker_planet_id' => $fleet->readableSource->id,
-                                            'defender_planet_id' => $fleet->readableTarget->id,
-                                            'report_type' => 1,
-                                            'planet_info' => json_encode($infoJson),
-                                            'planet_infrastructure' => json_encode($defenderFullBuildingList),
-                                            'defender_knowledge' => json_encode($defenderFullResearchList),
-                                        ]);
-
-                                        $link = Report::where('id', $report->id)->first();
-                                        // emit system message to users
-                                        $message = [
-                                            'user_id' => 0,
-                                            'receiver_id' => $fleet->readableSource->user_id,
-                                            'subject' => 'Delta Scan',
-                                            'message' => 'Delta Scan von ' . $fleet->readableSource->galaxy .':'. $fleet->readableSource->system . ':' . $fleet->readableSource->planet . ' erfolgte auf ' . $fleet->readableTarget->galaxy .':'. $fleet->readableTarget->system . ':' . $fleet->readableTarget->planet . ' (<a href="/report/' . $link->link . '">Zum Bericht</a>)',
-                                        ];
-                                        Messages::create($message);
-                                        $message = [
-                                            'user_id' => 0,
-                                            'receiver_id' => $fleet->readableTarget->user_id,
-                                            'subject' => 'Delta Scan',
-                                            'message' => 'Delta Scan von ' . $fleet->readableSource->galaxy .':'. $fleet->readableSource->system . ':' . $fleet->readableSource->planet . ' erfolgte auf ' . $fleet->readableTarget->galaxy .':'. $fleet->readableTarget->system . ':' . $fleet->readableTarget->planet . ' (<a href="/report/' . $link->link . '">Zum Bericht</a>)',
-                                        ];
-                                        Messages::create($message);
-                                    } else {
-                                        // create report
-                                        $report = Report::create([
-                                            'link' => Uuid::uuid4(),
-                                            'attacker_id' => $fleet->readableSource->user_id,
-                                            'defender_id' => $fleet->readableTarget->user_id,
-                                            'attacker_fleet' => null,
-                                            'defender_fleet' => null,
-                                            'defender_defense' => null,
-                                            'resources' => null,
-                                            'attacker_planet_id' => $fleet->readableSource->id,
-                                            'defender_planet_id' => $fleet->readableTarget->id,
-                                            'report_type' => 0,
-                                        ]);
-
-                                        $link = Report::where('id', $report->id)->first();
-                                        // emit system message to users
-                                        $message = [
-                                            'user_id' => 0,
-                                            'receiver_id' => $fleet->readableSource->user_id,
-                                            'subject' => 'Delta Scan',
-                                            'message' => 'Delta Scan von ' . $fleet->readableSource->galaxy .':'. $fleet->readableSource->system . ':' . $fleet->readableSource->planet . ' auf ' . $fleet->readableTarget->galaxy .':'. $fleet->readableTarget->system . ':' . $fleet->readableTarget->planet . ' schlug fehl. (<a href="/report/' . $link->link . '">Zum Bericht</a>)',
-                                        ];
-                                        Messages::create($message);
-                                        $message = [
-                                            'user_id' => 0,
-                                            'receiver_id' => $fleet->readableTarget->user_id,
-                                            'subject' => 'Delta Scan',
-                                            'message' => 'Delta Scan von ' . $fleet->readableSource->galaxy .':'. $fleet->readableSource->system . ':' . $fleet->readableSource->planet . ' auf ' . $fleet->readableTarget->galaxy .':'. $fleet->readableTarget->system . ':' . $fleet->readableTarget->planet . ' erfolgreich verhindert. (<a href="/report/' . $link->link . '">Zum Bericht</a>)',
-                                        ];
-                                        Messages::create($message);
-                                    }
-                                } else {
-                                    $planetInfo = Planet::getOneById($fleet->target);
-
-                                    $infoJson = [
-                                        'diameter' => $planetInfo->diameter,
-                                        'temperature' => $planetInfo->temperature,
-                                        'atmosphere' => $planetInfo->atmosphere,
-                                        'resource_bonus' => $planetInfo->resource_bonus,
-                                    ];
-
-                                    // create report
-                                    $report = Report::create([
-                                        'link' => Uuid::uuid4(),
-                                        'attacker_id' => $fleet->readableSource->user_id,
-                                        'defender_id' => $fleet->readableTarget->user_id,
-                                        'attacker_fleet' => null,
-                                        'defender_fleet' => null,
-                                        'defender_defense' => null,
-                                        'resources' => null,
-                                        'attacker_planet_id' => $fleet->readableSource->id,
-                                        'defender_planet_id' => $fleet->readableTarget->id,
-                                        'report_type' => 1,
-                                        'planet_info' => json_encode($infoJson),
-                                    ]);
-
-                                    $link = Report::where('id', $report->id)->first();
-                                    // emit system message to users
-                                    $message = [
-                                        'user_id' => 0,
-                                        'receiver_id' => $fleet->readableSource->user_id,
                                         'subject' => 'Delta Scan',
-                                        'message' => 'Der Delta Scan von ' . $fleet->readableSource->galaxy .':'. $fleet->readableSource->system . ':' . $fleet->readableSource->planet . ' auf ' . $fleet->readableTarget->galaxy .':'. $fleet->readableTarget->system . ':' . $fleet->readableTarget->planet . ' war erfolgreich. (<a href="/report/' . $link->link . '">Zum Bericht</a>)',
+                                        'message' => 'Delta Scan von ' . $fleet->readableSource->galaxy .':'. $fleet->readableSource->system . ':' . $fleet->readableSource->planet . ' auf ' . $fleet->readableTarget->galaxy .':'. $fleet->readableTarget->system . ':' . $fleet->readableTarget->planet . ' erfolgreich verhindert. (<a href="/report/' . $link->link . '">Zum Bericht</a>)',
                                     ];
                                     Messages::create($message);
                                 }
+                            } else {
+                                $planetInfo = Planet::getOneById($fleet->target);
+
+                                $infoJson = [
+                                    'diameter' => $planetInfo->diameter,
+                                    'temperature' => $planetInfo->temperature,
+                                    'atmosphere' => $planetInfo->atmosphere,
+                                    'resource_bonus' => $planetInfo->resource_bonus,
+                                ];
+
+                                // create report
+                                $report = Report::create([
+                                    'link' => Uuid::uuid4(),
+                                    'attacker_id' => $fleet->readableSource->user_id,
+                                    'defender_id' => $fleet->readableTarget->user_id,
+                                    'attacker_fleet' => null,
+                                    'defender_fleet' => null,
+                                    'defender_defense' => null,
+                                    'resources' => null,
+                                    'attacker_planet_id' => $fleet->readableSource->id,
+                                    'defender_planet_id' => $fleet->readableTarget->id,
+                                    'report_type' => 1,
+                                    'planet_info' => json_encode($infoJson),
+                                ]);
+
+                                $link = Report::where('id', $report->id)->first();
+                                // emit system message to users
+                                $message = [
+                                    'user_id' => 0,
+                                    'receiver_id' => $fleet->readableSource->user_id,
+                                    'subject' => 'Delta Scan',
+                                    'message' => 'Der Delta Scan von ' . $fleet->readableSource->galaxy .':'. $fleet->readableSource->system . ':' . $fleet->readableSource->planet . ' auf ' . $fleet->readableTarget->galaxy .':'. $fleet->readableTarget->system . ':' . $fleet->readableTarget->planet . ' war erfolgreich. (<a href="/report/' . $link->link . '">Zum Bericht</a>)',
+                                ];
+                                Messages::create($message);
+                            }
+                            unset($fleet->readableSource);
+                            unset($fleet->readableTarget);
+                            $fleet->arrived = true;
+                            $fleet->save();
+
+                            break;
+                        case 5:
+                            $shipTypes = json_decode($fleet->ship_types);
+                            foreach($shipTypes as $key => $shipType) {
+                                if($shipType->ship_name == "Kolonisationsschiff")
+                                {
+                                    $shipTypes[$key]->amount -= 1;
+                                }
+                            }
+                            $fleet->ship_types = json_encode($shipTypes);
+
+                            if($fleet->readableTarget->user_id == null)
+                            {
+                                // emit system message to user
+                                $message = [
+                                    'user_id' => 0,
+                                    'receiver_id' => Auth::id(),
+                                    'subject' => 'Kolonisierung',
+                                    'message' => 'Der Planet ' . $fleet->readableTarget->galaxy .':'. $fleet->readableTarget->system . ':' . $fleet->readableTarget->planet . ' wurde erfolgreich kolonisiert.',
+                                ];
+                                Messages::create($message);
+
                                 unset($fleet->readableSource);
                                 unset($fleet->readableTarget);
-                                $fleet->arrived = true;
+
+                                $fleet->planet_id = $fleet->target;
+                                $fleet->target = null;
+                                $fleet->mission = null;
+                                $fleet->arrival = null;
+                                $fleet->departure = null;
+
+                                Planet::where('id', $fleet->planet->id)->update([
+                                    'user_id' => Auth::id(),
+                                    'fe' => 500,
+                                    'lut' => 500,
+                                    'h2o' => 500,
+                                    'rate_fe' => 10,
+                                    'rate_lut' => 10,
+                                    'rate_cry' => 0,
+                                    'rate_h2o' => 10,
+                                    'rate_h2' => 0,
+                                ]);
                                 $fleet->save();
+                                return true;
+                            } else {
+                                $fleet->delete();
+                                dd('error while colonization');
+                            }
+                            break;
+                        case 6:
+                            $result = self::fightCalculation($fleet);
 
-                                break;
-                            case 5:
-                                $shipTypes = json_decode($fleet->ship_types);
-                                foreach($shipTypes as $key => $shipType) {
-                                    if($shipType->ship_name == "Kolonisationsschiff")
+                            $fleet = $result->fleet;
+                            $temp = $result->temp;
+                            $attacker = $result->attacker;
+                            $defender = $result->defender;
+
+                            if(!isset($defender["turrets"]))
+                            {
+                                $defender["turrets"] = [];
+                            }
+
+                            // create report
+                            $report = Report::create([
+                                'link' => Uuid::uuid4(),
+                                'attacker_id' => $fleet->readableSource->user_id,
+                                'defender_id' => $fleet->readableTarget->user_id,
+                                'attacker_fleet' => json_encode($attacker["ship"]),
+                                'defender_fleet' => json_encode($defender["ship"]),
+                                'defender_defense' => json_encode($defender["turrets"]),
+                                'resources' => $temp->cargo,
+                                'attacker_planet_id' => $fleet->readableSource->id,
+                                'defender_planet_id' => $fleet->readableTarget->id,
+                                'report_type' => 3,
+                            ]);
+
+                            $link = Report::where('id', $report->id)->first();
+                            // emit system message to users
+                            $message = [
+                                'user_id' => 0,
+                                'receiver_id' => $fleet->readableSource->user_id,
+                                'subject' => 'Kampfbericht',
+                                'message' => 'Flotte von ' . $fleet->readableSource->galaxy .':'. $fleet->readableSource->system . ':' . $fleet->readableSource->planet . ' griff ' . $fleet->readableTarget->galaxy .':'. $fleet->readableTarget->system . ':' . $fleet->readableTarget->planet . ' an (<a href="/report/' . $link->link . '">Zum Bericht</a>)',
+                            ];
+                            Messages::create($message);
+                            $message = [
+                                'user_id' => 0,
+                                'receiver_id' => $fleet->readableTarget->user_id,
+                                'subject' => 'Kampfbericht',
+                                'message' => 'Flotte von ' . $fleet->readableSource->galaxy .':'. $fleet->readableSource->system . ':' . $fleet->readableSource->planet . ' griff ' . $fleet->readableTarget->galaxy .':'. $fleet->readableTarget->system . ':' . $fleet->readableTarget->planet . ' an (<a href="/report/' . $link->link . '">Zum Bericht</a>)',
+                            ];
+                            Messages::create($message);
+
+                            // set attacker fleet
+                            if($attacker["hasSurvived"])
+                            {
+                                $temp->arrived = true;
+                                unset($temp->readableSource);
+                                unset($temp->readableTarget);
+                                $temp->save();
+                            } else {
+                                $fleet->delete();
+                            }
+
+                            // set defender fleet
+                            $defenderList = [];
+                            $defenderTurretList = [];
+                            if($defender["turrets"])
+                            {
+                                foreach($defender["turrets"] as $key => $defenderTurret)
+                                {
+                                    $temp            = new \stdClass();
+                                    $temp->turret_id   = $defenderTurret->turret_id;
+                                    $temp->turret_name = $defenderTurret->turret_name;
+                                    $temp->amount    = $defenderTurret->newAmount;
+                                    $defenderTurretList[]  = $temp;
+                                }
+                                $defender->turret_types = json_encode($defenderTurretList);
+                                Defense::where('planet_id', $fleet->target)->update(['turret_types' => $defender->turret_types]);
+                            }
+
+
+                            if($defender["ship"])
+                            {
+                                foreach ( $defender["ship"] as $key => $defenderShip )
+                                {
+                                    $temp            = new \stdClass();
+                                    $temp->ship_id   = $defenderShip->ship_id;
+                                    $temp->ship_name = $defenderShip->ship_name;
+                                    $temp->amount    = $defenderShip->newAmount;
+                                    $defenderList[]  = $temp;
+                                }
+                                $defender->ship_types = json_encode( $defenderList );
+
+                                unset( $defender["ship"] );
+                                unset( $defender["home"] );
+                                unset( $defender["research"] );
+                                unset( $defender["attack_value"] );
+                                unset( $defender["final_attack_value"] );
+                                unset( $defender["final_defense_value"] );
+                                unset( $defender["defense_value"] );
+                                unset( $defender["final_shield_value"] );
+                                unset( $defender["survivedDefRatio"] );
+                                unset( $defender["turrets"] );
+                                unset( $defender->turret_types );
+                                $defender->save();
+                            }
+
+                            break;
+                        case 7:
+                            $result = self::fightCalculation($fleet);
+
+                            $fleet = $result->fleet;
+                            $temp = $result->temp;
+                            $attacker = $result->attacker;
+                            $defender = $result->defender;
+                            $defenderHome = Profile::where('user_id', $fleet->readableTarget->user_id)->first(['start_planet']);
+
+                            if($attacker["survivedAttRatio"] > 92 && $defender["survivedDefRatio"] <= 0 && $defenderHome->start_planet != $fleet->readableTarget->id)
+                            {
+
+                                $report = Report::create([
+                                    'link' => Uuid::uuid4(),
+                                    'attacker_id' => $fleet->readableSource->user_id,
+                                    'defender_id' => $fleet->readableTarget->user_id,
+                                    'attacker_fleet' => json_encode($attacker["ship"]),
+                                    'defender_fleet' => json_encode($defender["ship"]),
+                                    'defender_defense' => json_encode($defender["turrets"]),
+                                    'resources' => $temp->cargo,
+                                    'attacker_planet_id' => $fleet->readableSource->id,
+                                    'defender_planet_id' => $fleet->readableTarget->id,
+                                    'report_type' => 4,
+                                ]);
+
+                                $link = Report::where('id', $report->id)->first();
+                                // emit system message to users
+                                $message = [
+                                    'user_id' => 0,
+                                    'receiver_id' => $fleet->readableSource->user_id,
+                                    'subject' => 'Invasionsbericht',
+                                    'message' => 'Flotte von ' . $fleet->readableSource->galaxy .':'. $fleet->readableSource->system . ':' . $fleet->readableSource->planet . ' eroberte ' . $fleet->readableTarget->galaxy .':'. $fleet->readableTarget->system . ':' . $fleet->readableTarget->planet . ' (<a href="/report/' . $link->link . '">Zum Bericht</a>)',
+                                ];
+                                Messages::create($message);
+                                $message = [
+                                    'user_id' => 0,
+                                    'receiver_id' => $fleet->readableTarget->user_id,
+                                    'subject' => 'Invasionsbericht',
+                                    'message' => 'Flotte von ' . $fleet->readableSource->galaxy .':'. $fleet->readableSource->system . ':' . $fleet->readableSource->planet . ' eroberte ' . $fleet->readableTarget->galaxy .':'. $fleet->readableTarget->system . ':' . $fleet->readableTarget->planet . ' (<a href="/report/' . $link->link . '">Zum Bericht</a>)',
+                                ];
+                                Messages::create($message);
+
+                                // delete defender fleet if there was
+                                if($defender["ship"])
+                                {
+                                    $defender->delete();
+                                }
+
+                                // delete defender defense
+                                $turrets = Defense::getTurretsAtPlanet($fleet->target);
+                                if($turrets)
+                                {
+                                    $turrets->delete();
+                                }
+
+                                // rewrite user id for planet
+                                $targetPlanet->user_id = $fleet->readableSource->user_id;
+                                $targetPlanet->save();
+                                // save attacker fleet to new planet
+
+                                foreach($attacker["ship"] as $key => $attackerShip)
+                                {
+                                    $tempShip = new \stdClass();
+                                    $tempShip->ship_id = $attackerShip->ship_id;
+                                    $tempShip->ship_name = $attackerShip->ship_name;
+                                    $tempShip->amount = $attackerShip->newAmount;
+                                    // invasion unit --1
+                                    if($attackerShip->ship_id == 19)
                                     {
-                                        $shipTypes[$key]->amount -= 1;
+                                        $tempShip->amount--;
                                     }
-                                }
-                                $fleet->ship_types = json_encode($shipTypes);
-
-                                if($fleet->readableTarget->user_id == null)
-                                {
-                                    // emit system message to user
-                                    $message = [
-                                        'user_id' => 0,
-                                        'receiver_id' => Auth::id(),
-                                        'subject' => 'Kolonisierung',
-                                        'message' => 'Der Planet ' . $fleet->readableTarget->galaxy .':'. $fleet->readableTarget->system . ':' . $fleet->readableTarget->planet . ' wurde erfolgreich kolonisiert.',
-                                    ];
-                                    Messages::create($message);
-
-                                    unset($fleet->readableSource);
-                                    unset($fleet->readableTarget);
-
-                                    $fleet->planet_id = $fleet->target;
-                                    $fleet->target = null;
-                                    $fleet->mission = null;
-                                    $fleet->arrival = null;
-                                    $fleet->departure = null;
-
-                                    Planet::where('id', $fleet->planet->id)->update([
-                                        'user_id' => Auth::id(),
-                                        'fe' => 500,
-                                        'lut' => 500,
-                                        'h2o' => 500,
-                                        'rate_fe' => 10,
-                                        'rate_lut' => 10,
-                                        'rate_cry' => 0,
-                                        'rate_h2o' => 10,
-                                        'rate_h2' => 0,
-                                    ]);
-                                    $fleet->save();
-                                    return true;
-                                } else {
-                                    $fleet->delete();
-                                    dd('error while colonization');
-                                }
-                                break;
-                            case 6:
-                                $result = self::fightCalculation($fleet);
-
-                                $fleet = $result->fleet;
-                                $temp = $result->temp;
-                                $attacker = $result->attacker;
-                                $defender = $result->defender;
-
-                                if(!isset($defender["turrets"]))
-                                {
-                                    $defender["turrets"] = [];
+                                    $attackerList[] = $tempShip;
                                 }
 
+                                $fleet->ship_types = json_encode($attackerList);
+                                $fleet->planet_id = $targetPlanet->id;
+                                $fleet->cargo = Null;
+                                $fleet->mission = Null;
+                                $fleet->target = Null;
+                                $fleet->arrival = Null;
+                                $fleet->departure = Null;
+                                unset($fleet->readableSource);
+                                unset($fleet->readableTarget);
+
+                                $noReturn = true;
+
+                                $fleet->save();
+                            } else {
                                 // create report
                                 $report = Report::create([
                                     'link' => Uuid::uuid4(),
@@ -1182,6 +1355,7 @@ class Controller extends BaseController
                                 if($attacker["hasSurvived"])
                                 {
                                     $temp->arrived = true;
+                                    $temp->mission = 6;
                                     unset($temp->readableSource);
                                     unset($temp->readableTarget);
                                     $temp->save();
@@ -1204,13 +1378,12 @@ class Controller extends BaseController
                                     }
                                     $defender->turret_types = json_encode($defenderTurretList);
                                     Defense::where('planet_id', $fleet->target)->update(['turret_types' => $defender->turret_types]);
+                                    unset($defender["turrets"]);
+                                    unset($defender->turret_types);
                                 }
 
-
-                                if($defender["ship"])
-                                {
-                                    foreach ( $defender["ship"] as $key => $defenderShip )
-                                    {
+                                if($defender["ship"]) {
+                                    foreach ( $defender["ship"] as $key => $defenderShip ) {
                                         $temp            = new \stdClass();
                                         $temp->ship_id   = $defenderShip->ship_id;
                                         $temp->ship_name = $defenderShip->ship_name;
@@ -1228,231 +1401,55 @@ class Controller extends BaseController
                                     unset( $defender["defense_value"] );
                                     unset( $defender["final_shield_value"] );
                                     unset( $defender["survivedDefRatio"] );
-                                    unset( $defender["turrets"] );
-                                    unset( $defender->turret_types );
                                     $defender->save();
                                 }
-
-                                break;
-                            case 7:
-                                $result = self::fightCalculation($fleet);
-
-                                $fleet = $result->fleet;
-                                $temp = $result->temp;
-                                $attacker = $result->attacker;
-                                $defender = $result->defender;
-                                $defenderHome = Profile::where('user_id', $fleet->readableTarget->user_id)->first(['start_planet']);
-
-                                if($attacker["survivedAttRatio"] > 92 && $defender["survivedDefRatio"] <= 0 && $defenderHome->start_planet != $fleet->readableTarget->id)
-                                {
-
-                                    $report = Report::create([
-                                        'link' => Uuid::uuid4(),
-                                        'attacker_id' => $fleet->readableSource->user_id,
-                                        'defender_id' => $fleet->readableTarget->user_id,
-                                        'attacker_fleet' => json_encode($attacker["ship"]),
-                                        'defender_fleet' => json_encode($defender["ship"]),
-                                        'defender_defense' => json_encode($defender["turrets"]),
-                                        'resources' => $temp->cargo,
-                                        'attacker_planet_id' => $fleet->readableSource->id,
-                                        'defender_planet_id' => $fleet->readableTarget->id,
-                                        'report_type' => 4,
-                                    ]);
-
-                                    $link = Report::where('id', $report->id)->first();
-                                    // emit system message to users
-                                    $message = [
-                                        'user_id' => 0,
-                                        'receiver_id' => $fleet->readableSource->user_id,
-                                        'subject' => 'Invasionsbericht',
-                                        'message' => 'Flotte von ' . $fleet->readableSource->galaxy .':'. $fleet->readableSource->system . ':' . $fleet->readableSource->planet . ' eroberte ' . $fleet->readableTarget->galaxy .':'. $fleet->readableTarget->system . ':' . $fleet->readableTarget->planet . ' (<a href="/report/' . $link->link . '">Zum Bericht</a>)',
-                                    ];
-                                    Messages::create($message);
-                                    $message = [
-                                        'user_id' => 0,
-                                        'receiver_id' => $fleet->readableTarget->user_id,
-                                        'subject' => 'Invasionsbericht',
-                                        'message' => 'Flotte von ' . $fleet->readableSource->galaxy .':'. $fleet->readableSource->system . ':' . $fleet->readableSource->planet . ' eroberte ' . $fleet->readableTarget->galaxy .':'. $fleet->readableTarget->system . ':' . $fleet->readableTarget->planet . ' (<a href="/report/' . $link->link . '">Zum Bericht</a>)',
-                                    ];
-                                    Messages::create($message);
-
-                                    // delete defender fleet if there was
-                                    if($defender["ship"])
-                                    {
-                                        $defender->delete();
-                                    }
-
-                                    // delete defender defense
-                                    $turrets = Defense::getTurretsAtPlanet($fleet->target);
-                                    if($turrets)
-                                    {
-                                        $turrets->delete();
-                                    }
-
-                                    // rewrite user id for planet
-                                    $targetPlanet->user_id = $fleet->readableSource->user_id;
-                                    $targetPlanet->save();
-                                    // save attacker fleet to new planet
-
-                                    foreach($attacker["ship"] as $key => $attackerShip)
-                                    {
-                                        $tempShip = new \stdClass();
-                                        $tempShip->ship_id = $attackerShip->ship_id;
-                                        $tempShip->ship_name = $attackerShip->ship_name;
-                                        $tempShip->amount = $attackerShip->newAmount;
-                                        // invasion unit --1
-                                        if($attackerShip->ship_id == 19)
-                                        {
-                                            $tempShip->amount--;
-                                        }
-                                        $attackerList[] = $tempShip;
-                                    }
-
-                                    $fleet->ship_types = json_encode($attackerList);
-                                    $fleet->planet_id = $targetPlanet->id;
-                                    $fleet->cargo = Null;
-                                    $fleet->mission = Null;
-                                    $fleet->target = Null;
-                                    $fleet->arrival = Null;
-                                    $fleet->departure = Null;
-                                    unset($fleet->readableSource);
-                                    unset($fleet->readableTarget);
-
-                                    $noReturn = true;
-
-                                    $fleet->save();
-                                } else {
-                                    // create report
-                                    $report = Report::create([
-                                        'link' => Uuid::uuid4(),
-                                        'attacker_id' => $fleet->readableSource->user_id,
-                                        'defender_id' => $fleet->readableTarget->user_id,
-                                        'attacker_fleet' => json_encode($attacker["ship"]),
-                                        'defender_fleet' => json_encode($defender["ship"]),
-                                        'defender_defense' => json_encode($defender["turrets"]),
-                                        'resources' => $temp->cargo,
-                                        'attacker_planet_id' => $fleet->readableSource->id,
-                                        'defender_planet_id' => $fleet->readableTarget->id,
-                                        'report_type' => 3,
-                                    ]);
-
-                                    $link = Report::where('id', $report->id)->first();
-                                    // emit system message to users
-                                    $message = [
-                                        'user_id' => 0,
-                                        'receiver_id' => $fleet->readableSource->user_id,
-                                        'subject' => 'Kampfbericht',
-                                        'message' => 'Flotte von ' . $fleet->readableSource->galaxy .':'. $fleet->readableSource->system . ':' . $fleet->readableSource->planet . ' griff ' . $fleet->readableTarget->galaxy .':'. $fleet->readableTarget->system . ':' . $fleet->readableTarget->planet . ' an (<a href="/report/' . $link->link . '">Zum Bericht</a>)',
-                                    ];
-                                    Messages::create($message);
-                                    $message = [
-                                        'user_id' => 0,
-                                        'receiver_id' => $fleet->readableTarget->user_id,
-                                        'subject' => 'Kampfbericht',
-                                        'message' => 'Flotte von ' . $fleet->readableSource->galaxy .':'. $fleet->readableSource->system . ':' . $fleet->readableSource->planet . ' griff ' . $fleet->readableTarget->galaxy .':'. $fleet->readableTarget->system . ':' . $fleet->readableTarget->planet . ' an (<a href="/report/' . $link->link . '">Zum Bericht</a>)',
-                                    ];
-                                    Messages::create($message);
-
-                                    // set attacker fleet
-                                    if($attacker["hasSurvived"])
-                                    {
-                                        $temp->arrived = true;
-                                        $temp->mission = 6;
-                                        unset($temp->readableSource);
-                                        unset($temp->readableTarget);
-                                        $temp->save();
-                                    } else {
-                                        $fleet->delete();
-                                    }
-
-                                    // set defender fleet
-                                    $defenderList = [];
-                                    $defenderTurretList = [];
-                                    if($defender["turrets"])
-                                    {
-                                        foreach($defender["turrets"] as $key => $defenderTurret)
-                                        {
-                                            $temp            = new \stdClass();
-                                            $temp->turret_id   = $defenderTurret->turret_id;
-                                            $temp->turret_name = $defenderTurret->turret_name;
-                                            $temp->amount    = $defenderTurret->newAmount;
-                                            $defenderTurretList[]  = $temp;
-                                        }
-                                        $defender->turret_types = json_encode($defenderTurretList);
-                                        Defense::where('planet_id', $fleet->target)->update(['turret_types' => $defender->turret_types]);
-                                        unset($defender["turrets"]);
-                                        unset($defender->turret_types);
-                                    }
-
-                                    if($defender["ship"]) {
-                                        foreach ( $defender["ship"] as $key => $defenderShip ) {
-                                            $temp            = new \stdClass();
-                                            $temp->ship_id   = $defenderShip->ship_id;
-                                            $temp->ship_name = $defenderShip->ship_name;
-                                            $temp->amount    = $defenderShip->newAmount;
-                                            $defenderList[]  = $temp;
-                                        }
-                                        $defender->ship_types = json_encode( $defenderList );
-
-                                        unset( $defender["ship"] );
-                                        unset( $defender["home"] );
-                                        unset( $defender["research"] );
-                                        unset( $defender["attack_value"] );
-                                        unset( $defender["final_attack_value"] );
-                                        unset( $defender["final_defense_value"] );
-                                        unset( $defender["defense_value"] );
-                                        unset( $defender["final_shield_value"] );
-                                        unset( $defender["survivedDefRatio"] );
-                                        $defender->save();
-                                    }
-                                }
-                                break;
-                        }
+                            }
+                            break;
                     }
+                }
 
-                    // fleet is also back (except stationierung, spionage && kolonisierung, invasion)
-                    if(strtotime($fleet->arrival) + (strtotime($fleet->arrival) - strtotime($fleet->departure)) <= now()->timestamp && $fleet->mission != 1 && $fleet->mission != 3 && $fleet->mission != 5 && $fleet->mission != 7 && !$noReturn)
+                // fleet is also back (except stationierung, spionage && kolonisierung, invasion)
+                if(strtotime($fleet->arrival) + (strtotime($fleet->arrival) - strtotime($fleet->departure)) <= now()->timestamp && $fleet->mission != 1 && $fleet->mission != 3 && $fleet->mission != 5 && $fleet->mission != 7 && !$noReturn)
+                {
+                    // fleet is back
+                    $homeFleet = Fleet::getShipsAtPlanet($fleet->planet_id);
+                    $homePlanet = Planet::getOneById($fleet->planet_id);
+                    $home_fleet_type = json_decode($homeFleet->ship_types);
+                    $fleet_type = json_decode($fleet->ship_types);
+                    $cargo = json_decode($fleet->cargo);
+                    foreach($home_fleet_type as $key => $ship)
                     {
-                        // fleet is back
-                        $homeFleet = Fleet::getShipsAtPlanet($fleet->planet_id);
-                        $homePlanet = Planet::getOneById($fleet->planet_id);
-                        $home_fleet_type = json_decode($homeFleet->ship_types);
-                        $fleet_type = json_decode($fleet->ship_types);
-                        $cargo = json_decode($fleet->cargo);
-                        foreach($home_fleet_type as $key => $ship)
+                        //dd($ship->ship_id);
+                        foreach($fleet_type as $keyB => $fleetShip)
                         {
-                            //dd($ship->ship_id);
-                            foreach($fleet_type as $keyB => $fleetShip)
+                            if($fleetShip->ship_id == $ship->ship_id)
                             {
-                                if($fleetShip->ship_id == $ship->ship_id)
-                                {
-                                    $home_fleet_type[$key]->amount += $fleetShip->amount;
-                                }
+                                $home_fleet_type[$key]->amount += $fleetShip->amount;
                             }
                         }
-
-                        if($cargo != null) {
-                            $homePlanet->fe += $cargo->fe;
-                            $homePlanet->lut += $cargo->lut;
-                            $homePlanet->cry += $cargo->cry;
-                            $homePlanet->h2o += $cargo->h2o;
-                            $homePlanet->h2 += $cargo->h2;
-                            $homePlanet->save();
-                        }
-
-                        $homeFleet->ship_types = json_encode($home_fleet_type);
-                        $homeFleet->save();
-
-                        // emit system message to user
-                        $message = [
-                            'user_id' => 0,
-                            'receiver_id' => Auth::id(),
-                            'subject' => 'Flottenaktivität',
-                            'message' => 'Eine Flotte kehrt zurück',
-                        ];
-                        Messages::create($message);
-                        $fleet->delete();
                     }
+
+                    if($cargo != null) {
+                        $homePlanet->fe += $cargo->fe;
+                        $homePlanet->lut += $cargo->lut;
+                        $homePlanet->cry += $cargo->cry;
+                        $homePlanet->h2o += $cargo->h2o;
+                        $homePlanet->h2 += $cargo->h2;
+                        $homePlanet->save();
+                    }
+
+                    $homeFleet->ship_types = json_encode($home_fleet_type);
+                    $homeFleet->save();
+
+                    // emit system message to user
+                    $message = [
+                        'user_id' => 0,
+                        'receiver_id' => Auth::id(),
+                        'subject' => 'Flottenaktivität',
+                        'message' => 'Eine Flotte kehrt zurück',
+                    ];
+                    Messages::create($message);
+                    $fleet->delete();
                 }
             }
         }
@@ -2169,117 +2166,82 @@ class Controller extends BaseController
 
     public static function checkForLostFleets($planet_ids)
     {
-        // empty fleets array | each planet has its own index
-        $lostFleets = [];
-
-        // run through every planet and get all fleets with target and mission null to combine them
-        foreach($planet_ids as $index => $planet)
-        {
-            // first should be the main fleet
-            $firstFleetEntry = Fleet::where([
-                "planet_id" => $planet->id,
-                "mission" => null,
-                "target" => null
-            ])->first();
-
-            // collection of not proper added ships
-            $lostFleets[$planet->id] = Fleet::where([
-                "planet_id" => $planet->id,
-                "mission" => null,
-                "target" => null
-            ])->get()->skip(1);
-
-
-            // only collection with 1 and above entries are worth to be shown at
-            if(count($lostFleets[$planet->id]) > 0) {
-                $mainFleetShips = json_decode($firstFleetEntry->ship_types);
-                $fleetCollection = $lostFleets[$planet->id];
-
-                // ran through every fleet and add amounts to main fleet
-                foreach ($fleetCollection as $rawFleet) {
-                    $fleet = json_decode($rawFleet->ship_types);
-
-                    foreach($mainFleetShips as $mainFleetShip) {
-
-                        // every ship step by step
-                        foreach($fleet as $ship) {
-
-                            // only watch for amount > 0 and count on correct id
-                            if($ship->amount > 0 && $mainFleetShip->ship_id == $ship->ship_id) {
-                                $mainFleetShip->amount += $ship->amount;
-                            }
-                        }
-                    }
-                    // when done delete the current record
-                    $rawFleet->delete();
-                }
-
-                // encode ship types and save to main fleet
-                $firstFleetEntry->ship_types = json_encode($mainFleetShips);
-                $firstFleetEntry->save();
-            }
+        $ids = [];
+        foreach ($planet_ids as $planet_id) {
+            $ids[] = $planet_id->id;
         }
 
+        // run through every planet and get all fleets with target and mission null to combine them
+        // first should be the main fleet
+        $fleetEntries = Fleet::whereIn("planet_id", $ids)
+            ->where([
+            "mission" => null,
+            "target" => null
+            ])->get();
+
+        // more fleets present as planets? -> fleet is not correctly added to planets main fleet
+        if(count($fleetEntries) > count($ids)) {
+            $fleetEntries->groupBy('planet_id')->flatMap(function($fleets) {
+                foreach($fleets as $key => $fleet) {
+                    $fleets[$key]->ship_types = json_decode($fleet->ship_types);
+                    if($key > 0) {
+                        foreach($fleet->ship_types as $ship) {
+                            foreach($fleets[0]->ship_types as $originalShip) {
+                                if($ship->ship_id == $originalShip->ship_id) {
+                                    $originalShip->amount += $ship->amount;
+                                }
+                            }
+                        }
+                        $fleets[$key]->delete();
+                        $fleets[0]->ship_type = json_encode($fleets[0]->ship_types);
+                        $fleets[0]->save();
+                    }
+                }
+            });
+        }
     }
 
     public static function checkForLostTurrets($planet_ids)
     {
-        // empty defense array | each planet has its own index
-        $lostTurrets = [];
+        $ids = [];
+        foreach ($planet_ids as $planet_id) {
+            $ids[] = $planet_id->id;
+        }
 
-        // run through every planet and get all defenses to combine them
-        foreach($planet_ids as $index => $planet)
-        {
-            // first should be the main turret
-            $firstTurretEntry = Defense::where([
-                "planet_id" => $planet->id,
-            ])->first();
+        // run through every planet and get all turrets
+        // first should be the main defense
+        $turretEntries = Defense::whereIn("planet_id", $ids)->get();
 
-            // collection of not proper added turrets
-            $lostTurrets[$planet->id] = Defense::where([
-                "planet_id" => $planet->id,
-            ])->get()->skip(1);
-
-
-            // only collection with 1 and above entries are worth to be shown at
-            if(count($lostTurrets[$planet->id]) > 0) {
-                $mainTurretTurrets = json_decode($firstTurretEntry->turret_types);
-                $turretCollection = $lostTurrets[$planet->id];
-
-                // ran through every turret and add amounts to main turret
-                foreach ($turretCollection as $rawTurret) {
-                    $turrets = json_decode($rawTurret->turret_types);
-
-                    foreach($mainTurretTurrets as $mainTurretTurret) {
-
-                        // every turret step by step
-                        foreach($turrets as $turret) {
-
-                            // only watch for amount > 0 and count on correct id
-                            if($turret->amount > 0 && $mainTurretTurret->turret_id == $turret->turret_id) {
-                                $mainTurretTurret->amount += $turret->amount;
+        // more turrets present as planets? -> turret is not correctly added to planets defense
+        if(count($turretEntries) > count($ids)) {
+            $turretEntries->groupBy('planet_id')->flatMap(function($turrets) {
+                foreach($turrets as $key => $turret) {
+                    $turrets[$key]->turret_types = json_decode($turret->turret_types);
+                    if($key > 0) {
+                        foreach($turret->turret_types as $turret) {
+                            foreach($turrets[0]->turret_types as $originalTurret) {
+                                if($turret->turret_id == $originalTurret->turret_id) {
+                                    $originalTurret->amount += $turret->amount;
+                                }
                             }
                         }
+                        $turrets[$key]->delete();
+                        $turrets[0]->turret_type = json_encode($turrets[0]->turret_types);
+                        $turrets[0]->save();
                     }
-                    // when done delete the current record
-                    $rawTurret->delete();
                 }
-
-                // encode turret types and save to main turret
-                $firstTurretEntry->turret_types = json_encode($mainTurretTurrets);
-                $firstTurretEntry->save();
-
-            }
+            });
         }
     }
 
     public static function checkAllProcesses($planet_ids)
     {
-        $count = 0;
-        DB::listen(function ($query) use (&$count) {
-            $count++;
-        });
-        Planet::getResourcesForAllPlanets($planet_ids);
+//        $start = microtime(true);
+//        $count = 0;
+//        DB::listen(function ($query) use (&$count) {
+//            $count++;
+//        });
+        //Planet::getResourcesForAllPlanets($planet_ids);
         self::checkBuildingProcesses($planet_ids);
         self::checkResearchProcesses($planet_ids);
         self::checkShipProcesses($planet_ids);
@@ -2287,6 +2249,8 @@ class Controller extends BaseController
         self::checkFleetProcesses($planet_ids);
         self::checkForLostFleets($planet_ids);
         self::checkForLostTurrets($planet_ids);
+        //$time_elapsed_secs = microtime(true) - $start;
+        //dd($time_elapsed_secs);
         //dd($count);
     }
 }

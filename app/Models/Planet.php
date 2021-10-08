@@ -238,16 +238,21 @@ class Planet extends Model
     }
 
     public static function getResourcesForPlanet($planet_id) {
-
         $lastStand = Planet::where('id', $planet_id)->first();
-        $buildingsList = Building::getAllBuildingsForPlanet($planet_id);
+
+        if(session('buildings_' . $planet_id)) {
+            $buildingsList = session('buildings_' . $planet_id);
+        } else {
+            $buildingsList = Building::getAllBuildingsForPlanet($planet_id);
+            session(['buildings_' . $planet_id => $buildingsList]);
+        }
         $storage = new \stdClass();
         $storage->fe = 10000;
         $storage->lut = 10000;
         $storage->cry = 100;
         $storage->h2o = 10000;
         $storage->h2 = 1000;
-//dd($buildingsList);
+
         foreach($buildingsList as $building) {
             if($building->store_fe > 0) {
                 if($building->level > 0) {
@@ -276,76 +281,11 @@ class Planet extends Model
             }
         }
 
-        $ressFe = [
-            "currentFe" => $lastStand->fe,
-            "goneSeconds" => now()->diffInSeconds($lastStand->updated_at),
-            "feRate" => $lastStand->rate_fe,
-            "perSecond" => $lastStand->rate_fe/3600,
-            "tobeAdded" => ($lastStand->rate_fe/3600)*now()->diffInSeconds($lastStand->updated_at),
-            "newFe" => $lastStand->fe+($lastStand->rate_fe/3600)*now()->diffInSeconds($lastStand->updated_at),
-        ];
-
-        $ressLut = [
-            "currentLut" => $lastStand->lut,
-            "goneSeconds" => now()->diffInSeconds($lastStand->updated_at),
-            "lutRate" => $lastStand->rate_lut,
-            "perSecond" => $lastStand->rate_lut/3600,
-            "tobeAdded" => ($lastStand->rate_lut/3600)*now()->diffInSeconds($lastStand->updated_at),
-            "newLut" => $lastStand->lut+($lastStand->rate_lut/3600)*now()->diffInSeconds($lastStand->updated_at),
-        ];
-
-        $ressCry = [
-            "currentCry" => $lastStand->cry,
-            "goneSeconds" => now()->diffInSeconds($lastStand->updated_at),
-            "cryRate" => $lastStand->rate_cry,
-            "perSecond" => $lastStand->rate_cry/3600,
-            "tobeAdded" => ($lastStand->rate_cry/3600)*now()->diffInSeconds($lastStand->updated_at),
-            "newCry" => $lastStand->cry+($lastStand->rate_cry/3600)*now()->diffInSeconds($lastStand->updated_at),
-        ];
-
-        $ressH2o = [
-            "currentH2o" => $lastStand->h2o,
-            "goneSeconds" => now()->diffInSeconds($lastStand->updated_at),
-            "h2oRate" => $lastStand->rate_h2o,
-            "perSecond" => $lastStand->rate_h2o/3600,
-            "tobeAdded" => ($lastStand->rate_h2o/3600)*now()->diffInSeconds($lastStand->updated_at),
-            "newH2o" => $lastStand->h2o+($lastStand->rate_h2o/3600)*now()->diffInSeconds($lastStand->updated_at),
-        ];
-
-        $ressH2 = [
-            "currentH2" => $lastStand->h2,
-            "goneSeconds" => now()->diffInSeconds($lastStand->updated_at),
-            "h2Rate" => $lastStand->rate_h2,
-            "perSecond" => $lastStand->rate_h2/3600,
-            "tobeAdded" => ($lastStand->rate_h2/3600)*now()->diffInSeconds($lastStand->updated_at),
-            "newH2" => $lastStand->h2+($lastStand->rate_h2/3600)*now()->diffInSeconds($lastStand->updated_at),
-        ];
-
-        if($ressFe["newFe"] <= $storage->fe) {
-            $lastStand->fe = $ressFe['newFe'];
-        } else {
-            $lastStand->fe = $storage->fe;
-        }
-        if($ressLut["newLut"] <= $storage->lut) {
-            $lastStand->lut = $ressLut['newLut'];
-        } else {
-            $lastStand->lut = $storage->lut;
-        }
-        if($ressCry["newCry"] <= $storage->cry) {
-            $lastStand->cry = $ressCry['newCry'];
-        } else {
-            $lastStand->cry = $storage->cry;
-        }
-        if($ressH2o["newH2o"] <= $storage->h2o) {
-            $lastStand->h2o = $ressH2o['newH2o'];
-        } else {
-            $lastStand->h2o = $storage->h2o;
-        }
-        if($ressH2["newH2"] <= $storage->h2) {
-            $lastStand->h2 = $ressH2['newH2'];
-        } else {
-            $lastStand->h2 = $storage->h2;
-        }
+        $lastStand->fe = $lastStand->fe+($lastStand->rate_fe/3600)*now()->diffInSeconds($lastStand->updated_at) <= $storage->fe ? $lastStand->fe+($lastStand->rate_fe/3600)*now()->diffInSeconds($lastStand->updated_at) : $storage->fe;
+        $lastStand->lut = $lastStand->lut+($lastStand->rate_lut/3600)*now()->diffInSeconds($lastStand->updated_at) <= $storage->lut ? $lastStand->lut+($lastStand->rate_lut/3600)*now()->diffInSeconds($lastStand->updated_at) : $storage->lut;
+        $lastStand->cry = $lastStand->cry+($lastStand->rate_cry/3600)*now()->diffInSeconds($lastStand->updated_at) <= $storage->cry ? $lastStand->cry+($lastStand->rate_cry/3600)*now()->diffInSeconds($lastStand->updated_at) : $storage->cry;
+        $lastStand->h2o = $lastStand->h2o+($lastStand->rate_h2o/3600)*now()->diffInSeconds($lastStand->updated_at) <= $storage->h2o ? $lastStand->h2o+($lastStand->rate_h2o/3600)*now()->diffInSeconds($lastStand->updated_at) : $storage->h2o;
+        $lastStand->h2 = $lastStand->h2+($lastStand->rate_h2/3600)*now()->diffInSeconds($lastStand->updated_at) <= $storage->h2 ? $lastStand->h2+($lastStand->rate_h2/3600)*now()->diffInSeconds($lastStand->updated_at) : $storage->h2;
 
         if($lastStand->fe < 0)
         {

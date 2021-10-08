@@ -84,12 +84,12 @@
                     </div>
                 @endif
                 @if($process->type == 'fleet')
-                    @if(strtotime($process->arrival) > now()->timestamp && $process->aborted == null)
+                    @if(strtotime($process->arrival) > now()->timestamp && !property_exists($process, 'aborted'))
                     <div class="col-3 text-right sub-line" style="background-color:#102f4c;">
                         <span class="js-add-countdown" data-seconds-to-count="{{strtotime($process->arrival) - now()->timestamp}}"></span> - [{{date('H:i:s', strtotime($process->arrival))}}]
                     </div>
                     <div class="col-9 sub-line" style="background-color:#102f4c;">
-                        <span>Flotte von {{$process->readableSource->galaxy}}:{{$process->readableSource->system}}:{{$process->readableSource->planet}} erreicht {{$process->readableTarget->galaxy}}:{{$process->readableTarget->system}}:{{$process->readableTarget->planet}} ({{$process->mission == 1 ? 'Stationierung' : ($process->mission == 2 ? 'Transport' : ($process->mission == 3 ? 'Spionage' : ($process->mission == 4 ? 'Delta Scan' : ($process->mission == 5 ? 'Kolonisierung' : ($process->mission == 6 ? 'Angriff' : ($process->mission == 7 ? 'Invasion' : ''))))))}})</span>
+                        <span>Flotte von {{$process->sourceGalaxy}}:{{$process->sourceSystem}}:{{$process->sourcePlanet}} erreicht {{$process->targetGalaxy}}:{{$process->targetSystem}}:{{$process->targetPlanet}} ({{$process->mission == 1 ? 'Stationierung' : ($process->mission == 2 ? 'Transport' : ($process->mission == 3 ? 'Spionage' : ($process->mission == 4 ? 'Delta Scan' : ($process->mission == 5 ? 'Kolonisierung' : ($process->mission == 6 ? 'Angriff' : ($process->mission == 7 ? 'Invasion' : ''))))))}})</span>
                     </div>
                     @endif
                     @if($process->mission == 0)
@@ -97,15 +97,15 @@
                         <span class="js-add-countdown" data-seconds-to-count="{{strtotime($process->arrival) + (strtotime($process->arrival) - strtotime($process->departure)) - now()->timestamp}}"></span> - [{{date('H:i:s', strtotime($process->arrival) + (strtotime($process->arrival) - strtotime($process->departure)))}}]
                     </div>
                     <div class="col-9 sub-line" style="background-color:#001e3b;">
-                        <span>Flotte von {{$process->readableSource->galaxy}}:{{$process->readableSource->system}}:{{$process->readableSource->planet}} kehrt zurück [Mission abgebrochen]</span>
+                        <span>Flotte von {{$process->sourceGalaxy}}:{{$process->sourceSystem}}:{{$process->sourcePlanet}} kehrt zurück [Mission abgebrochen]</span>
                     </div>
                     @else
-                    @if($process->aborted == 1)
+                    @if(property_exists($process, 'aborted') && $process->aborted == 1)
                     <div class="col-3 text-right sub-line" style="background-color:#001e3b;">
                         <span class="js-add-countdown" data-seconds-to-count="{{strtotime($process->arrival) + (strtotime($process->arrival) - strtotime($process->departure)) - now()->timestamp}}"></span> - [{{date('H:i:s', strtotime($process->arrival) + (strtotime($process->arrival) - strtotime($process->departure)))}}]
                     </div>
                     <div class="col-9 sub-line" style="background-color:#001e3b;">
-                        <span>Flotte von {{$process->readableSource->galaxy}}:{{$process->readableSource->system}}:{{$process->readableSource->planet}} erreicht {{$process->readableTarget->galaxy}}:{{$process->readableTarget->system}}:{{$process->readableTarget->planet}} ({{$process->mission == 1 ? 'Stationierung' : ($process->mission == 2 ? 'Transport' : ($process->mission == 3 ? 'Spionage' : ($process->mission == 4 ? 'Delta Scan' : ($process->mission == 5 ? 'Kolonisierung' : ($process->mission == 6 ? 'Angriff' : ($process->mission == 7 ? 'Invasion' : ''))))))}}) [Rückkehr]</span>
+                        <span>Flotte von {{$process->sourceGalaxy}}:{{$process->sourceSystem}}:{{$process->sourcePlanet}} erreicht {{$process->targetGalaxy}}:{{$process->targetSystem}}:{{$process->targetPlanet}} ({{$process->mission == 1 ? 'Stationierung' : ($process->mission == 2 ? 'Transport' : ($process->mission == 3 ? 'Spionage' : ($process->mission == 4 ? 'Delta Scan' : ($process->mission == 5 ? 'Kolonisierung' : ($process->mission == 6 ? 'Angriff' : ($process->mission == 7 ? 'Invasion' : ''))))))}}) [Rückkehr]</span>
                     </div>
                     @endif
                     @endif

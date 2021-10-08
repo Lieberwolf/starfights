@@ -30,8 +30,8 @@ class OverviewController extends Controller
     {
         $user_id = Auth::id();
         $start_planet = Profile::getStartPlanetByUserId($user_id);
-        session(['default_planet' => $start_planet[0]->start_planet]);
-        return redirect('overview/' . $start_planet[0]->start_planet);
+        session(['default_planet' => $start_planet->start_planet]);
+        return redirect('overview/' . $start_planet->start_planet);
     }
 
     /**
@@ -45,13 +45,16 @@ class OverviewController extends Controller
         // update session with new planet id
         session(['default_planet' => $planet_id]);
         $user_id = Auth::id();
-        /*
+
         $count = 0;
         DB::listen(function($query) use (&$count) {
             $count++;
         });
-        */
-        $planetaryResources = Planet::getResourcesForPlanet($planet_id);
+        $start = microtime(true);
+        $planetaryResources = Planet::getResourcesForPlanet($planet_id);                                    // 3 | 0.0019
+        $time_elapsed_secs = microtime(true) - $start;
+        //dd($time_elapsed_secs);
+        //dd($count);
         $planetInformation = Planet::getOneById($planet_id);
         $allUserPlanets = Controller::getAllUserPlanets($user_id);
         Controller::checkAllProcesses($allUserPlanets);
@@ -61,7 +64,6 @@ class OverviewController extends Controller
         $turretsAtPlanet = Defense::getTurretsAtPlanet($planet_id);
         $fleetsOnMission = Fleet::getFleetsOnMission($allUserPlanets);
         $knowledge = Research::getAllAvailableResearches($user_id, $planet_id);
-        //dd($count);
         $maxPlanets = 10;
 
         if($shipsAtPlanet)
@@ -126,37 +128,42 @@ class OverviewController extends Controller
         }
         if($fleetsOnMission)
         {
-            foreach($fleetsOnMission as $processes)
+            foreach($fleetsOnMission as $process)
             {
-                foreach($processes as $process) {
-                    if($process)
+                if($process)
+                {
+                    $process->type = 'fleet';
+                    if($process->mission == 0)
                     {
-                        $process->type = 'fleet';
-                        if($process->mission == 0)
-                        {
-                            $process->finished_at = date("Y-m-d H:i:s", strtotime($process->arrival) + (strtotime($process->arrival) - strtotime($process->departure)));
-                        } else {
-                            $process->finished_at = $process->arrival;
-                        }
+                        $process->finished_at = date("Y-m-d H:i:s", strtotime($process->arrival) + (strtotime($process->arrival) - strtotime($process->departure)));
+                    } else {
+                        $process->finished_at = $process->arrival;
+                    }
 
-                        $planetaryProcesses[] = $process;
-                        // create extra return entry for return entry
-                        if($process->mission != 0 && $process->mission != 1 && $process->mission != 3 && $process->mission != 5)
-                        {
-                            $processReturn = new \stdClass();
-                            $processReturn->type = $process->type;
-                            $processReturn->arrival = $process->arrival;
-                            $processReturn->departure = $process->departure;
-                            $processReturn->readableSource = $process->readableSource;
-                            $processReturn->readableTarget = $process->readableTarget;
-                            $processReturn->aborted = 1;
-                            $processReturn->mission = $process->mission;
-                            $processReturn->finished_at = date("Y-m-d H:i:s", strtotime($process->arrival) + (strtotime($process->arrival) - strtotime($process->departure)));
-                            $planetaryProcesses[] = $processReturn;
-                        }
+                    $planetaryProcesses[] = $process;
+                    // create extra return entry for return entry
+                    if($process->mission != 0 && $process->mission != 1 && $process->mission != 3 && $process->mission != 5)
+                    {
+                        $processReturn = new \stdClass();
+                        $processReturn->type = $process->type;
+                        $processReturn->arrival = $process->arrival;
+                        $processReturn->departure = $process->departure;
+                        $processReturn->sourceGalaxy = $process->sourceGalaxy;
+                        $processReturn->sourceSystem = $process->sourceSystem;
+                        $processReturn->sourcePlanet = $process->sourcePlanet;
+                        $processReturn->targetGalaxy = $process->targetGalaxy;
+                        $processReturn->targetSystem = $process->targetSystem;
+                        $processReturn->targetPlanet = $process->targetPlanet;
+                        $processReturn->aborted = 1;
+                        $processReturn->mission = $process->mission;
+                        $processReturn->finished_at = date("Y-m-d H:i:s", strtotime($process->arrival) + (strtotime($process->arrival) - strtotime($process->departure)));
+                        $planetaryProcesses[] = $processReturn;
+                        //dd($planetaryProcesses);
                     } else {
                         dd($process);
                     }
+                } else {
+                    dd($process);
                 }
             }
         }
