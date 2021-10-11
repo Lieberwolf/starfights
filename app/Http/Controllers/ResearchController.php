@@ -72,7 +72,7 @@ class ResearchController extends Controller
             $researchList[$key]->inProgress = false;
             foreach($researchProcesses as $process)
             {
-                if($process->research_id == $entry->id)
+                if($process->research_id == $entry->research_id)
                 {
                     $researchList[$key]->inProgress = true;
                 }
@@ -83,12 +83,12 @@ class ResearchController extends Controller
             $f3 = $entry->factor_3 > 0 ? $entry->factor_3 : 0.0001;
 
             $Grundzeit = $entry->initial_researchtime;
-            $Stufe = $entry ? $entry->level : 0;
+            $Stufe = $entry->level != null ? $entry->level : 1;
             $Modifikator1 = ($Stufe / ($f1) ) + $f2;
             $Modifikator2 = $Stufe * $f3;
             $suffix = ':';
 
-            if($Stufe == 0)
+            if($Stufe == 1)
             {
                 $researchList[$key]->actual_buildtime = $Grundzeit;
             } else {
@@ -114,7 +114,7 @@ class ResearchController extends Controller
             $researchList[$key]->readableBuildtime = $days . $hours . $minutes . $seconds;
 
             // calc resource cost
-            if($entry != null)
+            if($entry->level != null)
             {
                 $f1 = $entry->fe_factor_1 > 0 ? $entry->fe_factor_1 : 0.0001;
                 $f2 = $entry->fe_factor_2 > 0 ? $entry->fe_factor_2 : 0.0001;

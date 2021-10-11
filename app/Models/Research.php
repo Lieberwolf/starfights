@@ -33,7 +33,14 @@ class Research extends Model
             {
                 $join->on('k.research_id', '=', 'r.id')->where('k.user_id', '=', $user_id);
             })
-            ->get();
+            ->get([
+                'k.*',
+                'r.*',
+                'rtf.*',
+                'rf.*',
+                'r.id AS research_id'
+            ]);
+
 
         // get all buildings
         $buildings = DB::table('buildings AS b')

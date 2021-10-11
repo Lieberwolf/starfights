@@ -6,7 +6,7 @@
                 <a href="/research/{{$prevPlanet->id}}"><<</a>
             </span>
             @endif
-            <span>Verfügbare Forschungen auf {{$planetInformation->galaxy}}:{{$planetInformation->system}}:{{$planetInformation->planet}}</span>
+            <span>{{__('research.availableAt', ['planet' => $planetInformation->galaxy.':'.$planetInformation->system.':'.$planetInformation->planet])}}</span>
             @if($nextPlanet)
             <span>
                 <a href="/research/{{$nextPlanet->id}}">>></a>
@@ -15,27 +15,25 @@
         </div>
         @if($currentResearch)
         <div class="col-10 current-process process-entry">
-            <span>Aktuell in Forschung: {{$currentResearch->research_name}} Stufe {{$currentResearch != null ? $currentResearch->level + 1 : 1}}</span>
+            <span>{{__('research.currently')}} {{$currentResearch->research_name}} Stufe {{$currentResearch != null ? $currentResearch->level + 1 : 1}}</span>
             <br/>
-            <span>Abgeschlossen in: </span>
+            <span>{{__('research.finishedAt')}} </span>
             <span class="js-add-countdown"
                   data-seconds-to-count="{{strtotime($currentResearch->finished_at) - now()->timestamp}}">-</span>
             <br/>
-            <span>Fertigstellung: {{ date("d.m.Y H:i:s", strtotime($currentResearch->finished_at)) }}</span>
+            <span>{{__('research.doneDate')}} {{ date("d.m.Y H:i:s", strtotime($currentResearch->finished_at)) }}</span>
         </div>
         <div class="col-2 process-action">
-            <a class="process-denied" href="/research/{{$activePlanet}}/edit">Abbrechen</a>
+            <a class="process-denied" href="/research/{{$activePlanet}}/edit">{{__('research.cancel')}}</a>
         </div>
         @endif
         @if(count($availableResearches) <= 0)
-        <div class="col-12">
-            Keine Forschungen Verfügbar
-        </div>
+        <div class="col-12">{{__('research.emptyList')}}</div>
         @else
             @foreach($availableResearches as $key => $research)
             @if($research->buildable)
             <div class="col-10 process-entry">
-                <span>{{$research->research_name}} {{$research != null ? '(Stufe ' . $research->level . ')' : ''}} <a data-toggle="collapse" href="#collapse{{$research->id}}" aria-expanded="false" aria-controls="collapse{{$research->id}}">[Info]</a></span>
+                <span>{{$research->research_name}} {{$research->level != null ? '(Stufe ' . $research->level . ')' : ''}} <a data-toggle="collapse" href="#collapse{{$research->id}}" aria-expanded="false" aria-controls="collapse{{$research->id}}">[Info]</a></span>
                 <div class="collapse" id="collapse{{$research->id}}">
                     <span>{{$research->description}}</span>
                 </div>
