@@ -17,7 +17,7 @@
                     <div class="col-6 sub-line">{{$ship->ship_name}}</div>
                     <div class="col-2 sub-line">{{number_format($ship->destroyed, 0, ',', '.')}}</div>
                     <div class="col-2 sub-line">{{number_format($ship->lost, 0, ',', '.')}}</div>
-                    <div class="col-2 sub-line {{$ship->destroyed - $ship->lost < 0 ? 'text-danger' : ''}}">{{number_format($ship->destroyed - $ship->lost, 0, ',', '.')}}</div>
+                    <div class="col-2 sub-line {{$ship->destroyed - $ship->lost < 0 ? 'text-danger' : ($ship->destroyed - $ship->lost > 0 ? 'text-success' : 'text-neutral')}}">{{number_format($ship->destroyed - $ship->lost, 0, ',', '.')}}</div>
                 @endforeach
             @else
                 <div class="col-12 sub-line">Nichts</div>
@@ -33,7 +33,7 @@
                     <div class="col-6 sub-line">{{$turret->turret_name}}</div>
                     <div class="col-2 sub-line">{{number_format($turret->destroyed, 0, ',', '.')}}</div>
                     <div class="col-2 sub-line">{{number_format($turret->lost, 0, ',', '.')}}</div>
-                    <div class="col-2 sub-line {{$turret->destroyed - $turret->lost < 0 ? 'text-danger' : ''}}">{{number_format($turret->destroyed - $turret->lost, 0, ',', '.')}}</div>
+                    <div class="col-2 sub-line {{$turret->destroyed - $turret->lost < 0 ? 'text-danger' : ($turret->destroyed - $turret->lost > 0 ? 'text-success' : 'text-neutral')}}">{{number_format($turret->destroyed - $turret->lost, 0, ',', '.')}}</div>
                 @endforeach
             @else
                 <div class="col-12 sub-line">Nichts</div>
@@ -65,7 +65,7 @@
                     </div>
                     <div class="col-2 sub-line">{{number_format($resource->caught, 0, ',', '.')}}</div>
                     <div class="col-2 sub-line">{{number_format($resource->lost, 0, ',', '.')}}</div>
-                    <div class="col-2 sub-line {{$resource->caught - $resource->lost < 0 ? 'text-danger' : ''}}">{{number_format($resource->caught - $resource->lost, 0, ',', '.')}}</div>
+                    <div class="col-2 sub-line {{$resource->caught - $resource->lost < 0 ? 'text-danger' : ($resource->caught - $resource->lost > 0 ? 'text-success' : 'text-neutral')}}">{{number_format($resource->caught - $resource->lost, 0, ',', '.')}}</div>
                 @endforeach
             @else
                 <div class="col-12 sub-line">Nichts</div>
