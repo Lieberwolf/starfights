@@ -55,7 +55,6 @@ class PlanetaryOverviewController extends Controller
                 }
             }
         }
-
         if(count($planetaryResources)>0)
         {
             return view('planetary.show', [

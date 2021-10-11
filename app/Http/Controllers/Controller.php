@@ -6,6 +6,7 @@ use App\Models\Profile;
 use App\Models\Report;
 use App\Models\Statistics;
 use App\Models\Turret;
+use App\Models\User;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -645,10 +646,10 @@ class Controller extends BaseController
                                 'user_id' => 0,
                                 'receiver_id' => Auth::id(),
                                 'subject' => 'Stationierung',
-                                'message' => 'Flotte von ' . $fleet->readableSource->galaxy .':'. $fleet->readableSource->system . ':' . $fleet->readableSource->planet . ' wurde auf ' . $fleet->readableTarget->galaxy .':'. $fleet->readableTarget->system . ':' . $fleet->readableTarget->planet . ' stationiert.',
+                                'message' => 'Flotte von ' . $fleet->sourceGalaxy .':'. $fleet->sourceSystem . ':' . $fleet->sourcePlanet . ' wurde auf ' . $fleet->targetGalaxy .':'. $fleet->targetSystem . ':' . $fleet->targetPlanet . ' stationiert.',
                             ];
                             Messages::create($message);
-                            $fleet->delete();
+                            DB::table('fleets')->where('fleets.id', $fleet->id)->delete();
 
                             break;
                         case 2:
@@ -675,21 +676,33 @@ class Controller extends BaseController
                                     'user_id' => 0,
                                     'receiver_id' => Auth::id(),
                                     'subject' => 'Transportbericht',
-                                    'message' => 'Flotte von ' . $fleet->readableSource->galaxy .':'. $fleet->readableSource->system . ':' . $fleet->readableSource->planet . ' lieferte an ' . $fleet->readableTarget->galaxy .':'. $fleet->readableTarget->system . ':' . $fleet->readableTarget->planet . ' folgende Rohstoffe:<br/>' . $resourcesList,
+                                    'message' => 'Flotte von ' . $fleet->sourceGalaxy .':'. $fleet->sourceSystem . ':' . $fleet->sourcePlanet . ' lieferte an ' . $fleet->targetGalaxy .':'. $fleet->targetSystem . ':' . $fleet->targetPlanet . ' folgende Rohstoffe:<br/>' . $resourcesList,
                                 ];
                                 Messages::create($message);
 
-                                unset($fleet->readableSource);
-                                unset($fleet->readableTarget);
+                                unset($fleet->sourceGalaxy);
+                                unset($fleet->sourceSystem);
+                                unset($fleet->sourcePlanet);
+                                unset($fleet->targetGalaxy);
+                                unset($fleet->targetSystem);
+                                unset($fleet->targetPlanet);
                                 $fleet->cargo = null;
-                                $fleet->save();
+                                DB::table('fleets AS f')
+                                    ->where('f.id', '=', $fleet->id)
+                                    ->update([
+                                    'ship_types' => $fleet->ship_types,
+                                    'cargo' => $fleet->cargo,
+                                    'arrived' => $fleet->arrived,
+                                ]);
                             }
                             break;
                         case 3:
                             $research = Research::all();
+                            $sourceUser = Planet::getPlanetByCoordinates($fleet->sourceGalaxy, $fleet->sourceSystem, $fleet->sourcePlanet);
+                            $targetUser = Planet::getPlanetByCoordinates($fleet->targetGalaxy, $fleet->targetSystem, $fleet->targetPlanet);
                             $attackerResearch = Research::getUsersKnowledge(Auth::id());
                             $attackerSpyIncrements = [];
-                            $defenderResearch = Research::getUsersKnowledge($fleet->readableTarget->user_id);
+                            $defenderResearch = Research::getUsersKnowledge($targetUser->user_id);
                             $defenderCounterSpyIncrements = [];
 
                             foreach($attackerResearch as $key => $attacker_research)
@@ -768,7 +781,7 @@ class Controller extends BaseController
                                     $defenderTurrets = $defenderTurrets->turret_types;
                                 }
 
-                                $defenderResourcesRaw = Planet::getPlanetaryResourcesByPlanetId($fleet->target, $fleet->readableTarget->user_id);
+                                $defenderResourcesRaw = Planet::getPlanetaryResourcesByPlanetId($fleet->target, $targetUser->user_id);
                                 $defenderResources = $defenderResourcesRaw[0];
 
                                 $resourceJson = [
@@ -782,14 +795,14 @@ class Controller extends BaseController
                                 // create report
                                 $report = Report::create([
                                     'link' => Uuid::uuid4(),
-                                    'attacker_id' => $fleet->readableSource->user_id,
-                                    'defender_id' => $fleet->readableTarget->user_id,
+                                    'attacker_id' => $sourceUser->user_id,
+                                    'defender_id' => $targetUser->user_id,
                                     'attacker_fleet' => null,
                                     'defender_fleet' => $defenderShips,
                                     'defender_defense' => $defenderTurrets,
                                     'resources' => json_encode($resourceJson),
-                                    'attacker_planet_id' => $fleet->readableSource->id,
-                                    'defender_planet_id' => $fleet->readableTarget->id,
+                                    'attacker_planet_id' => $fleet->planet_id,
+                                    'defender_planet_id' => $fleet->target,
                                     'report_type' => 2,
                                 ]);
 
@@ -797,30 +810,30 @@ class Controller extends BaseController
                                 // emit system message to users
                                 $message = [
                                     'user_id' => 0,
-                                    'receiver_id' => $fleet->readableSource->user_id,
+                                    'receiver_id' => $sourceUser->user_id,
                                     'subject' => 'Spionagebericht',
-                                    'message' => 'Spionagemission von ' . $fleet->readableSource->galaxy .':'. $fleet->readableSource->system . ':' . $fleet->readableSource->planet . ' erfolgte auf ' . $fleet->readableTarget->galaxy .':'. $fleet->readableTarget->system . ':' . $fleet->readableTarget->planet . ' (<a href="/report/' . $link->link . '">Zum Bericht</a>)',
+                                    'message' => 'Spionagemission von ' . $fleet->sourceGalaxy .':'. $fleet->sourceSystem . ':' . $fleet->sourcePlanet . ' erfolgte auf ' . $fleet->targetGalaxy .':'. $fleet->targetSystem . ':' . $fleet->targetPlanet . ' (<a href="/report/' . $link->link . '">Zum Bericht</a>)',
                                 ];
                                 Messages::create($message);
                                 $message = [
                                     'user_id' => 0,
-                                    'receiver_id' => $fleet->readableTarget->user_id,
+                                    'receiver_id' => $targetUser->user_id,
                                     'subject' => 'Spionagebericht',
-                                    'message' => 'Spionagemission von ' . $fleet->readableSource->galaxy .':'. $fleet->readableSource->system . ':' . $fleet->readableSource->planet . ' erfolgte auf ' . $fleet->readableTarget->galaxy .':'. $fleet->readableTarget->system . ':' . $fleet->readableTarget->planet . ' (<a href="/report/' . $link->link . '">Zum Bericht</a>)',
+                                    'message' => 'Spionagemission von ' . $fleet->sourceGalaxy .':'. $fleet->sourceSystem . ':' . $fleet->sourcePlanett . ' erfolgte auf ' . $fleet->targetGalaxy .':'. $fleet->targetSystem . ':' . $fleet->targetPlanet . ' (<a href="/report/' . $link->link . '">Zum Bericht</a>)',
                                 ];
                                 Messages::create($message);
                             } else {
                                 // create report
                                 $report = Report::create([
                                     'link' => Uuid::uuid4(),
-                                    'attacker_id' => $fleet->readableSource->user_id,
-                                    'defender_id' => $fleet->readableTarget->user_id,
+                                    'attacker_id' => $sourceUser->user_id,
+                                    'defender_id' => $targetUser->user_id,
                                     'attacker_fleet' => null,
                                     'defender_fleet' => null,
                                     'defender_defense' => null,
                                     'resources' => null,
-                                    'attacker_planet_id' => $fleet->readableSource->id,
-                                    'defender_planet_id' => $fleet->readableTarget->id,
+                                    'attacker_planet_id' => $sourceUser->id,
+                                    'defender_planet_id' => $targetUser->id,
                                     'report_type' => 0,
                                 ]);
 
@@ -828,16 +841,16 @@ class Controller extends BaseController
                                 // emit system message to users
                                 $message = [
                                     'user_id' => 0,
-                                    'receiver_id' => $fleet->readableSource->user_id,
+                                    'receiver_id' => $sourceUser->user_id,
                                     'subject' => 'Spionagebericht',
-                                    'message' => 'Spionagemission von ' . $fleet->readableSource->galaxy .':'. $fleet->readableSource->system . ':' . $fleet->readableSource->planet . ' auf ' . $fleet->readableTarget->galaxy .':'. $fleet->readableTarget->system . ':' . $fleet->readableTarget->planet . ' schlug fehl. (<a href="/report/' . $link->link . '">Zum Bericht</a>)',
+                                    'message' => 'Spionagemission von ' . $fleet->sourceGalaxy .':'. $fleet->sourceSystem . ':' . $fleet->sourcePlanet . ' auf ' . $fleet->targetGalaxy .':'. $fleet->targetSystem . ':' . $fleet->targetPlanet . ' schlug fehl. (<a href="/report/' . $link->link . '">Zum Bericht</a>)',
                                 ];
                                 Messages::create($message);
                                 $message = [
                                     'user_id' => 0,
-                                    'receiver_id' => $fleet->readableTarget->user_id,
+                                    'receiver_id' => $targetUser->user_id,
                                     'subject' => 'Spionagebericht',
-                                    'message' => 'Spionagemission von ' . $fleet->readableSource->galaxy .':'. $fleet->readableSource->system . ':' . $fleet->readableSource->planet . ' auf ' . $fleet->readableTarget->galaxy .':'. $fleet->readableTarget->system . ':' . $fleet->readableTarget->planet . ' erfolgreich verhindert. (<a href="/report/' . $link->link . '">Zum Bericht</a>)',
+                                    'message' => 'Spionagemission von ' . $fleet->sourceGalaxy .':'. $fleet->sourceSystem . ':' . $fleet->sourcePlanet . ' auf ' . $fleet->targetGalaxy .':'. $fleet->targetSystem . ':' . $fleet->targetPlanet . ' erfolgreich verhindert. (<a href="/report/' . $link->link . '">Zum Bericht</a>)',
                                 ];
                                 Messages::create($message);
                             }
@@ -848,12 +861,14 @@ class Controller extends BaseController
                             break;
                         case 4:
                             // is planet occupied by another user?
-                            if($fleet->readableTarget->user_id != null)
+                            $sourceUser = Planet::getPlanetByCoordinates($fleet->sourceGalaxy, $fleet->sourceSystem, $fleet->sourcePlanet);
+                            $targetUser = Planet::getPlanetByCoordinates($fleet->targetGalaxy, $fleet->targetSystem, $fleet->targetPlanet);
+                            if($targetUser->user_id != null)
                             {
                                 $research = Research::all();
-                                $attackerResearch = Research::getUsersKnowledge(Auth::id());
+                                $attackerResearch = Research::getUsersKnowledge($sourceUser->user_id);
                                 $attackerSpyIncrements = [];
-                                $defenderResearch = Research::getUsersKnowledge($fleet->readableTarget->user_id);
+                                $defenderResearch = Research::getUsersKnowledge($targetUser->user_id);
                                 $defenderCounterSpyIncrements = [];
                                 $defenderFullResearchList = [];
                                 $defenderFullBuildingList = [];
@@ -941,7 +956,7 @@ class Controller extends BaseController
                                         $defenderTurrets = $defenderTurrets->turret_types;
                                     }
 
-                                    $defenderResourcesRaw = Planet::getPlanetaryResourcesByPlanetId($fleet->target, $fleet->readableTarget->user_id);
+                                    $defenderResourcesRaw = Planet::getPlanetaryResourcesByPlanetId($fleet->target, $targetUser->user_id);
                                     $defenderResources = $defenderResourcesRaw[0];
 
                                     $resourceJson = [
@@ -981,14 +996,14 @@ class Controller extends BaseController
                                     // create report
                                     $report = Report::create([
                                         'link' => Uuid::uuid4(),
-                                        'attacker_id' => $fleet->readableSource->user_id,
-                                        'defender_id' => $fleet->readableTarget->user_id,
+                                        'attacker_id' => $sourceUser->user_id,
+                                        'defender_id' => $targetUser->user_id,
                                         'attacker_fleet' => null,
                                         'defender_fleet' => $defenderShips,
                                         'defender_defense' => $defenderTurrets,
                                         'resources' => json_encode($resourceJson),
-                                        'attacker_planet_id' => $fleet->readableSource->id,
-                                        'defender_planet_id' => $fleet->readableTarget->id,
+                                        'attacker_planet_id' => $sourceUser->user_id,
+                                        'defender_planet_id' => $targetUser->user_id,
                                         'report_type' => 1,
                                         'planet_info' => json_encode($infoJson),
                                         'planet_infrastructure' => json_encode($defenderFullBuildingList),
@@ -999,30 +1014,30 @@ class Controller extends BaseController
                                     // emit system message to users
                                     $message = [
                                         'user_id' => 0,
-                                        'receiver_id' => $fleet->readableSource->user_id,
+                                        'receiver_id' => $sourceUser->user_id,
                                         'subject' => 'Delta Scan',
-                                        'message' => 'Delta Scan von ' . $fleet->readableSource->galaxy .':'. $fleet->readableSource->system . ':' . $fleet->readableSource->planet . ' erfolgte auf ' . $fleet->readableTarget->galaxy .':'. $fleet->readableTarget->system . ':' . $fleet->readableTarget->planet . ' (<a href="/report/' . $link->link . '">Zum Bericht</a>)',
+                                        'message' => 'Delta Scan von ' . $fleet->sourceGalaxy .':'. $fleet->sourceSystem . ':' . $fleet->sourcePlanet . ' erfolgte auf ' . $fleet->targetGalaxy .':'. $fleet->targetSystem . ':' . $fleet->targetPlanet . ' (<a href="/report/' . $link->link . '">Zum Bericht</a>)',
                                     ];
                                     Messages::create($message);
                                     $message = [
                                         'user_id' => 0,
-                                        'receiver_id' => $fleet->readableTarget->user_id,
+                                        'receiver_id' => $targetUser->user_id,
                                         'subject' => 'Delta Scan',
-                                        'message' => 'Delta Scan von ' . $fleet->readableSource->galaxy .':'. $fleet->readableSource->system . ':' . $fleet->readableSource->planet . ' erfolgte auf ' . $fleet->readableTarget->galaxy .':'. $fleet->readableTarget->system . ':' . $fleet->readableTarget->planet . ' (<a href="/report/' . $link->link . '">Zum Bericht</a>)',
+                                        'message' => 'Delta Scan von ' . $fleet->sourceGalaxy .':'. $fleet->sourceSystem . ':' . $fleet->sourcePlanet . ' erfolgte auf ' . $fleet->targetGalaxy .':'. $fleet->targetSystem . ':' . $fleet->targetPlanet . ' (<a href="/report/' . $link->link . '">Zum Bericht</a>)',
                                     ];
                                     Messages::create($message);
                                 } else {
                                     // create report
                                     $report = Report::create([
                                         'link' => Uuid::uuid4(),
-                                        'attacker_id' => $fleet->readableSource->user_id,
-                                        'defender_id' => $fleet->readableTarget->user_id,
+                                        'attacker_id' => $sourceUser->user_id,
+                                        'defender_id' => $targetUser->user_id,
                                         'attacker_fleet' => null,
                                         'defender_fleet' => null,
                                         'defender_defense' => null,
                                         'resources' => null,
-                                        'attacker_planet_id' => $fleet->readableSource->id,
-                                        'defender_planet_id' => $fleet->readableTarget->id,
+                                        'attacker_planet_id' => $sourceUser->user_id,
+                                        'defender_planet_id' => $targetUser->user_id,
                                         'report_type' => 0,
                                     ]);
 
@@ -1030,16 +1045,16 @@ class Controller extends BaseController
                                     // emit system message to users
                                     $message = [
                                         'user_id' => 0,
-                                        'receiver_id' => $fleet->readableSource->user_id,
+                                        'receiver_id' => $sourceUser->user_id,
                                         'subject' => 'Delta Scan',
-                                        'message' => 'Delta Scan von ' . $fleet->readableSource->galaxy .':'. $fleet->readableSource->system . ':' . $fleet->readableSource->planet . ' auf ' . $fleet->readableTarget->galaxy .':'. $fleet->readableTarget->system . ':' . $fleet->readableTarget->planet . ' schlug fehl. (<a href="/report/' . $link->link . '">Zum Bericht</a>)',
+                                        'message' => 'Delta Scan von ' . $fleet->sourceGalaxy .':'. $fleet->sourceSystem . ':' . $fleet->sourcePlanet . ' auf ' . $fleet->targetGalaxy .':'. $fleet->targetSystem . ':' . $fleet->targetPlanet . ' schlug fehl. (<a href="/report/' . $link->link . '">Zum Bericht</a>)',
                                     ];
                                     Messages::create($message);
                                     $message = [
                                         'user_id' => 0,
-                                        'receiver_id' => $fleet->readableTarget->user_id,
+                                        'receiver_id' => $targetUser->user_id,
                                         'subject' => 'Delta Scan',
-                                        'message' => 'Delta Scan von ' . $fleet->readableSource->galaxy .':'. $fleet->readableSource->system . ':' . $fleet->readableSource->planet . ' auf ' . $fleet->readableTarget->galaxy .':'. $fleet->readableTarget->system . ':' . $fleet->readableTarget->planet . ' erfolgreich verhindert. (<a href="/report/' . $link->link . '">Zum Bericht</a>)',
+                                        'message' => 'Delta Scan von ' . $fleet->sourceGalaxy .':'. $fleet->sourceSystem . ':' . $fleet->sourcePlanet . ' auf ' . $fleet->targetGalaxy .':'. $fleet->targetSystem . ':' . $fleet->targetPlanet . ' erfolgreich verhindert. (<a href="/report/' . $link->link . '">Zum Bericht</a>)',
                                     ];
                                     Messages::create($message);
                                 }
@@ -1056,14 +1071,14 @@ class Controller extends BaseController
                                 // create report
                                 $report = Report::create([
                                     'link' => Uuid::uuid4(),
-                                    'attacker_id' => $fleet->readableSource->user_id,
-                                    'defender_id' => $fleet->readableTarget->user_id,
+                                    'attacker_id' => $sourceUser->user_id,
+                                    'defender_id' => $targetUser->user_id,
                                     'attacker_fleet' => null,
                                     'defender_fleet' => null,
                                     'defender_defense' => null,
                                     'resources' => null,
-                                    'attacker_planet_id' => $fleet->readableSource->id,
-                                    'defender_planet_id' => $fleet->readableTarget->id,
+                                    'attacker_planet_id' => $fleet->planet_id,
+                                    'defender_planet_id' => $fleet->target,
                                     'report_type' => 1,
                                     'planet_info' => json_encode($infoJson),
                                 ]);
@@ -1072,20 +1087,31 @@ class Controller extends BaseController
                                 // emit system message to users
                                 $message = [
                                     'user_id' => 0,
-                                    'receiver_id' => $fleet->readableSource->user_id,
+                                    'receiver_id' => $sourceUser->user_id,
                                     'subject' => 'Delta Scan',
-                                    'message' => 'Der Delta Scan von ' . $fleet->readableSource->galaxy .':'. $fleet->readableSource->system . ':' . $fleet->readableSource->planet . ' auf ' . $fleet->readableTarget->galaxy .':'. $fleet->readableTarget->system . ':' . $fleet->readableTarget->planet . ' war erfolgreich. (<a href="/report/' . $link->link . '">Zum Bericht</a>)',
+                                    'message' => 'Der Delta Scan von ' . $fleet->sourceGalaxy .':'. $fleet->sourceSystem . ':' . $fleet->sourcePlanet . ' auf ' . $fleet->targetGalaxy .':'. $fleet->targetSystem . ':' . $fleet->targetPlanet . ' war erfolgreich. (<a href="/report/' . $link->link . '">Zum Bericht</a>)',
                                 ];
                                 Messages::create($message);
                             }
-                            unset($fleet->readableSource);
-                            unset($fleet->readableTarget);
+                            unset($fleet->sourceGalaxy);
+                            unset($fleet->sourceSystem);
+                            unset($fleet->sourcePlanet);
+                            unset($fleet->targetGalaxy);
+                            unset($fleet->targetSystem);
+                            unset($fleet->targetPlanet);
                             $fleet->arrived = true;
-                            $fleet->save();
+                            DB::table('fleets AS f')
+                                ->where('f.id', '=', $fleet->id)
+                                ->update([
+                                    'ship_types' => $fleet->ship_types,
+                                    'cargo' => $fleet->cargo,
+                                    'arrived' => $fleet->arrived,
+                                ]);
 
                             break;
                         case 5:
                             $shipTypes = json_decode($fleet->ship_types);
+                            $targetUser = Planet::getPlanetByCoordinates($fleet->targetGalaxy, $fleet->targetSystem, $fleet->targetPlanet);
                             foreach($shipTypes as $key => $shipType) {
                                 if($shipType->ship_name == "Kolonisationsschiff")
                                 {
@@ -1094,19 +1120,16 @@ class Controller extends BaseController
                             }
                             $fleet->ship_types = json_encode($shipTypes);
 
-                            if($fleet->readableTarget->user_id == null)
+                            if($targetUser && $targetUser->user_id == null)
                             {
                                 // emit system message to user
                                 $message = [
                                     'user_id' => 0,
                                     'receiver_id' => Auth::id(),
                                     'subject' => 'Kolonisierung',
-                                    'message' => 'Der Planet ' . $fleet->readableTarget->galaxy .':'. $fleet->readableTarget->system . ':' . $fleet->readableTarget->planet . ' wurde erfolgreich kolonisiert.',
+                                    'message' => 'Der Planet ' . $fleet->targetGalaxy .':'. $fleet->targetSystem . ':' . $fleet->targetPlanet . ' wurde erfolgreich kolonisiert.',
                                 ];
                                 Messages::create($message);
-
-                                unset($fleet->readableSource);
-                                unset($fleet->readableTarget);
 
                                 $fleet->planet_id = $fleet->target;
                                 $fleet->target = null;
@@ -1134,6 +1157,8 @@ class Controller extends BaseController
                             break;
                         case 6:
                             $result = self::fightCalculation($fleet);
+                            $sourceUser = Planet::getPlanetByCoordinates($fleet->sourceGalaxy, $fleet->sourceSystem, $fleet->sourcePlanet);
+                            $targetUser = Planet::getPlanetByCoordinates($fleet->targetGalaxy, $fleet->targetSystem, $fleet->targetPlanet);
 
                             $fleet = $result->fleet;
                             $temp = $result->temp;
@@ -1148,14 +1173,14 @@ class Controller extends BaseController
                             // create report
                             $report = Report::create([
                                 'link' => Uuid::uuid4(),
-                                'attacker_id' => $fleet->readableSource->user_id,
-                                'defender_id' => $fleet->readableTarget->user_id,
+                                'attacker_id' => $sourceUser->user_id,
+                                'defender_id' => $targetUser->user_id,
                                 'attacker_fleet' => json_encode($attacker["ship"]),
                                 'defender_fleet' => json_encode($defender["ship"]),
                                 'defender_defense' => json_encode($defender["turrets"]),
                                 'resources' => $temp->cargo,
-                                'attacker_planet_id' => $fleet->readableSource->id,
-                                'defender_planet_id' => $fleet->readableTarget->id,
+                                'attacker_planet_id' => $fleet->planet_id,
+                                'defender_planet_id' => $fleet->target,
                                 'report_type' => 3,
                             ]);
 
@@ -1163,16 +1188,16 @@ class Controller extends BaseController
                             // emit system message to users
                             $message = [
                                 'user_id' => 0,
-                                'receiver_id' => $fleet->readableSource->user_id,
+                                'receiver_id' => $sourceUser->user_id,
                                 'subject' => 'Kampfbericht',
-                                'message' => 'Flotte von ' . $fleet->readableSource->galaxy .':'. $fleet->readableSource->system . ':' . $fleet->readableSource->planet . ' griff ' . $fleet->readableTarget->galaxy .':'. $fleet->readableTarget->system . ':' . $fleet->readableTarget->planet . ' an (<a href="/report/' . $link->link . '">Zum Bericht</a>)',
+                                'message' => 'Flotte von ' . $fleet->sourceGalaxy .':'. $fleet->sourceSystem . ':' . $fleet->sourcePlanet . ' griff ' . $fleet->targetGalaxy .':'. $fleet->targetSystem . ':' . $fleet->targetPlanet . ' an (<a href="/report/' . $link->link . '">Zum Bericht</a>)',
                             ];
                             Messages::create($message);
                             $message = [
                                 'user_id' => 0,
-                                'receiver_id' => $fleet->readableTarget->user_id,
+                                'receiver_id' => $targetUser->user_id,
                                 'subject' => 'Kampfbericht',
-                                'message' => 'Flotte von ' . $fleet->readableSource->galaxy .':'. $fleet->readableSource->system . ':' . $fleet->readableSource->planet . ' griff ' . $fleet->readableTarget->galaxy .':'. $fleet->readableTarget->system . ':' . $fleet->readableTarget->planet . ' an (<a href="/report/' . $link->link . '">Zum Bericht</a>)',
+                                'message' => 'Flotte von ' . $fleet->sourceGalaxy .':'. $fleet->sourceSystem . ':' . $fleet->sourcePlanet . ' griff ' . $fleet->targetGalaxy .':'. $fleet->targetSystem . ':' . $fleet->targetPlanet . ' an (<a href="/report/' . $link->link . '">Zum Bericht</a>)',
                             ];
                             Messages::create($message);
 
@@ -1180,11 +1205,19 @@ class Controller extends BaseController
                             if($attacker["hasSurvived"])
                             {
                                 $temp->arrived = true;
-                                unset($temp->readableSource);
-                                unset($temp->readableTarget);
-                                $temp->save();
+                                unset($temp->sourceGalaxy);
+                                unset($temp->sourceSystem);
+                                unset($temp->sourcePlanet);
+                                unset($temp->targetGalaxy);
+                                unset($temp->targetSystem);
+                                unset($temp->targetPlanet);
+                                DB::table('fleets')->where('fleets.id', $fleet->id)->update([
+                                    'ship_types' => $temp->ship_types,
+                                    'cargo' => $temp->cargo,
+                                    'arrived' => $temp->arrived,
+                                ]);
                             } else {
-                                $fleet->delete();
+                                DB::table('fleets')->where('fleets.id', $fleet->id)->delete();
                             }
 
                             // set defender fleet
@@ -1240,20 +1273,22 @@ class Controller extends BaseController
                             $attacker = $result->attacker;
                             $defender = $result->defender;
                             $defenderHome = Profile::where('user_id', $fleet->readableTarget->user_id)->first(['start_planet']);
+                            $sourceUser = Planet::getPlanetByCoordinates($fleet->sourceGalaxy, $fleet->sourceSystem, $fleet->sourcePlanet);
+                            $targetUser = Planet::getPlanetByCoordinates($fleet->targetGalaxy, $fleet->targetSystem, $fleet->targetPlanet);
 
                             if($attacker["survivedAttRatio"] > 92 && $defender["survivedDefRatio"] <= 0 && $defenderHome->start_planet != $fleet->readableTarget->id)
                             {
 
                                 $report = Report::create([
                                     'link' => Uuid::uuid4(),
-                                    'attacker_id' => $fleet->readableSource->user_id,
-                                    'defender_id' => $fleet->readableTarget->user_id,
+                                    'attacker_id' => $sourceUser->user_id,
+                                    'defender_id' => $targetUser->user_id,
                                     'attacker_fleet' => json_encode($attacker["ship"]),
                                     'defender_fleet' => json_encode($defender["ship"]),
                                     'defender_defense' => json_encode($defender["turrets"]),
                                     'resources' => $temp->cargo,
-                                    'attacker_planet_id' => $fleet->readableSource->id,
-                                    'defender_planet_id' => $fleet->readableTarget->id,
+                                    'attacker_planet_id' => $fleet->planet_id,
+                                    'defender_planet_id' => $fleet->target,
                                     'report_type' => 4,
                                 ]);
 
@@ -1261,16 +1296,16 @@ class Controller extends BaseController
                                 // emit system message to users
                                 $message = [
                                     'user_id' => 0,
-                                    'receiver_id' => $fleet->readableSource->user_id,
+                                    'receiver_id' => $sourceUser->user_id,
                                     'subject' => 'Invasionsbericht',
-                                    'message' => 'Flotte von ' . $fleet->readableSource->galaxy .':'. $fleet->readableSource->system . ':' . $fleet->readableSource->planet . ' eroberte ' . $fleet->readableTarget->galaxy .':'. $fleet->readableTarget->system . ':' . $fleet->readableTarget->planet . ' (<a href="/report/' . $link->link . '">Zum Bericht</a>)',
+                                    'message' => 'Flotte von ' . $fleet->sourceGalaxy .':'. $fleet->sourceSystem . ':' . $fleet->sourcePlanet . ' eroberte ' . $fleet->targetGalaxy .':'. $fleet->targetSystem . ':' . $fleet->targetPlanet . ' (<a href="/report/' . $link->link . '">Zum Bericht</a>)',
                                 ];
                                 Messages::create($message);
                                 $message = [
                                     'user_id' => 0,
-                                    'receiver_id' => $fleet->readableTarget->user_id,
+                                    'receiver_id' => $targetUser->user_id,
                                     'subject' => 'Invasionsbericht',
-                                    'message' => 'Flotte von ' . $fleet->readableSource->galaxy .':'. $fleet->readableSource->system . ':' . $fleet->readableSource->planet . ' eroberte ' . $fleet->readableTarget->galaxy .':'. $fleet->readableTarget->system . ':' . $fleet->readableTarget->planet . ' (<a href="/report/' . $link->link . '">Zum Bericht</a>)',
+                                    'message' => 'Flotte von ' . $fleet->sourceGalaxy .':'. $fleet->sourceSystem . ':' . $fleet->sourcePlanet . ' eroberte ' . $fleet->targetGalaxy .':'. $fleet->targetSystem . ':' . $fleet->targetPlanet . ' (<a href="/report/' . $link->link . '">Zum Bericht</a>)',
                                 ];
                                 Messages::create($message);
 
@@ -1288,7 +1323,7 @@ class Controller extends BaseController
                                 }
 
                                 // rewrite user id for planet
-                                $targetPlanet->user_id = $fleet->readableSource->user_id;
+                                $targetPlanet->user_id = $sourceUser->user_id;
                                 $targetPlanet->save();
                                 // save attacker fleet to new planet
 
@@ -1313,8 +1348,6 @@ class Controller extends BaseController
                                 $fleet->target = Null;
                                 $fleet->arrival = Null;
                                 $fleet->departure = Null;
-                                unset($fleet->readableSource);
-                                unset($fleet->readableTarget);
 
                                 $noReturn = true;
 
@@ -1323,14 +1356,14 @@ class Controller extends BaseController
                                 // create report
                                 $report = Report::create([
                                     'link' => Uuid::uuid4(),
-                                    'attacker_id' => $fleet->readableSource->user_id,
-                                    'defender_id' => $fleet->readableTarget->user_id,
+                                    'attacker_id' => $sourceUser->user_id,
+                                    'defender_id' => $targetUser->user_id,
                                     'attacker_fleet' => json_encode($attacker["ship"]),
                                     'defender_fleet' => json_encode($defender["ship"]),
                                     'defender_defense' => json_encode($defender["turrets"]),
                                     'resources' => $temp->cargo,
-                                    'attacker_planet_id' => $fleet->readableSource->id,
-                                    'defender_planet_id' => $fleet->readableTarget->id,
+                                    'attacker_planet_id' => $fleet->planet_id,
+                                    'defender_planet_id' => $fleet->target,
                                     'report_type' => 3,
                                 ]);
 
@@ -1338,16 +1371,16 @@ class Controller extends BaseController
                                 // emit system message to users
                                 $message = [
                                     'user_id' => 0,
-                                    'receiver_id' => $fleet->readableSource->user_id,
+                                    'receiver_id' => $sourceUser->user_id,
                                     'subject' => 'Kampfbericht',
-                                    'message' => 'Flotte von ' . $fleet->readableSource->galaxy .':'. $fleet->readableSource->system . ':' . $fleet->readableSource->planet . ' griff ' . $fleet->readableTarget->galaxy .':'. $fleet->readableTarget->system . ':' . $fleet->readableTarget->planet . ' an (<a href="/report/' . $link->link . '">Zum Bericht</a>)',
+                                    'message' => 'Flotte von ' . $fleet->sourceGalaxy .':'. $fleet->sourceSystem . ':' . $fleet->sourcePlanet . ' griff ' . $fleet->targetGalaxy .':'. $fleet->targetSystem . ':' . $fleet->targetPlanet . ' an (<a href="/report/' . $link->link . '">Zum Bericht</a>)',
                                 ];
                                 Messages::create($message);
                                 $message = [
                                     'user_id' => 0,
-                                    'receiver_id' => $fleet->readableTarget->user_id,
+                                    'receiver_id' => $targetUser->user_id,
                                     'subject' => 'Kampfbericht',
-                                    'message' => 'Flotte von ' . $fleet->readableSource->galaxy .':'. $fleet->readableSource->system . ':' . $fleet->readableSource->planet . ' griff ' . $fleet->readableTarget->galaxy .':'. $fleet->readableTarget->system . ':' . $fleet->readableTarget->planet . ' an (<a href="/report/' . $link->link . '">Zum Bericht</a>)',
+                                    'message' => 'Flotte von ' . $fleet->sourceGalaxy .':'. $fleet->sourceSystem . ':' . $fleet->sourcePlanet . ' griff ' . $fleet->targetGalaxy .':'. $fleet->targetSystem . ':' . $fleet->targetPlanet . ' an (<a href="/report/' . $link->link . '">Zum Bericht</a>)',
                                 ];
                                 Messages::create($message);
 
@@ -1356,8 +1389,6 @@ class Controller extends BaseController
                                 {
                                     $temp->arrived = true;
                                     $temp->mission = 6;
-                                    unset($temp->readableSource);
-                                    unset($temp->readableTarget);
                                     $temp->save();
                                 } else {
                                     $fleet->delete();
@@ -1449,7 +1480,7 @@ class Controller extends BaseController
                         'message' => 'Eine Flotte kehrt zurück',
                     ];
                     Messages::create($message);
-                    $fleet->delete();
+                    DB::table('fleets')->where('fleets.id', $fleet->id)->delete();
                 }
             }
         }
@@ -1704,7 +1735,8 @@ class Controller extends BaseController
 
         if(!$sim)
         {
-            Planet::getPlanetaryResourcesByPlanetId($fleet->target, $fleet->readableTarget->user_id);
+            $targetUser = Planet::getOneById($fleet->target);
+            Planet::getPlanetaryResourcesByPlanetId($fleet->target, $targetUser->user_id);
             $attacker["ship"] = json_decode($fleet->ship_types);
             $attacker["home"] = Planet::getOneById($fleet->planet_id);
             $attacker["research"] = Research::getUsersKnowledge($attacker["home"]->user_id);
@@ -2044,7 +2076,7 @@ class Controller extends BaseController
                 $cargoH2o = $cargo * .05;
                 $cargoH2 = $cargo * .1;
 
-                $buildingsList = Building::getAllAvailableBuildings($fleet->target, $fleet->readableTarget->user_id);
+                $buildingsList = Building::getAllAvailableBuildings($fleet->target, $targetUser->user_id);
 
                 $storage = new \stdClass();
                 $storage->fe = 10000;

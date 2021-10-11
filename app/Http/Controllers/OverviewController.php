@@ -41,20 +41,11 @@ class OverviewController extends Controller
      */
     public function show($planet_id)
     {
-
         // update session with new planet id
         session(['default_planet' => $planet_id]);
         $user_id = Auth::id();
 
-        $count = 0;
-        DB::listen(function($query) use (&$count) {
-            $count++;
-        });
-        $start = microtime(true);
         $planetaryResources = Planet::getResourcesForPlanet($planet_id);                                    // 3 | 0.0019
-        $time_elapsed_secs = microtime(true) - $start;
-        //dd($time_elapsed_secs);
-        //dd($count);
         $planetInformation = Planet::getOneById($planet_id);
         $allUserPlanets = Controller::getAllUserPlanets($user_id);
         Controller::checkAllProcesses($allUserPlanets);
@@ -102,30 +93,35 @@ class OverviewController extends Controller
 
         foreach($knowledge as $research)
         {
-            if($research->increase_max_planets != 0 && $research->knowledge != null)
+            if($research->increase_max_planets != 0)
             {
-                $maxPlanets += $research->increase_max_planets * $research->knowledge->level;
+                $maxPlanets += $research->increase_max_planets * $research->level;
             }
         }
 
         $planetaryProcesses = [];
-        foreach($planetaryBuildingProcesses as $process)
-        {
-            if($process)
+        if($planetaryBuildingProcesses) {
+            foreach($planetaryBuildingProcesses as $process)
             {
-                $planetaryProcesses[] = $process;
-                $process->type = 'building';
+                if($process)
+                {
+                    $planetaryProcesses[] = $process;
+                    $process->type = 'building';
+                }
             }
         }
 
-        foreach($planetaryResearchProcesses as $process)
-        {
-            if($process)
+        if($planetaryResearchProcesses) {
+            foreach($planetaryResearchProcesses as $process)
             {
-                $process->type = 'research';
-                $planetaryProcesses[] = $process;
+                if($process)
+                {
+                    $process->type = 'research';
+                    $planetaryProcesses[] = $process;
+                }
             }
         }
+
         if($fleetsOnMission)
         {
             foreach($fleetsOnMission as $process)
@@ -160,47 +156,42 @@ class OverviewController extends Controller
                         $planetaryProcesses[] = $processReturn;
                         //dd($planetaryProcesses);
                     } else {
-                        dd($process);
+                        //dd($process);
                     }
                 } else {
-                    dd($process);
+                    //dd($process);
                 }
             }
         }
-
         // incoming spy, scan, attack or invasion?
         $incomingFleets = Fleet::getFleetsOnMissionToPlayer($user_id, $allUserPlanets);
         $attackAlert = false;
-        foreach($incomingFleets as $incoming_fleet)
+        foreach($incomingFleets as $arriving_fleet)
         {
-            foreach($incoming_fleet as $arriving_fleet)
+            // 3,4,6,7
+            if($arriving_fleet->mission == 3 || $arriving_fleet->mission == 4 || $arriving_fleet->mission == 6 || $arriving_fleet->mission == 7)
             {
-                // 3,4,6,7
-                if($arriving_fleet->mission == 3 || $arriving_fleet->mission == 4 || $arriving_fleet->mission == 6 || $arriving_fleet->mission == 7)
-                {
-                    if(strtotime($arriving_fleet->arrival) < now()->timestamp)
-                    {
-                        $attackAlert = false;
-                    } else {
-                        $attackAlert = true;
-                    }
-                }
-                $arriving_fleet->finished_at = date("Y-m-d H:i:s", strtotime($arriving_fleet->arrival));
-                $arriving_fleet->type = 'foreignFleet';
-                $planetaryProcesses[] = $arriving_fleet;
-
-                // foreign fleet has arrived
                 if(strtotime($arriving_fleet->arrival) < now()->timestamp)
                 {
-                    $fakeList = [];
-                    $temp = new \stdClass();
-                    $temp->id = $arriving_fleet->planet_id;
-                    $fakeList[] = $temp;
-                    Controller::checkFleetProcesses($fakeList);
+                    $attackAlert = false;
+                } else {
+                    $attackAlert = true;
                 }
             }
-        }
+            $arriving_fleet->finished_at = date("Y-m-d H:i:s", strtotime($arriving_fleet->arrival));
+            $arriving_fleet->type = 'foreignFleet';
+            $planetaryProcesses[] = $arriving_fleet;
 
+            // foreign fleet has arrived
+            if(strtotime($arriving_fleet->arrival) < now()->timestamp)
+            {
+                $fakeList = [];
+                $temp = new \stdClass();
+                $temp->id = $arriving_fleet->planet_id;
+                $fakeList[] = $temp;
+                Controller::checkFleetProcesses($fakeList);
+            }
+        }
         $planetaryProcesses = array_values(Arr::sort($planetaryProcesses, function($value) {
             return strtotime($value->finished_at);
         }));

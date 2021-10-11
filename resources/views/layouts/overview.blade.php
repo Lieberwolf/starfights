@@ -80,7 +80,7 @@
                         <span class="js-add-countdown" data-seconds-to-count="{{strtotime($process->arrival) - now()->timestamp}}"></span> - [{{date('H:i:s', strtotime($process->arrival))}}]
                     </div>
                     <div class="col-9 sub-line {{($process->mission == 2 ? 'transport' : ($process->mission == 3 ? 'espionage' : ($process->mission == 4 ? 'espionage' : ($process->mission == 6 ? 'attack' : ($process->mission == 7 ? 'invasion' : '')))))}}">
-                        <span>Flotte von {{$process->galaxy}}:{{$process->system}}:{{$process->planet}} erreicht {{$process->targetPlanet->galaxy}}:{{$process->targetPlanet->system}}:{{$process->targetPlanet->planet}} ({{$process->mission == 1 ? 'Stationierung' : ($process->mission == 2 ? 'Transport' : ($process->mission == 3 ? 'Spionage' : ($process->mission == 4 ? 'Delta Scan' : ($process->mission == 5 ? 'Kolonisierung' : ($process->mission == 6 ? 'Angriff' : ($process->mission == 7 ? 'Invasion' : ''))))))}})</span>
+                        <span>Flotte von {{$process->sourceGalaxy}}:{{$process->sourceSystem}}:{{$process->sourcePlanet}} erreicht {{$process->targetGalaxy}}:{{$process->targetSystem}}:{{$process->targetPlanet}} ({{$process->mission == 1 ? 'Stationierung' : ($process->mission == 2 ? 'Transport' : ($process->mission == 3 ? 'Spionage' : ($process->mission == 4 ? 'Delta Scan' : ($process->mission == 5 ? 'Kolonisierung' : ($process->mission == 6 ? 'Angriff' : ($process->mission == 7 ? 'Invasion' : ''))))))}})</span>
                     </div>
                 @endif
                 @if($process->type == 'fleet')

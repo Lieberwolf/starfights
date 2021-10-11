@@ -17,6 +17,7 @@
                     <td class="title-line">
                         <a href="/overview/{{$planet->id}}">{{$planet->galaxy}}:{{$planet->system}}:{{$planet->planet}}</a>
                     </td>
+                    {{--
                     @if($buildings[$key] != null)
                         <td class="sub-line">
                             <span class="js-add-countdown" data-seconds-to-count="{{strtotime($buildings[$key]->finished_at) - now()->timestamp}}"></span>
@@ -31,6 +32,7 @@
                     @else
                         <td class="sub-line"></td>
                     @endif
+
                     @if($planet->nextShip && $planet->nextShip != null)
                         <td class="sub-line">
                             <span class="js-add-countdown" data-seconds-to-count="{{$planet->nextShip->seconds}}"></span>
@@ -45,6 +47,7 @@
                     @else
                         <td class="sub-line"></td>
                     @endif
+                    --}}
                 </tr>
             @endforeach
             </tbody>

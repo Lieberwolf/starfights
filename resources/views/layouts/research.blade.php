@@ -15,7 +15,7 @@
         </div>
         @if($currentResearch)
         <div class="col-10 current-process process-entry">
-            <span>Aktuell in Forschung: {{$currentResearch->research_name}} Stufe {{$currentResearch->knowledge != null ? $currentResearch->knowledge->level + 1 : 1}}</span>
+            <span>Aktuell in Forschung: {{$currentResearch->research_name}} Stufe {{$currentResearch != null ? $currentResearch->level + 1 : 1}}</span>
             <br/>
             <span>Abgeschlossen in: </span>
             <span class="js-add-countdown"
@@ -35,11 +35,11 @@
             @foreach($availableResearches as $key => $research)
             @if($research->buildable)
             <div class="col-10 process-entry">
-                <span>{{$research->research_name}} {{$research->knowledge != null ? '(Stufe ' . $research->knowledge->level . ')' : ''}} <a data-toggle="collapse" href="#collapse{{$research->id}}" aria-expanded="false" aria-controls="collapse{{$research->id}}">[Info]</a></span>
+                <span>{{$research->research_name}} {{$research != null ? '(Stufe ' . $research->level . ')' : ''}} <a data-toggle="collapse" href="#collapse{{$research->id}}" aria-expanded="false" aria-controls="collapse{{$research->id}}">[Info]</a></span>
                 <div class="collapse" id="collapse{{$research->id}}">
                     <span>{{$research->description}}</span>
                 </div>
-                <span>Forschung auf Stufe {{$research->knowledge != null ? $research->knowledge->level + 1 : 1}}:</span>
+                <span>Forschung auf Stufe {{$research != null ? $research->level + 1 : 1}}:</span>
                 <span>
                     @if($research->fe > 0)
                         Eisen: {{number_format($research->fe,0, ',', '.')}}
@@ -66,8 +66,8 @@
                 @if($research->inProgress)
                 <span class="process-denied">Wird bereits geforscht</span>
                 @else
-                <a class="process-start" href="/research/{{$activePlanet}}/{{$research->id}}">Forschung<br/>Stufe
-                    {{$research->knowledge != null ? $research->knowledge->level + 1 : 1}}</a>
+                <a class="process-start" href="/research/{{$activePlanet}}/{{$research->research_id}}">Forschung<br/>Stufe
+                    {{$research != null ? $research->level + 1 : 1}}</a>
                 @endif
                 @else
                 <span class="process-denied">Forschung starten</span>

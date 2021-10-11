@@ -42,11 +42,12 @@ body {
     }
 }
 
+.sub-line.attack, .sub-line.espionage, .sub-line.invasion,
 .attack, .espionage, .invasion {
     background-color: $red;
 }
 
-.transport {
+.sub-line.transport {
     background-color: #b8860b;
 }
 

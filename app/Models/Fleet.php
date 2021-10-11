@@ -115,18 +115,20 @@ class Fleet extends Model
             $planet_ids[] = $planet->id;
         }
 
-        $list = [];
-        foreach ($allUserPlanets as $planet) {
-            $temp = self::where('target', $planet->id)->whereNotIn('planet_id', $planet_ids)->leftJoin('planets', 'planets.id', '=', 'fleets.planet_id')->orderBy('fleets.arrival', 'ASC')->get();
-            foreach ($temp as $key => $tmp) {
-                $temp[$key]->targetPlanet = Planet::getOneById($planet->id);
-            }
-            if (count($temp) > 0) {
-                $list[] = $temp;
-            }
-        }
-
-        return $list;
+        return self::whereIn('target', $planet_ids)
+            ->whereNotIn('planet_id', $planet_ids)
+            ->leftJoin('planets AS sp', 'sp.id', '=', 'fleets.planet_id')
+            ->leftJoin('planets AS tp', 'tp.id', '=', 'fleets.target')
+            ->orderBy('fleets.arrival', 'ASC')
+            ->get([
+                'fleets.*',
+                'sp.galaxy AS sourceGalaxy',
+                'sp.system AS sourceSystem',
+                'sp.planet AS sourcePlanet',
+                'tp.galaxy AS targetGalaxy',
+                'tp.system AS targetSystem',
+                'tp.planet AS targetPlanet',
+            ]);
     }
 
 }

@@ -83,7 +83,7 @@ class ResearchController extends Controller
             $f3 = $entry->factor_3 > 0 ? $entry->factor_3 : 0.0001;
 
             $Grundzeit = $entry->initial_researchtime;
-            $Stufe = $entry->knowledge ? $entry->knowledge->level : 0;
+            $Stufe = $entry ? $entry->level : 0;
             $Modifikator1 = ($Stufe / ($f1) ) + $f2;
             $Modifikator2 = $Stufe * $f3;
             $suffix = ':';
@@ -114,13 +114,13 @@ class ResearchController extends Controller
             $researchList[$key]->readableBuildtime = $days . $hours . $minutes . $seconds;
 
             // calc resource cost
-            if($entry->knowledge != null)
+            if($entry != null)
             {
                 $f1 = $entry->fe_factor_1 > 0 ? $entry->fe_factor_1 : 0.0001;
                 $f2 = $entry->fe_factor_2 > 0 ? $entry->fe_factor_2 : 0.0001;
                 $f3 = $entry->fe_factor_3 > 0 ? $entry->fe_factor_3 : 0.0001;
                 $cost = $entry->fe;
-                $level = $entry->knowledge ? $entry->knowledge->level : 0;
+                $level = $entry ? $entry->level : 0;
                 $Modifikator1 = ($level / ($f1) ) + $f2;
                 $Modifikator2 = $level * $f3;
                 $researchList[$key]->fe =  floor($cost * $Modifikator1 * $Modifikator2);
@@ -129,7 +129,7 @@ class ResearchController extends Controller
                 $f2 = $entry->lut_factor_2 > 0 ? $entry->lut_factor_2 : 0.0001;
                 $f3 = $entry->lut_factor_3 > 0 ? $entry->lut_factor_3 : 0.0001;
                 $cost = $entry->lut;
-                $level = $entry->knowledge ? $entry->knowledge->level : 0;
+                $level = $entry ? $entry->level : 0;
                 $Modifikator1 = ($level / ($f1) ) + $f2;
                 $Modifikator2 = $level * $f3;
                 $researchList[$key]->lut =  floor($cost * $Modifikator1 * $Modifikator2);
@@ -138,7 +138,7 @@ class ResearchController extends Controller
                 $f2 = $entry->cry_factor_2 > 0 ? $entry->cry_factor_2 : 0.0001;
                 $f3 = $entry->cry_factor_3 > 0 ? $entry->cry_factor_3 : 0.0001;
                 $cost = $entry->cry;
-                $level = $entry->knowledge ? $entry->knowledge->level : 0;
+                $level = $entry ? $entry->level : 0;
                 $Modifikator1 = ($level / ($f1) ) + $f2;
                 $Modifikator2 = $level * $f3;
                 $researchList[$key]->cry =  floor($cost * $Modifikator1 * $Modifikator2);
@@ -147,7 +147,7 @@ class ResearchController extends Controller
                 $f2 = $entry->h2o_factor_2 > 0 ? $entry->h2o_factor_2 : 0.0001;
                 $f3 = $entry->h2o_factor_3 > 0 ? $entry->h2o_factor_3 : 0.0001;
                 $cost = $entry->h2o;
-                $level = $entry->knowledge ? $entry->knowledge->level : 0;
+                $level = $entry ? $entry->level : 0;
                 $Modifikator1 = ($level / ($f1) ) + $f2;
                 $Modifikator2 = $level * $f3;
                 $researchList[$key]->h2o =  floor($cost * $Modifikator1 * $Modifikator2);
@@ -156,7 +156,7 @@ class ResearchController extends Controller
                 $f2 = $entry->h2_factor_2 > 0 ? $entry->h2_factor_2 : 0.0001;
                 $f3 = $entry->h2_factor_3 > 0 ? $entry->h2_factor_3 : 0.0001;
                 $cost = $entry->h2;
-                $level = $entry->knowledge ? $entry->knowledge->level : 0;
+                $level = $entry ? $entry->level : 0;
                 $Modifikator1 = ($level / ($f1) ) + $f2;
                 $Modifikator2 = $level * $f3;
                 $researchList[$key]->h2 =  floor($cost * $Modifikator1 * $Modifikator2);
@@ -209,14 +209,14 @@ class ResearchController extends Controller
         if($research_id)
         {
             // selected building exists?
-            $selectedResearch = $researchList->firstWhere('id', $research_id);
+            $selectedResearch = $researchList->firstWhere('research_id', $research_id);
             if($selectedResearch)
             {
                 // check if selected building can be built (resources)
                 if($planetaryResources[0]->fe >= $selectedResearch->fe && $planetaryResources[0]->lut >= $selectedResearch->lut && $planetaryResources[0]->cry >= $selectedResearch->cry && $planetaryResources[0]->h2o >= $selectedResearch->h2o && $planetaryResources[0]->h2 >= $selectedResearch->h2)
                 {
                     $needle = $researchList->filter(function($value, $key) use ($research_id) {
-                        if($value->id == $research_id)
+                        if($value->research_id == $research_id)
                         {
                             return $value->buildable;
                         }
@@ -227,6 +227,7 @@ class ResearchController extends Controller
                         $started = Research::startResearch($selectedResearch, $planet_id);
                         if($started)
                         {
+                            //dd($selectedResearch);
                             // calculate new resources
                             $planetaryResources[0]->fe -= $selectedResearch->fe;
                             $planetaryResources[0]->lut -= $selectedResearch->lut;
@@ -279,9 +280,10 @@ class ResearchController extends Controller
         $planetaryResources = Planet::getResourcesForPlanet($planet_id);
         $researchList = Research::getAllAvailableResearches($user_id, $planet_id);
         $currentResearch = Planet::getPlanetaryResearchProcess($planet_id, $user_id);
-        $selectedResearch = $researchList->firstWhere('id', $currentResearch->research_id);
+        $selectedResearch = $researchList->firstWhere('research_id', $currentResearch->research_id);
 
         // calculate new resources
+        // todo: higher levels => higher cost, it only calculates level 1 costs
         $planetaryResources[0]->fe += $selectedResearch->fe;
         $planetaryResources[0]->lut += $selectedResearch->lut;
         $planetaryResources[0]->cry += $selectedResearch->cry;

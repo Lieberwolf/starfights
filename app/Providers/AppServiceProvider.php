@@ -26,6 +26,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+
         DB::listen(function($query) {
             File::append(
                 storage_path('/logs/'.date("Y-m-d H-i-s").'_query.log'),
@@ -34,5 +35,6 @@ class AppServiceProvider extends ServiceProvider
                     PHP_EOL . PHP_EOL
             );
         });
+
     }
 }

@@ -119,15 +119,15 @@ class MissionController extends Controller
 
         foreach($knowledge as $research)
         {
-            if($research->increase_max_planets != 0 && $research->knowledge != null)
+            if($research->increase_max_planets != 0 && $research->level != null)
             {
-                $maxPlanets += $research->increase_max_planets * $research->knowledge->level;
+                $maxPlanets += $research->increase_max_planets * $research->level;
             }
 
-            if($research->increase_cargo != 0 && $research->knowledge != null)
+            if($research->increase_cargo != 0 && $research->level != null)
             {
                 $temp = new \stdClass();
-                $temp->level = $research->knowledge->level;
+                $temp->level = $research->level;
                 $temp->factor = $research->increase_cargo;
 
                 $cargoIncreaser[] = $temp;

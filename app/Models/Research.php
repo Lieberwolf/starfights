@@ -29,54 +29,27 @@ class Research extends Model
             ->orderBy('r.id')
             ->leftJoin('researchtimefactors AS rtf','rtf.research_id','=','r.id')
             ->leftJoin('resourcefactors AS rf', 'rf.research_id','=', 'r.id')
-            ->get([
-                'r.*',
-                'rtf.factor_1',
-                'rtf.factor_2',
-                'rtf.factor_3',
-                'rf.fe_factor_1',
-                'rf.fe_factor_2',
-                'rf.fe_factor_3',
-                'rf.lut_factor_1',
-                'rf.lut_factor_2',
-                'rf.lut_factor_3',
-                'rf.cry_factor_1',
-                'rf.cry_factor_2',
-                'rf.cry_factor_3',
-                'rf.h2o_factor_1',
-                'rf.h2o_factor_2',
-                'rf.h2o_factor_3',
-                'rf.h2_factor_1',
-                'rf.h2_factor_2',
-                'rf.h2_factor_3',
-            ]);
+            ->leftJoin('knowledge AS k', function($join) use ($user_id)
+            {
+                $join->on('k.research_id', '=', 'r.id')->where('k.user_id', '=', $user_id);
+            })
+            ->get();
+
         // get all buildings
-        $buildings = DB::table('buildings')
-                       ->get();
-        $knowledge = [];
+        $buildings = DB::table('buildings AS b')
+            ->leftJoin('infrastructures AS i', function($join) use ($planet_id)
+            {
+                $join->on('i.building_id', '=', 'b.id');
+                $join->where('i.planet_id', '=', $planet_id);
+            })
+            ->get();
+
         $techtree = [];
-
-        foreach($buildings as $key => $building)
-        {
-            $building->infrastructure = DB::table('infrastructures')
-                                          ->where('building_id', $building->id)
-                                          ->where('planet_id', $planet_id)
-                                          ->first();
-
-            $buildings[$key] = $building;
-        }
 
         // get knowledge
         foreach($researches as $key => $research)
         {
-            $temp = DB::table('knowledge AS i')
-                      ->where('i.research_id', '=', $research->id)
-                      ->where('i.user_id', '=', $user_id)
-                      ->first();
-
             $researches[$key]->buildable = true;
-            $researches[$key]->knowledge = $temp;
-            $knowledge[$research->research_name] = $temp;
 
             foreach(json_decode($research->research_requirements) as $keyB => $req)
             {
@@ -94,9 +67,9 @@ class Research extends Model
                     {
                         if($compareItem->research_name == $keyB)
                         {
-                            if($compareItem->knowledge)
+                            if($compareItem->level)
                             {
-                                if($compareItem->knowledge->level >= $req)
+                                if($compareItem->level >= $req)
                                 {
                                     if($researches[$key]->buildable != false)
                                     {
@@ -126,9 +99,9 @@ class Research extends Model
                     {
                         if($compareItem->building_name == $keyB)
                         {
-                            if($compareItem->infrastructure)
+                            if($compareItem->level)
                             {
-                                if($compareItem->infrastructure->level >= $req)
+                                if($compareItem->level >= $req)
                                 {
                                     if($researches[$key]->buildable != false)
                                     {
@@ -163,14 +136,14 @@ class Research extends Model
 
             $insert_queue = DB::table('research_process')->insert([
                 'planet_id' => $planet,
-                'research_id' => $research->id,
+                'research_id' => $research->research_id,
                 'started_at' => date('Y-m-d H:i:s',time()),
                 'finished_at' => date('Y-m-d H:i:s',time()+$researchtime)
             ]);
 
             return $insert_queue;
         } else {
-            dd('building in process');
+            dd('research in process');
         }
     }
 
