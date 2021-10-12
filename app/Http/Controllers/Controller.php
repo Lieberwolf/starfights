@@ -819,7 +819,7 @@ class Controller extends BaseController
                                     'user_id' => 0,
                                     'receiver_id' => $targetUser->user_id,
                                     'subject' => 'Spionagebericht',
-                                    'message' => 'Spionagemission von ' . $fleet->sourceGalaxy .':'. $fleet->sourceSystem . ':' . $fleet->sourcePlanett . ' erfolgte auf ' . $fleet->targetGalaxy .':'. $fleet->targetSystem . ':' . $fleet->targetPlanet . ' (<a href="/report/' . $link->link . '">Zum Bericht</a>)',
+                                    'message' => 'Spionagemission von ' . $fleet->sourceGalaxy .':'. $fleet->sourceSystem . ':' . $fleet->sourcePlanet . ' erfolgte auf ' . $fleet->targetGalaxy .':'. $fleet->targetSystem . ':' . $fleet->targetPlanet . ' (<a href="/report/' . $link->link . '">Zum Bericht</a>)',
                                 ];
                                 Messages::create($message);
                             } else {
@@ -857,7 +857,7 @@ class Controller extends BaseController
 
 
                             // drones die, so delete fleet
-                            $fleet->delete();
+                            DB::table('fleets')->where('fleets.id', $fleet->id)->delete();
                             break;
                         case 4:
                             // is planet occupied by another user?
@@ -1151,7 +1151,6 @@ class Controller extends BaseController
                                 $fleet->save();
                                 return true;
                             } else {
-                                $fleet->delete();
                                 dd('error while colonization');
                             }
                             break;
@@ -1391,7 +1390,7 @@ class Controller extends BaseController
                                     $temp->mission = 6;
                                     $temp->save();
                                 } else {
-                                    $fleet->delete();
+                                    DB::table('fleets')->where('fleets.id', $fleet->id)->delete();
                                 }
 
                                 // set defender fleet
