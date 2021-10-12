@@ -24,7 +24,7 @@
                     <td class="sub-line">{{number_format($planet->points, 0, ',', '.')}}</td>
                     <td class="sub-line">
                         @if($activePlanet != $planet->id)
-                            <a href="/mission/{{$activePlanet}}/withdata/{{$planet->galaxy}}/{{$planet->system}}/{{$planet->planet}}">[M]</a>
+                            <a href="/mission/withdata/{{$planet->galaxy}}/{{$planet->system}}/{{$planet->planet}}/{{$activePlanet}}">[M]</a>
                         @endif
                     </td>
                 </tr>

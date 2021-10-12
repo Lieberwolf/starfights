@@ -64,10 +64,11 @@ Route::get('/research/{planet_id}/{research_id}', [App\Http\Controllers\Research
 
 // mission
 Route::get('/mission', [App\Http\Controllers\MissionController::class, 'index']);
+Route::get('/mission/start/{planet_id}', [App\Http\Controllers\MissionController::class, 'index']);
+Route::post('/mission/start/{planet_id}', [App\Http\Controllers\MissionController::class, 'start']);
+Route::post('/mission/liftoff/{planet_id}', [App\Http\Controllers\MissionController::class, 'liftoff']);
+Route::get('/mission/withdata/{targetGalaxy}/{targetSystem}/{targetPlanet}/{planet_id}', [App\Http\Controllers\MissionController::class, 'withdata']);
 Route::get('/mission/{planet_id}', [App\Http\Controllers\MissionController::class, 'show']);
-Route::post('/mission/{planet_id}/start', [App\Http\Controllers\MissionController::class, 'start']);
-Route::post('/mission/{planet_id}/liftoff', [App\Http\Controllers\MissionController::class, 'liftoff']);
-Route::get('/mission/{planet_id}/withdata/{targetGalaxy}/{targetSystem}/{targetPlanet}', [App\Http\Controllers\MissionController::class, 'withdata']);
 
 // fleetlist
 Route::get('/fleetlist', [App\Http\Controllers\FleetlistController::class, 'index']);

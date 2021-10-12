@@ -21,8 +21,9 @@ class MissionController extends Controller
     {
         $user_id = Auth::id();
         $start_planet = Profile::getStartPlanetByUserId($user_id);
-        session(['default_planet' => $start_planet[0]->start_planet]);
-        return redirect('mission/' . $start_planet[0]->start_planet);
+        session(['default_planet' => $start_planet->start_planet]);
+        session(['target' => null]);
+        return redirect('mission/' . $start_planet->start_planet);
     }
 
     public function show(Request $request, $planet_id)
@@ -682,7 +683,7 @@ class MissionController extends Controller
         }
     }
 
-    public function withdata($planet_id, $targetGalaxy = false, $targetSystem = false, $targetPlanet = false)
+    public function withdata($targetGalaxy, $targetSystem, $targetPlanet, $planet_id)
     {
         if($targetGalaxy == false || $targetSystem == false || $targetPlanet == false)
         {

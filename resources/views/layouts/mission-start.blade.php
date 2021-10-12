@@ -2,7 +2,7 @@
     <div class="row">
         <div class="col-12 title-line mb-1"><span>Missions Übersicht</span></div>
         <div class="col-12">
-            <form action="/mission/{{$activePlanet}}/liftoff" method="post">
+            <form action="/mission/liftoff/{{$activePlanet}}" method="post">
                 @csrf
                 <div class="row">
                     <div class="col-6 sub-line p-1">Ziel:</div>
