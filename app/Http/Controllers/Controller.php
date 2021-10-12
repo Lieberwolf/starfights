@@ -644,7 +644,7 @@ class Controller extends BaseController
                             // emit system message to user
                             $message = [
                                 'user_id' => 0,
-                                'receiver_id' => Auth::id(),
+                                'receiver_id' => $target->user_id,
                                 'subject' => 'Stationierung',
                                 'message' => 'Flotte von ' . $fleet->sourceGalaxy .':'. $fleet->sourceSystem . ':' . $fleet->sourcePlanet . ' wurde auf ' . $fleet->targetGalaxy .':'. $fleet->targetSystem . ':' . $fleet->targetPlanet . ' stationiert.',
                             ];
@@ -674,7 +674,7 @@ class Controller extends BaseController
                                 // emit system message to user
                                 $message = [
                                     'user_id' => 0,
-                                    'receiver_id' => Auth::id(),
+                                    'receiver_id' => $target->user_id,
                                     'subject' => 'Transportbericht',
                                     'message' => 'Flotte von ' . $fleet->sourceGalaxy .':'. $fleet->sourceSystem . ':' . $fleet->sourcePlanet . ' lieferte an ' . $fleet->targetGalaxy .':'. $fleet->targetSystem . ':' . $fleet->targetPlanet . ' folgende Rohstoffe:<br/>' . $resourcesList,
                                 ];
@@ -700,7 +700,7 @@ class Controller extends BaseController
                             $research = Research::all();
                             $sourceUser = Planet::getPlanetByCoordinates($fleet->sourceGalaxy, $fleet->sourceSystem, $fleet->sourcePlanet);
                             $targetUser = Planet::getPlanetByCoordinates($fleet->targetGalaxy, $fleet->targetSystem, $fleet->targetPlanet);
-                            $attackerResearch = Research::getUsersKnowledge(Auth::id());
+                            $attackerResearch = Research::getUsersKnowledge($sourceUser->user_id);
                             $attackerSpyIncrements = [];
                             $defenderResearch = Research::getUsersKnowledge($targetUser->user_id);
                             $defenderCounterSpyIncrements = [];
@@ -1137,7 +1137,7 @@ class Controller extends BaseController
                                 $fleet->arrival = null;
                                 $fleet->departure = null;
 
-                                Planet::where('id', $fleet->planet->id)->update([
+                                Planet::where('id', $fleet->planet_id)->update([
                                     'user_id' => Auth::id(),
                                     'fe' => 500,
                                     'lut' => 500,
@@ -1148,7 +1148,17 @@ class Controller extends BaseController
                                     'rate_h2o' => 10,
                                     'rate_h2' => 0,
                                 ]);
-                                $fleet->save();
+
+                                DB::table('fleets')->where('fleets.id', $fleet->id)->update([
+                                    'planet_id' => $fleet->planet_id,
+                                    'target' => $fleet->target,
+                                    'mission' => $fleet->mission,
+                                    'arrival' => $fleet->arrival,
+                                    'departure' => $fleet->departure,
+                                    'ship_types' => $fleet->ship_types,
+                                    'cargo' => null,
+                                    'arrived' => 0
+                                ]);
                                 return true;
                             } else {
                                 dd('error while colonization');
@@ -1474,7 +1484,7 @@ class Controller extends BaseController
                     // emit system message to user
                     $message = [
                         'user_id' => 0,
-                        'receiver_id' => Auth::id(),
+                        'receiver_id' => $homePlanet->user_id,
                         'subject' => 'Flottenaktivität',
                         'message' => 'Eine Flotte kehrt zurück',
                     ];
