@@ -72,6 +72,7 @@ class AllianceController extends Controller
                 {
                     $alliance = new \stdClass();
                     $alliance->id = null;
+                    $alliance->alliance_description = null;
                 }
 
                 if($alliance) {
