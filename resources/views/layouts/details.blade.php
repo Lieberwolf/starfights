@@ -77,7 +77,7 @@
             Planet löschen:
         </div>
         <div class="col-12 col-md-6 mt-4 sub-line">
-            @if($activePlanet != $startPlanet[0]->start_planet)
+            @if($activePlanet != $startPlanet->start_planet)
             <form action="/details/{{$activePlanet}}/delete" method="post">
                 @csrf
                 <button type="submit" class="btn btn-warning">Löschen</button>

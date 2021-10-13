@@ -10,5 +10,7 @@ return [
     'passwordSettings' => 'Passwort Einstellungen',
     'save' => 'Speichern',
     'chatSettings' => 'Chat Einstellungen',
-    'forgottenPassword' => 'Passwort vergessen?'
+    'forgottenPassword' => 'Passwort vergessen?',
+    'warning' => 'Dieser Account ist verwarnt',
+    'warningDate' => 'Reduziert sich um 10% am: :DATE',
 ];

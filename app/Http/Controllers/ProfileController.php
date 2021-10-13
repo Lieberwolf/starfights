@@ -18,7 +18,7 @@ class ProfileController extends Controller
 
     public function index()
     {
-        $user_id = Auth::id();
+        $user = session()->get('user');$user_id = $user->user_id;
         return redirect('profile/' . $user_id);
     }
 
@@ -37,7 +37,7 @@ class ProfileController extends Controller
             $planetaryResources = Planet::getResourcesForPlanet($planet_id);
             // my own profile
             $proof = true;
-            $allUserPlanets = Controller::getAllUserPlanets($user_id);
+            $allUserPlanets = session()->get('planets');
             Controller::checkAllProcesses($allUserPlanets);
         } else {
             $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, Auth::id());

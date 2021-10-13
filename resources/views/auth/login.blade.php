@@ -3,6 +3,20 @@
 @section('content')
 <div class="container">
     <div class="row justify-content-center">
+        @if(session('status'))
+        <div class="col-md-8">
+            <div class="alert alert-danger" role="alert">
+                {{session('status')}}
+            </div>
+        </div>
+        @endif
+        @if(session('enabled'))
+        <div class="col-md-8">
+            <div class="alert alert-info" role="alert">
+                Urlaubsmodus erfoglreich aktiviert.
+            </div>
+        </div>
+        @endif
         <div class="col-md-8">
             <div class="card">
                 <div class="card-header title-line">{{ __('Login') }}</div>

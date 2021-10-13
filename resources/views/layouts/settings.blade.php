@@ -5,6 +5,45 @@
         </div>
 
         <div class="col-12 title-line">
+            Urlaubsmodus
+        </div>
+        <div class="col-12 sub-line">
+            @if(strtotime($vacation->vacation_blocked_until) <= now()->timestamp)
+            <form action="/vacation/enable" method="post">
+                @csrf
+                <div class="form-group row p-1 mb-0">
+                    <div class="col-6 col-form-label">
+                        <div class="row">
+                            <div class="col-12">
+                                Urlaubsmodus
+                            </div>
+                            <div class="col-12">
+                                Gilt für 2 Wochen und ist danach für 4 Wochen gesperrt.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 form-check p-1">
+                        <input class="form-check-input" type="checkbox" name="vacation" id="vacation">
+                        <label class="form-check-label" for="vacation">
+                            <span>aktivieren</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-md-6 offset-md-6 p-2">
+                        <button type="submit" class="btn btn-secondary">{{__('settings.save')}}</button>
+                    </div>
+                </div>
+            </form>
+            @else
+                <div class="row">
+                    <div class="col-6">Urlaubsmodus</div>
+                    <div class="col-6">Gesperrt bis: {{$vacation->vacation_blocked_until}}</div>
+                </div>
+            @endif
+        </div>
+
+        <div class="col-12 mt-3 title-line">
             <span>Benachrichtigungen</span>
         </div>
         <div class="col-12 sub-line">

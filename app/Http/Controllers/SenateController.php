@@ -20,9 +20,9 @@ class SenateController extends Controller
 
     public function index()
     {
-        $user_id = Auth::id();
+        $user = session()->get('user');$user_id = $user->user_id;
         $planet_id = session('default_planet');
-        $allUserPlanets = Controller::getAllUserPlanets($user_id);
+        $allUserPlanets = session()->get('planets');
         $allBuildings = Building::all();
 
         return view('senate.show', [

@@ -177,6 +177,11 @@ Route::get('/statistics', [App\Http\Controllers\StatisticsController::class, 'in
 Route::get('/statistics/{planet_id}/user/{users_id}', [App\Http\Controllers\StatisticsController::class, 'showUser']);
 Route::get('/statistics/{planet_id}/ally/{ally_id}', [App\Http\Controllers\StatisticsController::class, 'showAlly']);
 
+// vacation pre view
+Route::post('/vacation/enable', [App\Http\Controllers\VacationController::class, 'enable']);
+Route::get('/vacation/deactivate', [App\Http\Controllers\VacationController::class, 'deactivate']);
+Route::get('/vacation/{timestamp}', [App\Http\Controllers\VacationController::class, 'index']);
+
 /**
  * Admin
  */

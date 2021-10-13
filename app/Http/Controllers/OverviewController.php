@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Research;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Profile as Profile;
@@ -11,6 +12,7 @@ use App\Models\Messages as Messages;
 use App\Models\Fleet as Fleet;
 use App\Models\Defense as Defense;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Date;
 use Symfony\Component\Process\Process;
 use Illuminate\Support\Facades\DB;
 
@@ -28,7 +30,7 @@ class OverviewController extends Controller
 
     public function index()
     {
-        $user_id = Auth::id();
+        $user = session()->get('user');$user_id = $user->user_id;
         $start_planet = Profile::getStartPlanetByUserId($user_id);
         session(['default_planet' => $start_planet->start_planet]);
         return redirect('overview/' . $start_planet->start_planet);
@@ -43,11 +45,12 @@ class OverviewController extends Controller
     {
         // update session with new planet id
         session(['default_planet' => $planet_id]);
-        $user_id = Auth::id();
+        $user = session()->get('user');
+        $user_id = $user->user_id;
+        $allUserPlanets = session()->get('planets');
 
-        $planetaryResources = Planet::getResourcesForPlanet($planet_id);                                    // 3 | 0.0019
+        $planetaryResources = Planet::getResourcesForPlanet($planet_id);
         $planetInformation = Planet::getOneById($planet_id);
-        $allUserPlanets = Controller::getAllUserPlanets($user_id);
         Controller::checkAllProcesses($allUserPlanets);
         $planetaryBuildingProcesses = Planet::getAllPlanetaryBuildingProcess($allUserPlanets);
         $planetaryResearchProcesses = Planet::getAllPlanetaryResearchProcess($allUserPlanets, $user_id);

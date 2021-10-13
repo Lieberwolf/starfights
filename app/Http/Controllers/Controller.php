@@ -55,7 +55,7 @@ class Controller extends BaseController
         $processes = DB::table('building_process AS bp')
             ->whereIn('planet_id', $ids)
             ->get();
-        $user_id = Auth::id();
+        $user = session()->get('user');$user_id = $user->user_id;
         if($processes) {
             foreach($processes as $process)
             {
@@ -301,7 +301,7 @@ class Controller extends BaseController
         $processes = DB::table('research_process')
             ->whereIn('planet_id', $ids)
             ->get();
-        $user_id = Auth::id();
+        $user = session()->get('user');$user_id = $user->user_id;
         foreach($processes as $process)
         {
             $process = DB::table('research_process')

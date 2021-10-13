@@ -23,17 +23,19 @@ class AllianceController extends Controller
 
     public function index()
     {
-        $user_id = Auth::id();
+        $user = session()->get('user');
+        $user_id = $user->user_id;
         $start_planet = Profile::getStartPlanetByUserId($user_id);
-        session(['default_planet' => $start_planet[0]->start_planet]);
-        return redirect('alliance/' . $start_planet[0]->start_planet);
+        session(['default_planet' => $start_planet->start_planet]);
+        return redirect('alliance/' . $start_planet->start_planet);
     }
 
     public function redirect($planet_id)
     {
         // update session with new planet id
         session(['default_planet' => $planet_id]);
-        $user_id = Auth::id();
+        $user = session()->get('user');
+        $user_id = $user->user_id;
         $alliance = Alliance::getAllianceForUser($user_id);
 
         if(!$alliance->alliance_id) {
@@ -47,10 +49,11 @@ class AllianceController extends Controller
     {
         // update session with new planet id
         session(['default_planet' => $planet_id]);
-        $user_id = Auth::id();
+        $user = session()->get('user');
+        $user_id = $user->user_id;
         $profileData = Profile::getUsersProfileById($user_id);
         $planetaryResources = Planet::getResourcesForPlanet($planet_id);
-        $allUserPlanets = Controller::getAllUserPlanets($user_id);
+        $allUserPlanets = session()->get('planets');
         Controller::checkAllProcesses($allUserPlanets);
         $applications = false;
         if(!is_numeric($alliance_id)) {
@@ -123,9 +126,10 @@ class AllianceController extends Controller
     {
         // update session with new planet id
         session(['default_planet' => $planet_id]);
-        $user_id = Auth::id();
+        $user = session()->get('user');
+        $user_id = $user->user_id;
         $planetaryResources = Planet::getResourcesForPlanet($planet_id);
-        $allUserPlanets = Controller::getAllUserPlanets($user_id);
+        $allUserPlanets = session()->get('planets');
         Controller::checkAllProcesses($allUserPlanets);
         $alliance = Alliance::getAllianceForUser($user_id);
         if($alliance->alliance_id)
@@ -151,9 +155,10 @@ class AllianceController extends Controller
     {
         // update session with new planet id
         session(['default_planet' => $planet_id]);
-        $user_id = Auth::id();
+        $user = session()->get('user');
+        $user_id = $user->user_id;
         $planetaryResources = Planet::getResourcesForPlanet($planet_id);
-        $allUserPlanets = Controller::getAllUserPlanets($user_id);
+        $allUserPlanets = session()->get('planets');
         Controller::checkAllProcesses($allUserPlanets);
         $allianceData = Alliance::getUsersInAlliance($alliance_id);
 
@@ -215,7 +220,8 @@ class AllianceController extends Controller
 
     public function send($planet_id, $alliance_id)
     {
-        $user_id = Auth::id();
+        $user = session()->get('user');
+        $user_id = $user->user_id;
         $profile = Profile::getUsersProfileById($user_id);
         $alliance = Alliance::getAllianceForUser($user_id);
         if($alliance_id == $alliance->alliance_id) {
@@ -262,7 +268,8 @@ class AllianceController extends Controller
 
     public function apply($planet_id, $alliance_id)
     {
-        $user_id = Auth::id();
+        $user = session()->get('user');
+        $user_id = $user->user_id;
         // save the alliance id as *-1 in users profile to mark him as already applied somewhere
         $profile = Profile::getUsersProfileById($user_id);
         $profile->alliance_application = $alliance_id;
@@ -345,7 +352,7 @@ class AllianceController extends Controller
 
     public function leave($planet_id, $alliance_id)
     {
-        $user_id = Auth::id();
+        $user = session()->get('user');$user_id = $user->user_id;
         DB::table('profiles')->where('user_id', $user_id)->update([
             'alliance_id' => null
         ]);
