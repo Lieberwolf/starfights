@@ -106,36 +106,36 @@ class Planet extends Model
             }
 
             $storage = new \stdClass();
-            $storage->fe = 10000;
-            $storage->lut = 10000;
-            $storage->cry = 100;
-            $storage->h2o = 10000;
-            $storage->h2 = 1000;
+            $storage['max_fe'] = 10000;
+            $storage['max_lut'] = 10000;
+            $storage['max_cry'] = 100;
+            $storage['max_h2o'] = 10000;
+            $storage['max_h2'] = 1000;
 
             foreach ($buildings as $building) {
                 if ($building->store_fe > 0) {
                     if ($building->level > 0) {
-                        $storage->fe += $building->store_fe * $building->level;
+                        $storage['max_fe'] += $building->store_fe * $building->level;
                     }
                 }
                 if ($building->store_lut > 0) {
                     if ($building->level > 0) {
-                        $storage->lut += $building->store_lut * $building->level;
+                        $storage['max_lut'] += $building->store_lut * $building->level;
                     }
                 }
                 if ($building->store_cry > 0) {
                     if ($building->level > 0) {
-                        $storage->cry += $building->store_cry * $building->level;
+                        $storage['max_cry'] += $building->store_cry * $building->level;
                     }
                 }
                 if ($building->store_h2o > 0) {
                     if ($building->level > 0) {
-                        $storage->h2o += $building->store_h2o * $building->level;
+                        $storage['max_h2o'] += $building->store_h2o * $building->level;
                     }
                 }
                 if ($building->store_h2 > 0) {
                     if ($building->level > 0) {
-                        $storage->h2 += $building->store_h2 * $building->level;
+                        $storage['max_h2'] += $building->store_h2 * $building->level;
                     }
                 }
             }
@@ -185,30 +185,30 @@ class Planet extends Model
                 "newH2" => $lastStand->h2 + ($lastStand->rate_h2 / 3600) * now()->diffInSeconds($lastStand->updated_at),
             ];
 
-            if ($ressFe["newFe"] <= $storage->fe) {
+            if ($ressFe["newFe"] <= $storage['max_fe']) {
                 $lastStand->fe = $ressFe['newFe'];
             } else {
-                $lastStand->fe = $storage->fe;
+                $lastStand->fe = $storage['max_fe'];
             }
-            if ($ressLut["newLut"] <= $storage->lut) {
+            if ($ressLut["newLut"] <= $storage['max_lut']) {
                 $lastStand->lut = $ressLut['newLut'];
             } else {
-                $lastStand->lut = $storage->lut;
+                $lastStand->lut = $storage['max_lut'];
             }
-            if ($ressCry["newCry"] <= $storage->cry) {
+            if ($ressCry["newCry"] <= $storage['max_cry']) {
                 $lastStand->cry = $ressCry['newCry'];
             } else {
-                $lastStand->cry = $storage->cry;
+                $lastStand->cry = $storage['max_cry'];
             }
-            if ($ressH2o["newH2o"] <= $storage->h2o) {
+            if ($ressH2o["newH2o"] <= $storage['max_h2o']) {
                 $lastStand->h2o = $ressH2o['newH2o'];
             } else {
-                $lastStand->h2o = $storage->h2o;
+                $lastStand->h2o = $storage['max_h2o'];
             }
-            if ($ressH2["newH2"] <= $storage->h2) {
+            if ($ressH2["newH2"] <= $storage['max_h2']) {
                 $lastStand->h2 = $ressH2['newH2'];
             } else {
-                $lastStand->h2 = $storage->h2;
+                $lastStand->h2 = $storage['max_h2'];
             }
 
             if ($lastStand->fe < 0) {
@@ -232,73 +232,92 @@ class Planet extends Model
 
     public static function getResourcesForPlanet($planet_id)
     {
-        $lastStand = Planet::where('id', $planet_id)->first();
 
-        if (session('buildings_' . $planet_id)) {
-            $buildingsList = session('buildings_' . $planet_id);
-        } else {
-            $buildingsList = Building::getAllBuildingsForPlanet($planet_id);
-            session(['buildings_' . $planet_id => $buildingsList]);
-        }
-        $storage = new \stdClass();
-        $storage->fe = 10000;
-        $storage->lut = 10000;
-        $storage->cry = 100;
-        $storage->h2o = 10000;
-        $storage->h2 = 1000;
+        $return = (array) tap(DB::table('planets')
+            ->where('id', $planet_id))
+            ->update([
+                'fe' => DB::raw(
+                    "
+                    (
+                        select *
+                        from (
+                            select if(
+                                fe + rate_fe * timestampdiff(SECOND, updated_at, now())/3600 > max_fe,
+                                max_fe,
+                                fe + rate_fe * timestampdiff(SECOND, updated_at, now())/3600
+                            )
+                            from planets as p
+                            where id = {$planet_id}
+                        ) as fe
+                    )
+                "),
 
-        foreach ($buildingsList as $building) {
-            if ($building->store_fe > 0) {
-                if ($building->level > 0) {
-                    $storage->fe += $building->store_fe * $building->level;
-                }
-            }
-            if ($building->store_lut > 0) {
-                if ($building->level > 0) {
-                    $storage->lut += $building->store_lut * $building->level;
-                }
-            }
-            if ($building->store_cry > 0) {
-                if ($building->level > 0) {
-                    $storage->cry += $building->store_cry * $building->level;
-                }
-            }
-            if ($building->store_h2o > 0) {
-                if ($building->level > 0) {
-                    $storage->h2o += $building->store_h2o * $building->level;
-                }
-            }
-            if ($building->store_h2 > 0) {
-                if ($building->level > 0) {
-                    $storage->h2 += $building->store_h2 * $building->level;
-                }
-            }
-        }
+                'lut' => DB::raw(
+                    "
+                    (
+                        select *
+                        from (
+                            select if(
+                                lut + rate_lut * timestampdiff(SECOND, updated_at, now())/3600 > max_lut,
+                                max_lut,
+                                lut + rate_lut * timestampdiff(SECOND, updated_at, now())/3600
+                            )
+                            from planets as p
+                            where id = {$planet_id}
+                        ) as lut
+                    )
+                "),
 
-        $lastStand->fe = $lastStand->fe + ($lastStand->rate_fe / 3600) * now()->diffInSeconds($lastStand->updated_at) <= $storage->fe ? $lastStand->fe + ($lastStand->rate_fe / 3600) * now()->diffInSeconds($lastStand->updated_at) : $storage->fe;
-        $lastStand->lut = $lastStand->lut + ($lastStand->rate_lut / 3600) * now()->diffInSeconds($lastStand->updated_at) <= $storage->lut ? $lastStand->lut + ($lastStand->rate_lut / 3600) * now()->diffInSeconds($lastStand->updated_at) : $storage->lut;
-        $lastStand->cry = $lastStand->cry + ($lastStand->rate_cry / 3600) * now()->diffInSeconds($lastStand->updated_at) <= $storage->cry ? $lastStand->cry + ($lastStand->rate_cry / 3600) * now()->diffInSeconds($lastStand->updated_at) : $storage->cry;
-        $lastStand->h2o = $lastStand->h2o + ($lastStand->rate_h2o / 3600) * now()->diffInSeconds($lastStand->updated_at) <= $storage->h2o ? $lastStand->h2o + ($lastStand->rate_h2o / 3600) * now()->diffInSeconds($lastStand->updated_at) : $storage->h2o;
-        $lastStand->h2 = $lastStand->h2 + ($lastStand->rate_h2 / 3600) * now()->diffInSeconds($lastStand->updated_at) <= $storage->h2 ? $lastStand->h2 + ($lastStand->rate_h2 / 3600) * now()->diffInSeconds($lastStand->updated_at) : $storage->h2;
+                'cry' => DB::raw(
+                    "
+                    (
+                        select *
+                        from (
+                            select if(
+                                cry + rate_cry * timestampdiff(SECOND, updated_at, now())/3600 > max_cry,
+                                max_cry,
+                                cry + rate_cry * timestampdiff(SECOND, updated_at, now())/3600
+                            )
+                            from planets as p
+                            where id = {$planet_id}
+                        ) as cry
+                    )
+                "),
 
-        if ($lastStand->fe < 0) {
-            $lastStand->fe = 0;
-        }
-        if ($lastStand->lut < 0) {
-            $lastStand->lut = 0;
-        }
-        if ($lastStand->cry < 0) {
-            $lastStand->cry = 0;
-        }
-        if ($lastStand->h2o < 0) {
-            $lastStand->h2o = 0;
-        }
-        if ($lastStand->h2 < 0) {
-            $lastStand->h2 = 0;
-        }
-        $lastStand->save();
-        $return[0] = $lastStand;
-        $return[1] = $storage;
+                'h2o' => DB::raw(
+                    "
+                    (
+                        select *
+                        from (
+                            select if(
+                                h2o + rate_h2o * timestampdiff(SECOND, updated_at, now())/3600 > max_h2o,
+                                max_h2o,
+                                h2o + rate_h2o * timestampdiff(SECOND, updated_at, now())/3600
+                            )
+                            from planets as p
+                            where id = {$planet_id}
+                        ) as h2o
+                    )
+                "),
+
+                'h2' => DB::raw(
+                    "
+                    (
+                        select *
+                        from (
+                            select if(
+                                h2 + rate_h2 * timestampdiff(SECOND, updated_at, now())/3600 > max_h2,
+                                max_h2,
+                                h2 + rate_h2 * timestampdiff(SECOND, updated_at, now())/3600
+                            )
+                            from planets as p
+                            where id = {$planet_id}
+                        ) as h2
+                    )
+                "),
+
+            ])
+            ->first();
 
         return $return;
     }
@@ -309,36 +328,36 @@ class Planet extends Model
         $buildingsList = Building::getAllAvailableBuildings($planet_id, $user_id, $buildings);
 
         $storage = new \stdClass();
-        $storage->fe = 10000;
-        $storage->lut = 10000;
-        $storage->cry = 100;
-        $storage->h2o = 10000;
-        $storage->h2 = 1000;
+        $storage['max_fe'] = 10000;
+        $storage['max_lut'] = 10000;
+        $storage['max_cry'] = 100;
+        $storage['max_h2o'] = 10000;
+        $storage['max_h2'] = 1000;
 
         foreach ($buildingsList as $building) {
             if ($building->store_fe > 0) {
                 if ($building->infrastructure && $building->infrastructure->level > 0) {
-                    $storage->fe += $building->store_fe * $building->infrastructure->level;
+                    $storage['max_fe'] += $building->store_fe * $building->infrastructure->level;
                 }
             }
             if ($building->store_lut > 0) {
                 if ($building->infrastructure && $building->infrastructure->level > 0) {
-                    $storage->lut += $building->store_lut * $building->infrastructure->level;
+                    $storage['max_lut'] += $building->store_lut * $building->infrastructure->level;
                 }
             }
             if ($building->store_cry > 0) {
                 if ($building->infrastructure && $building->infrastructure->level > 0) {
-                    $storage->cry += $building->store_cry * $building->infrastructure->level;
+                    $storage['max_cry'] += $building->store_cry * $building->infrastructure->level;
                 }
             }
             if ($building->store_h2o > 0) {
                 if ($building->infrastructure && $building->infrastructure->level > 0) {
-                    $storage->h2o += $building->store_h2o * $building->infrastructure->level;
+                    $storage['max_h2o'] += $building->store_h2o * $building->infrastructure->level;
                 }
             }
             if ($building->store_h2 > 0) {
                 if ($building->infrastructure && $building->infrastructure->level > 0) {
-                    $storage->h2 += $building->store_h2 * $building->infrastructure->level;
+                    $storage['max_h2'] += $building->store_h2 * $building->infrastructure->level;
                 }
             }
         }
@@ -388,30 +407,30 @@ class Planet extends Model
             "newH2" => $lastStand->h2 + ($lastStand->rate_h2 / 3600) * now()->diffInSeconds($lastStand->updated_at),
         ];
 
-        if ($ressFe["newFe"] <= $storage->fe) {
+        if ($ressFe["newFe"] <= $storage['max_fe']) {
             $lastStand->fe = $ressFe['newFe'];
         } else {
-            $lastStand->fe = $storage->fe;
+            $lastStand->fe = $storage['max_fe'];
         }
-        if ($ressLut["newLut"] <= $storage->lut) {
+        if ($ressLut["newLut"] <= $storage['max_lut']) {
             $lastStand->lut = $ressLut['newLut'];
         } else {
-            $lastStand->lut = $storage->lut;
+            $lastStand->lut = $storage['max_lut'];
         }
-        if ($ressCry["newCry"] <= $storage->cry) {
+        if ($ressCry["newCry"] <= $storage['max_cry']) {
             $lastStand->cry = $ressCry['newCry'];
         } else {
-            $lastStand->cry = $storage->cry;
+            $lastStand->cry = $storage['max_cry'];
         }
-        if ($ressH2o["newH2o"] <= $storage->h2o) {
+        if ($ressH2o["newH2o"] <= $storage['max_h2o']) {
             $lastStand->h2o = $ressH2o['newH2o'];
         } else {
-            $lastStand->h2o = $storage->h2o;
+            $lastStand->h2o = $storage['max_h2o'];
         }
-        if ($ressH2["newH2"] <= $storage->h2) {
+        if ($ressH2["newH2"] <= $storage['max_h2']) {
             $lastStand->h2 = $ressH2['newH2'];
         } else {
-            $lastStand->h2 = $storage->h2;
+            $lastStand->h2 = $storage['max_h2'];
         }
 
         if ($lastStand->fe < 0) {

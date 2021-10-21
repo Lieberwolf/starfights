@@ -62,8 +62,8 @@ class ProfileController extends Controller
         {
             return view('profile.show', [
                 'defaultPlanet' => $planet_id,
-                'planetaryResources' => $planetaryResources[0],
-                'planetaryStorage' => $planetaryResources[1],
+                'planetaryResources' => $planetaryResources,
+                'planetaryStorage' => $planetaryResources,
                 'allUserPlanets' => $allUserPlanets,
                 'activePlanet' => $planet_id,
                 'ownProfile' => $proof,

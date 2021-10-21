@@ -341,4 +341,75 @@ class Building extends Model
     {
         return DB::table('building_process')->where('planet_id', $planet_id)->delete();
     }
+
+    public static function updateStorageCapacityInitial($planet_ids){
+        Planet::whereIn('id', $planet_ids);
+    }
+
+    public static function updateStorageCapacity($planet_id) {
+        DB::statement(
+            "UPDATE planets
+		SET max_fe = (
+				select *
+				from (
+					select sum((b.store_fe * i.level)) +10000
+					from buildings as b
+					right JOIN infrastructures as i
+					ON i.building_id = b.id
+					join planets as p
+					ON i.planet_id = p.id
+					where p.id = {$planet_id}
+				) as fe
+				),
+				max_lut = (
+					select *
+                    from (
+						select sum((b.store_lut * i.level)) +10000
+						from buildings as b
+						right JOIN infrastructures as i
+						ON i.building_id = b.id
+						join planets as p
+						ON i.planet_id = p.id
+						where p.id = {$planet_id}
+					) as lut
+				),
+				max_cry = (
+                select *
+                from (
+						select sum((b.store_cry * i.level)) +100
+						from buildings as b
+						right JOIN infrastructures as i
+						ON i.building_id = b.id
+						join planets as p
+						ON i.planet_id = p.id
+						where p.id = {$planet_id}
+					) as cry
+				),
+				max_h2o = (
+					select *
+                    from (
+						select sum((b.store_h2o * i.level)) +10000
+						from buildings as b
+						right JOIN infrastructures as i
+						ON i.building_id = b.id
+						join planets as p
+						ON i.planet_id = p.id
+						where p.id = {$planet_id}
+					) as h2o
+				),
+				max_h2 = (
+					select *
+					from (
+						select sum((b.store_h2 * i.level)) +1000
+						from buildings as b
+						right JOIN infrastructures as i
+						ON i.building_id = b.id
+						join planets as p
+						ON i.planet_id = p.id
+						where p.id = {$planet_id}
+					) as h2
+				)
+WHERE id = {$planet_id}");
+
+    }
 }

@@ -55,7 +55,7 @@
                     <span>Dauer: {{$building->readableBuildtime}}</span>
                 </div>
                 <div class="col-2 process-action">
-                    @if(!$currentConstruction && $planetaryResources->fe >= $building->fe && $planetaryResources->lut >= $building->lut && $planetaryResources->cry >= $building->cry && $planetaryResources->h2o >= $building->h2o && $planetaryResources->h2 >= $building->h2)
+                    @if(!$currentConstruction && $planetaryResources['fe'] >= $building->fe && $planetaryResources['lut'] >= $building->lut && $planetaryResources['cry'] >= $building->cry && $planetaryResources['h2o'] >= $building->h2o && $planetaryResources['h2'] >= $building->h2)
                         <a class="process-start" href="/construction/{{$activePlanet}}/{{$building->id}}">Konstruktion<br/>Stufe {{$building->infrastructure != null ? $building->infrastructure->level + 1 : 1}}</a>
                         @else
                         <span class="process-denied">Ausbau</span>

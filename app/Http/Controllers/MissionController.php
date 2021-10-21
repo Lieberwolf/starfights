@@ -52,8 +52,8 @@ class MissionController extends Controller
         {
             return view('mission.show', [
                 'defaultPlanet' => session('default_planet'),
-                'planetaryResources' => $planetaryResources[0],
-                'planetaryStorage' => $planetaryResources[1],
+                'planetaryResources' => $planetaryResources,
+                'planetaryStorage' => $planetaryResources,
                 'allUserPlanets' => $allUserPlanets,
                 'activePlanet' => $planet_id,
                 'shipsAtPlanet' => $shipsAtPlanet,
@@ -327,7 +327,7 @@ class MissionController extends Controller
                     }
 
                     // not enough h2?
-                    if($planetaryResources[0]->h2 < $fuel)
+                    if($planetaryResources['h2'] < $fuel)
                     {
                         return redirect('/mission/' . $planet_id)->with('status', 'Nicht genügend Treibstoff');
                     }
@@ -370,8 +370,8 @@ class MissionController extends Controller
                     {
                         return view('mission.start', [
                             'defaultPlanet' => session('default_planet'),
-                            'planetaryResources' => $planetaryResources[0],
-                            'planetaryStorage' => $planetaryResources[1],
+                            'planetaryResources' => $planetaryResources,
+                            'planetaryStorage' => $planetaryResources,
                             'allUserPlanets' => $allUserPlanets,
                             'activePlanet' => $planet_id,
                             'allowedMissions' => $allowed_missions,

@@ -40,8 +40,8 @@ class DatabaseController extends Controller
         {
             return view('database.show', [
                 'defaultPlanet' => session('default_planet'),
-                'planetaryResources' => $planetaryResources[0],
-                'planetaryStorage' => $planetaryResources[1],
+                'planetaryResources' => $planetaryResources,
+                'planetaryStorage' => $planetaryResources,
                 'allUserPlanets' => $allUserPlanets,
                 'activePlanet' => $planet_id,
             ]);
@@ -62,8 +62,8 @@ class DatabaseController extends Controller
         {
             return view('database.detail', [
                 'defaultPlanet' => session('default_planet'),
-                'planetaryResources' => $planetaryResources[0],
-                'planetaryStorage' => $planetaryResources[1],
+                'planetaryResources' => $planetaryResources,
+                'planetaryStorage' => $planetaryResources,
                 'allUserPlanets' => $allUserPlanets,
                 'activePlanet' => $planet_id,
                 'data' => $allBuildings,
@@ -90,8 +90,8 @@ class DatabaseController extends Controller
         {
             return view('database.detail', [
                 'defaultPlanet' => session('default_planet'),
-                'planetaryResources' => $planetaryResources[0],
-                'planetaryStorage' => $planetaryResources[1],
+                'planetaryResources' => $planetaryResources,
+                'planetaryStorage' => $planetaryResources,
                 'allUserPlanets' => $allUserPlanets,
                 'activePlanet' => $planet_id,
                 'data' => $allResearch,
@@ -118,8 +118,8 @@ class DatabaseController extends Controller
         {
             return view('database.detail', [
                 'defaultPlanet' => session('default_planet'),
-                'planetaryResources' => $planetaryResources[0],
-                'planetaryStorage' => $planetaryResources[1],
+                'planetaryResources' => $planetaryResources,
+                'planetaryStorage' => $planetaryResources,
                 'allUserPlanets' => $allUserPlanets,
                 'activePlanet' => $planet_id,
                 'data' => $allShips,
@@ -146,8 +146,8 @@ class DatabaseController extends Controller
         {
             return view('database.detail', [
                 'defaultPlanet' => session('default_planet'),
-                'planetaryResources' => $planetaryResources[0],
-                'planetaryStorage' => $planetaryResources[1],
+                'planetaryResources' => $planetaryResources,
+                'planetaryStorage' => $planetaryResources,
                 'allUserPlanets' => $allUserPlanets,
                 'activePlanet' => $planet_id,
                 'data' => $allTurrets,
