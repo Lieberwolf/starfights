@@ -40,7 +40,7 @@ class ProfileController extends Controller
             $allUserPlanets = session()->get('planets');
             Controller::checkAllProcesses($allUserPlanets);
         } else {
-            $planetaryResources = Planet::getPlanetaryResourcesByPlanetId($planet_id, Auth::id());
+            $planetaryResources = Planet::getResourcesForPlanet($planet_id);
             // other ones profile
             $proof = false;
             $allUserPlanets = Controller::getAllUserPlanets(Auth::id());

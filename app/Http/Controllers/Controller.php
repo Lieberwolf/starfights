@@ -1749,7 +1749,7 @@ class Controller extends BaseController
         if(!$sim)
         {
             $targetUser = Planet::getOneById($fleet->target);
-            Planet::getPlanetaryResourcesByPlanetId($fleet->target, $targetUser->user_id);
+            Planet::getResourcesForPlanet($fleet->target);
             $attacker["ship"] = json_decode($fleet->ship_types);
             $attacker["home"] = Planet::getOneById($fleet->planet_id);
             $attacker["research"] = Research::getUsersKnowledge($attacker["home"]->user_id);
@@ -2092,43 +2092,43 @@ class Controller extends BaseController
                 $buildingsList = Building::getAllAvailableBuildings($fleet->target, $targetUser->user_id);
 
                 $storage = new \stdClass();
-                $storage['max_fe'] = 10000;
-                $storage['max_lut'] = 10000;
-                $storage['max_cry'] = 100;
-                $storage['max_h2o'] = 10000;
-                $storage['max_h2'] = 1000;
+                $storage->max_fe = 10000;
+                $storage->max_lut = 10000;
+                $storage->max_cry = 100;
+                $storage->max_h2o = 10000;
+                $storage->max_h2 = 1000;
 
                 foreach($buildingsList as $building) {
                     if($building->store_fe > 0) {
                         if($building->infrastructure && $building->infrastructure->level > 0) {
-                            $storage['max_fe'] += $building->store_fe * $building->infrastructure->level;
+                            $storage->max_fe += $building->store_fe * $building->infrastructure->level;
                         }
                     }
                     if($building->store_lut > 0) {
                         if($building->infrastructure && $building->infrastructure->level > 0) {
-                            $storage['max_lut'] += $building->store_lut * $building->infrastructure->level;
+                            $storage->max_lut += $building->store_lut * $building->infrastructure->level;
                         }
                     }
                     if($building->store_cry > 0) {
                         if($building->infrastructure && $building->infrastructure->level > 0) {
-                            $storage['max_cry'] += $building->store_cry * $building->infrastructure->level;
+                            $storage->max_cry += $building->store_cry * $building->infrastructure->level;
                         }
                     }
                     if($building->store_h2o > 0) {
                         if($building->infrastructure && $building->infrastructure->level > 0) {
-                            $storage['max_h2o'] += $building->store_h2o * $building->infrastructure->level;
+                            $storage->max_h2o += $building->store_h2o * $building->infrastructure->level;
                         }
                     }
                     if($building->store_h2 > 0) {
                         if($building->infrastructure && $building->infrastructure->level > 0) {
-                            $storage['max_h2'] += $building->store_h2 * $building->infrastructure->level;
+                            $storage->max_h2 += $building->store_h2 * $building->infrastructure->level;
                         }
                     }
                 }
 
                 if($defender["home"]->fe > -1)
                 {
-                    $maxFe = floor($defender["home"]->fe - ($storage['max_fe'] * 0.04));
+                    $maxFe = floor($defender["home"]->fe - ($storage->max_fe * 0.04));
                     $maxFe = $maxFe < 0 ? 0 : $maxFe;
                     if($maxFe < $cargoFe) {
                         $cargoFe = $maxFe;
@@ -2138,7 +2138,7 @@ class Controller extends BaseController
 
                 if($defender["home"]->lut > -1)
                 {
-                    $maxLut = floor($defender["home"]->lut - ($storage['max_lut'] * 0.04));
+                    $maxLut = floor($defender["home"]->lut - ($storage->max_lut * 0.04));
                     $maxLut = $maxLut < 0 ? 0 : $maxLut;
                     if($maxLut < $cargoLut) {
                         $cargoLut = $maxLut;
@@ -2149,7 +2149,7 @@ class Controller extends BaseController
                 if($defender["home"]->cry > -1)
                 {
 
-                    $maxCry = floor($defender["home"]->cry - ($storage['max_cry'] * 0.04));
+                    $maxCry = floor($defender["home"]->cry - ($storage->max_cry * 0.04));
                     $maxCry = $maxCry < 0 ? 0 : $maxCry;
                     if($cargoCry > $maxCry) {
                         $cargoCry = $maxCry;
@@ -2159,7 +2159,7 @@ class Controller extends BaseController
 
                 if($defender["home"]->h2o > -1)
                 {
-                    $maxH2o = floor($defender["home"]->h2o - ($storage['max_h2o'] * 0.04));
+                    $maxH2o = floor($defender["home"]->h2o - ($storage->max_h2o * 0.04));
                     $maxH2o = $maxH2o < 0 ? 0 : $maxH2o;
                     if($maxH2o < $cargoH2o) {
                         $cargoH2o = $maxH2o;
@@ -2169,7 +2169,7 @@ class Controller extends BaseController
 
                 if($defender["home"]->h2 > -1)
                 {
-                    $maxH2 = floor($defender["home"]->h2- ($storage['max_h2'] * 0.04));
+                    $maxH2 = floor($defender["home"]->h2- ($storage->max_h2 * 0.04));
                     $maxH2 = $maxH2 < 0 ? 0 : $maxH2;
                     if($maxH2 < $cargoH2) {
                         $cargoH2 = $maxH2;
