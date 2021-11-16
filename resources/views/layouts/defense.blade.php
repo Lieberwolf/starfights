@@ -58,7 +58,7 @@
                         </span>
                         <span>Dauer: {{$turret->current_buildtime_readable}}</span>
                     </div>
-                    @if(!$currentTurrets && $planetaryResources->fe >= $turret->fe && $planetaryResources->lut >= $turret->lut && $planetaryResources->cry >= $turret->cry && $planetaryResources->h2o >= $turret->h2o && $planetaryResources->h2 >= $turret->h2)
+                    @if(!$currentTurrets && $planetaryResources['fe'] >= $turret->fe && $planetaryResources['lut'] >= $turret->lut && $planetaryResources['cry'] >= $turret->cry && $planetaryResources['h2o'] >= $turret->h2o && $planetaryResources['h2'] >= $turret->h2)
                         <div class="col-4 process-action">
                             <form style="width: 100%;" action="/defense/{{$activePlanet}}/build" method="post">
                                 @csrf

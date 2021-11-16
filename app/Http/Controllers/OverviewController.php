@@ -204,12 +204,12 @@ class OverviewController extends Controller
         $allPlanetPoints = Planet::getAllPlanetaryPointsByIds($allUserPlanets);
         $allResearchPoints = Research::getAllUserResearchPointsByUserId($user_id);
 
-        if(count($planetaryResources)>0)
+        if(!is_null($planetaryResources))
         {
             return view('overview.show', [
                 'defaultPlanet' => session('default_planet'),
-                'planetaryResources' => $planetaryResources[0],
-                'planetaryStorage' => $planetaryResources[1],
+                'planetaryResources' => $planetaryResources,
+                'planetaryStorage' => $planetaryResources,
                 'allUserPlanets' => $allUserPlanets,
                 'activePlanet' => $planet_id,
                 'planetInformation' => $planetInformation,

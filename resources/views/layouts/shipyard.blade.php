@@ -58,7 +58,7 @@
                         </span>
                         <span>Dauer: {{$ship->current_buildtime_readable}}</span>
                     </div>
-                    @if(!$currentShips && $planetaryResources->fe >= $ship->fe && $planetaryResources->lut >= $ship->lut && $planetaryResources->cry >= $ship->cry && $planetaryResources->h2o >= $ship->h2o && $planetaryResources->h2 >= $ship->h2)
+                    @if(!$currentShips && $planetaryResources['fe'] >= $ship->fe && $planetaryResources['lut'] >= $ship->lut && $planetaryResources['cry'] >= $ship->cry && $planetaryResources['h2o'] >= $ship->h2o && $planetaryResources['h2'] >= $ship->h2)
                         <div class="col-4 process-action">
                             <form style="width: 100%;" action="/shipyard/{{$activePlanet}}/build" method="post">
                                 @csrf

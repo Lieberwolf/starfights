@@ -84,23 +84,23 @@ class ShipyardController extends Controller
 
             if($ship->fe > 0)
             {
-                $maxWithFe = floor($planetaryResources[0]->fe / $ship->fe);
+                $maxWithFe = floor($planetaryResources['fe'] / $ship->fe);
             }
             if($ship->lut > 0)
             {
-                $maxWithLut = floor($planetaryResources[0]->lut / $ship->lut);
+                $maxWithLut = floor($planetaryResources['lut'] / $ship->lut);
             }
             if($ship->cry > 0)
             {
-                $maxWithCry = floor($planetaryResources[0]->cry / $ship->cry);
+                $maxWithCry = floor($planetaryResources['cry'] / $ship->cry);
             }
             if($ship->h2o > 0)
             {
-                $maxWithH2o = floor($planetaryResources[0]->h2o / $ship->h2o);
+                $maxWithH2o = floor($planetaryResources['h2o'] / $ship->h2o);
             }
             if($ship->h2 > 0)
             {
-                $maxWithH2 = floor($planetaryResources[0]->h2 / $ship->h2);
+                $maxWithH2 = floor($planetaryResources['h2'] / $ship->h2);
             }
 
             $maxBuildable = min($maxWithFe, $maxWithLut, $maxWithCry, $maxWithH2o, $maxWithH2);
@@ -111,8 +111,8 @@ class ShipyardController extends Controller
         {
             return view('shipyard.show', [
                 'defaultPlanet' => session('default_planet'),
-                'planetaryResources' => $planetaryResources[0],
-                'planetaryStorage' => $planetaryResources[1],
+                'planetaryResources' => $planetaryResources,
+                'planetaryStorage' => $planetaryResources,
                 'allUserPlanets' => $allUserPlanets,
                 'activePlanet' => $planet_id,
                 'shipList' => $shipList,

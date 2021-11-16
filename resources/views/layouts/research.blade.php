@@ -58,9 +58,9 @@
                 <span>Dauer: {{$research->readableBuildtime}}</span>
             </div>
             <div class="col-2 process-action">
-                @if(!$currentResearch && $planetaryResources->fe >= $research->fe && $planetaryResources->lut >=
-                $research->lut && $planetaryResources->cry >= $research->cry && $planetaryResources->h2o >= $research->h2o
-                && $planetaryResources->h2 >= $research->h2)
+                @if(!$currentResearch && $planetaryResources['fe'] >= $research->fe && $planetaryResources['lut'] >=
+                $research->lut && $planetaryResources['cry'] >= $research->cry && $planetaryResources['h2o'] >= $research->h2o
+                && $planetaryResources['h2'] >= $research->h2)
                 @if($research->inProgress)
                 <span class="process-denied">Wird bereits geforscht</span>
                 @else

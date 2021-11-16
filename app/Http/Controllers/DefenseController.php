@@ -84,23 +84,23 @@ class DefenseController extends Controller
 
             if($turret->fe > 0)
             {
-                $maxWithFe = floor($planetaryResources[0]->fe / $turret->fe);
+                $maxWithFe = floor($planetaryResources['fe'] / $turret->fe);
             }
             if($turret->lut > 0)
             {
-                $maxWithLut = floor($planetaryResources[0]->lut / $turret->lut);
+                $maxWithLut = floor($planetaryResources['lut'] / $turret->lut);
             }
             if($turret->cry > 0)
             {
-                $maxWithCry = floor($planetaryResources[0]->cry / $turret->cry);
+                $maxWithCry = floor($planetaryResources['cry'] / $turret->cry);
             }
             if($turret->h2o > 0)
             {
-                $maxWithH2o = floor($planetaryResources[0]->h2o / $turret->h2o);
+                $maxWithH2o = floor($planetaryResources['h2o'] / $turret->h2o);
             }
             if($turret->h2 > 0)
             {
-                $maxWithH2 = floor($planetaryResources[0]->h2 / $turret->h2);
+                $maxWithH2 = floor($planetaryResources['h2'] / $turret->h2);
             }
 
             $maxBuildable = min($maxWithFe, $maxWithLut, $maxWithCry, $maxWithH2o, $maxWithH2);
@@ -111,8 +111,8 @@ class DefenseController extends Controller
         {
             return view('defense.show', [
                 'defaultPlanet' => session('default_planet'),
-                'planetaryResources' => $planetaryResources[0],
-                'planetaryStorage' => $planetaryResources[1],
+                'planetaryResources' => $planetaryResources,
+                'planetaryStorage' => $planetaryResources,
                 'allUserPlanets' => $allUserPlanets,
                 'activePlanet' => $planet_id,
                 'turretList' => $turretList,

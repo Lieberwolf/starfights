@@ -93,57 +93,57 @@
                 </tr>
                 <tr style="border-top: 1px solid #000;">
                     <td class="title-line">Gesamt</td>
-                    @if($rates->rate_fe > 0)
-                        <td class="alert-success">{{number_format($rates->rate_fe, 2, ',', '.')}}</td>
-                    @elseif($rates->rate_fe < 0)
-                        <td class="alert-danger">{{number_format($rates->rate_fe, 2, ',', '.')}}</td>
+                    @if($rates['rate_fe'] > 0)
+                        <td class="alert-success">{{number_format($rates['rate_fe'], 2, ',', '.')}}</td>
+                    @elseif($rates['rate_fe'] < 0)
+                        <td class="alert-danger">{{number_format($rates['rate_fe'], 2, ',', '.')}}</td>
                     @else
                         <td class="alert-info">0</td>
                     @endif
-                    @if($rates->rate_lut > 0)
-                        <td class="alert-success">{{number_format($rates->rate_lut, 2, ',', '.')}}</td>
-                    @elseif($rates->rate_lut < 0)
-                        <td class="alert-danger">{{number_format($rates->rate_lut, 2, ',', '.')}}</td>
+                    @if($rates['rate_lut'] > 0)
+                        <td class="alert-success">{{number_format($rates['rate_lut'], 2, ',', '.')}}</td>
+                    @elseif($rates['rate_lut'] < 0)
+                        <td class="alert-danger">{{number_format($rates['rate_lut'], 2, ',', '.')}}</td>
                     @else
                         <td class="alert-info">0</td>
                     @endif
-                    @if($rates->rate_cry > 0)
-                        <td class="alert-success">{{number_format($rates->rate_cry, 2, ',', '.')}}</td>
-                    @elseif($rates->rate_cry < 0)
-                        <td class="alert-danger">{{number_format($rates->rate_cry, 2, ',', '.')}}</td>
+                    @if($rates['rate_cry'] > 0)
+                        <td class="alert-success">{{number_format($rates['rate_cry'], 2, ',', '.')}}</td>
+                    @elseif($rates['rate_cry'] < 0)
+                        <td class="alert-danger">{{number_format($rates['rate_cry'], 2, ',', '.')}}</td>
                     @else
                         <td class="alert-info">0</td>
                     @endif
-                    @if($rates->rate_h2o > 0)
-                        <td class="alert-success">{{number_format($rates->rate_h2o, 2, ',', '.')}}</td>
-                    @elseif($rates->rate_h2o < 0)
-                        <td class="alert-danger">{{number_format($rates->rate_h2o, 2, ',', '.')}}</td>
+                    @if($rates['rate_h2o'] > 0)
+                        <td class="alert-success">{{number_format($rates['rate_h2o'], 2, ',', '.')}}</td>
+                    @elseif($rates['rate_h2o'] < 0)
+                        <td class="alert-danger">{{number_format($rates['rate_h2o'], 2, ',', '.')}}</td>
                     @else
                         <td class="alert-info">0</td>
                     @endif
-                    @if($rates->rate_h2 > 0)
-                        <td class="alert-success">{{number_format($rates->rate_h2, 2, ',', '.')}}</td>
-                    @elseif($rates->rate_h2 < 0)
-                        <td class="alert-danger">{{number_format($rates->rate_h2, 2, ',', '.')}}</td>
+                    @if($rates['rate_h2'] > 0)
+                        <td class="alert-success">{{number_format($rates['rate_h2'], 2, ',', '.')}}</td>
+                    @elseif($rates['rate_h2'] < 0)
+                        <td class="alert-danger">{{number_format($rates['rate_h2'], 2, ',', '.')}}</td>
                     @else
                         <td class="alert-info">0</td>
                     @endif
                 </tr>
                 <tr>
                     <td class="title-line">Lagerkapazität</td>
-                    <td class="title-line">{{$storage->fe ? number_format(floor($storage->fe), 0, ',', '.') : 0}}</td>
-                    <td class="title-line">{{$storage->lut ? number_format(floor($storage->lut), 0, ',', '.') : 0}}</td>
-                    <td class="title-line">{{$storage->cry ? number_format(floor($storage->cry), 0, ',', '.') : 0}}</td>
-                    <td class="title-line">{{$storage->h2o ? number_format(floor($storage->h2o), 0, ',', '.') : 0}}</td>
-                    <td class="title-line">{{$storage->h2 ? number_format(floor($storage->h2), 0, ',', '.') : 0}}</td>
+                    <td class="title-line">{{$storage['max_fe'] ? number_format(floor($storage['max_fe']), 0, ',', '.') : 0}}</td>
+                    <td class="title-line">{{$storage['max_lut'] ? number_format(floor($storage['max_lut']), 0, ',', '.') : 0}}</td>
+                    <td class="title-line">{{$storage['max_cry'] ? number_format(floor($storage['max_cry']), 0, ',', '.') : 0}}</td>
+                    <td class="title-line">{{$storage['max_h2o'] ? number_format(floor($storage['max_h2o']), 0, ',', '.') : 0}}</td>
+                    <td class="title-line">{{$storage['max_h2'] ? number_format(floor($storage['max_h2']), 0, ',', '.') : 0}}</td>
                 </tr>
                 <tr>
                     <td class="title-line">Davon sicher (4%)</td>
-                    <td class="title-line">{{$storage->fe ? number_format(floor($storage->fe * 0.04), 0, ',', '.') : 0}}</td>
-                    <td class="title-line">{{$storage->lut ? number_format(floor($storage->lut * 0.04), 0, ',', '.') : 0}}</td>
-                    <td class="title-line">{{$storage->cry ? number_format(floor($storage->cry * 0.04), 0, ',', '.') : 0}}</td>
-                    <td class="title-line">{{$storage->h2o ? number_format(floor($storage->h2o * 0.04), 0, ',', '.') : 0}}</td>
-                    <td class="title-line">{{$storage->h2 ? number_format(floor($storage->h2 * 0.04), 0, ',', '.') : 0}}</td>
+                    <td class="title-line">{{$storage['max_fe'] ? number_format(floor($storage['max_fe'] * 0.04), 0, ',', '.') : 0}}</td>
+                    <td class="title-line">{{$storage['max_lut'] ? number_format(floor($storage['max_lut'] * 0.04), 0, ',', '.') : 0}}</td>
+                    <td class="title-line">{{$storage['max_cry'] ? number_format(floor($storage['max_cry'] * 0.04), 0, ',', '.') : 0}}</td>
+                    <td class="title-line">{{$storage['max_h2o'] ? number_format(floor($storage['max_h2o'] * 0.04), 0, ',', '.') : 0}}</td>
+                    <td class="title-line">{{$storage['max_h2'] ? number_format(floor($storage['max_h2'] * 0.04), 0, ',', '.') : 0}}</td>
                 </tr>
                 </tbody>
             </table>

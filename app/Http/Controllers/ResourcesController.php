@@ -50,13 +50,13 @@ class ResourcesController extends Controller
         {
             return view('resources.show', [
                 'defaultPlanet' => session('default_planet'),
-                'planetaryResources' => $planetaryResources[0],
-                'planetaryStorage' => $planetaryResources[1],
+                'planetaryResources' => $planetaryResources,
+                'planetaryStorage' => $planetaryResources,
                 'allUserPlanets' => $allUserPlanets,
                 'activePlanet' => $planet_id,
                 'resourceBuildings' => $resourceBuildings,
-                'rates' => $planetaryResources[0],
-                'storage' => $planetaryResources[1],
+                'rates' => $planetaryResources,
+                'storage' => $planetaryResources,
                 'planetInfo' => $planetInfo,
                 'bonusValues' => $stats[1],
             ]);
