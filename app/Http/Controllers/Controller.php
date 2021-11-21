@@ -785,7 +785,7 @@ class Controller extends BaseController
                                     $defenderTurrets = $defenderTurrets->turret_types;
                                 }
 
-                                $defenderResourcesRaw = Planet::getPlanetaryResourcesByPlanetId($fleet->target, $targetUser->user_id);
+                                $defenderResourcesRaw = Planet::getResourcesForPlanet($targetUser->user_id);
                                 $defenderResources = $defenderResourcesRaw[0];
 
                                 $resourceJson = [
@@ -960,7 +960,7 @@ class Controller extends BaseController
                                         $defenderTurrets = $defenderTurrets->turret_types;
                                     }
 
-                                    $defenderResourcesRaw = Planet::getPlanetaryResourcesByPlanetId($fleet->target, $targetUser->user_id);
+                                    $defenderResourcesRaw = Planet::getResourcesForPlanet($targetUser->user_id);
                                     $defenderResources = $defenderResourcesRaw[0];
 
                                     $resourceJson = [
