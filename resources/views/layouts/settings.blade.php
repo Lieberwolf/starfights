@@ -8,7 +8,7 @@
             Urlaubsmodus
         </div>
         <div class="col-12 sub-line">
-            @if(strtotime($vacation->vacation_blocked_until) <= now()->timestamp)
+            @if(!$vacation || strtotime($vacation->vacation_blocked_until) <= now()->timestamp)
             <form action="/vacation/enable" method="post">
                 @csrf
                 <div class="form-group row p-1 mb-0">
@@ -38,7 +38,7 @@
             @else
                 <div class="row">
                     <div class="col-6">Urlaubsmodus</div>
-                    <div class="col-6">Gesperrt bis: {{$vacation->vacation_blocked_until}}</div>
+                    <div class="col-6">Gesperrt bis: {{$vacation ? $vacation->vacation_blocked_until : ''}}</div>
                 </div>
             @endif
         </div>
