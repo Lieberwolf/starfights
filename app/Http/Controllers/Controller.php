@@ -785,7 +785,7 @@ class Controller extends BaseController
                                     $defenderTurrets = $defenderTurrets->turret_types;
                                 }
 
-                                $defenderResourcesRaw = Planet::getResourcesForPlanet($targetUser->user_id);
+                                $defenderResourcesRaw = Planet::getResourcesForPlanet($fleet->target);
                                 $defenderResources = $defenderResourcesRaw[0];
 
                                 $resourceJson = [
@@ -960,7 +960,7 @@ class Controller extends BaseController
                                         $defenderTurrets = $defenderTurrets->turret_types;
                                     }
 
-                                    $defenderResourcesRaw = Planet::getResourcesForPlanet($targetUser->user_id);
+                                    $defenderResourcesRaw = Planet::getResourcesForPlanet($fleet->target);
                                     $defenderResources = $defenderResourcesRaw;
 
                                     $resourceJson = [
@@ -996,7 +996,6 @@ class Controller extends BaseController
                                             }
                                         }
                                     }
-
                                     // create report
                                     $report = Report::create([
                                         'link' => Uuid::uuid4(),
@@ -1006,8 +1005,8 @@ class Controller extends BaseController
                                         'defender_fleet' => $defenderShips,
                                         'defender_defense' => $defenderTurrets,
                                         'resources' => json_encode($resourceJson),
-                                        'attacker_planet_id' => $sourceUser->user_id,
-                                        'defender_planet_id' => $targetUser->user_id,
+                                        'attacker_planet_id' => $fleet->planet_id,
+                                        'defender_planet_id' => $fleet->target,
                                         'report_type' => 1,
                                         'planet_info' => json_encode($infoJson),
                                         'planet_infrastructure' => json_encode($defenderFullBuildingList),
@@ -1040,8 +1039,8 @@ class Controller extends BaseController
                                         'defender_fleet' => null,
                                         'defender_defense' => null,
                                         'resources' => null,
-                                        'attacker_planet_id' => $sourceUser->user_id,
-                                        'defender_planet_id' => $targetUser->user_id,
+                                        'attacker_planet_id' => $fleet->planet_id,
+                                        'defender_planet_id' => $fleet->target,
                                         'report_type' => 0,
                                     ]);
 
