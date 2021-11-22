@@ -553,12 +553,11 @@ class Planet extends Model
             ]);
 
         $shipAmount = $process->amount_left;
-        $resourceArray = new \stdClass();
-        $resourceArray->fe = $process->fe + ($shipAmount * $process->turret_fe);
-        $resourceArray->lut = $process->lut + ($shipAmount * $process->turret_lut);
-        $resourceArray->cry = $process->cry + ($shipAmount * $process->turret_cry);
-        $resourceArray->h2o = $process->h2o + ($shipAmount * $process->turret_h2o);
-        $resourceArray->h2 = $process->h2 + ($shipAmount * $process->turret_h2);
+        $resourceArray['fe'] = $process->fe + ($shipAmount * $process->turret_fe);
+        $resourceArray['lut'] = $process->lut + ($shipAmount * $process->turret_lut);
+        $resourceArray['cry'] = $process->cry + ($shipAmount * $process->turret_cry);
+        $resourceArray['h2o'] = $process->h2o + ($shipAmount * $process->turret_h2o);
+        $resourceArray['h2'] = $process->h2 + ($shipAmount * $process->turret_h2);
 
         $planet = new \stdClass();
         $planet->id = $planet_id;

@@ -961,14 +961,14 @@ class Controller extends BaseController
                                     }
 
                                     $defenderResourcesRaw = Planet::getResourcesForPlanet($targetUser->user_id);
-                                    $defenderResources = $defenderResourcesRaw[0];
+                                    $defenderResources = $defenderResourcesRaw;
 
                                     $resourceJson = [
-                                        "fe" => ceil($defenderResources->fe),
-                                        "lut" => ceil($defenderResources->lut),
-                                        "cry" => ceil($defenderResources->cry),
-                                        "h2o" => ceil($defenderResources->h2o),
-                                        "h2" => ceil($defenderResources->h2),
+                                        "fe" => ceil($defenderResources['fe']),
+                                        "lut" => ceil($defenderResources['lut']),
+                                        "cry" => ceil($defenderResources['cry']),
+                                        "h2o" => ceil($defenderResources['h2o']),
+                                        "h2" => ceil($defenderResources['h2']),
                                     ];
 
                                     $planetInfo = Planet::getOneById($fleet->target);
