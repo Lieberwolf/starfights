@@ -89,8 +89,12 @@ class MissionController extends Controller
         $allUserResearchPoints = Research::getAllUserResearchPointsByUserId($user_id);
         $userPoints = $allUserPlanetPoints + $allUserResearchPoints;
 
-        if($target->user_id != null)
-        {
+        if($target->vacation) {
+            // abort mission and report cause
+            return redirect('/mission/' . $planet_id)->with('status', 'Das gewählte Ziel befindet sich im Urlaubsmodus');
+        }
+
+        if($target->user_id != null) {
             $allTargetPlanetPoints = Planet::getAllPlanetaryPointsByIds(Controller::getAllUserPlanets($target->user_id));
             $allTargetResearchPoints = Research::getAllUserResearchPointsByUserId($target->user_id);
             $targetPoints = $allTargetPlanetPoints + $allTargetResearchPoints;
@@ -110,8 +114,6 @@ class MissionController extends Controller
                 $targetProtection = true;
             }
         }
-
-
 
         $knowledge = Research::getAllAvailableResearches($user_id, $planet_id);
         $maxPlanets = 10;
@@ -400,7 +402,8 @@ class MissionController extends Controller
 
     public function liftoff($planet_id)
     {
-        $user = session()->get('user');$user_id = $user->user_id;
+        $user = session()->get('user');
+        $user_id = $user->user_id;
         Planet::getResourcesForPlanet($planet_id);
         $data = request()->validate([
             'mission' => 'required'

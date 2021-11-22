@@ -23,8 +23,12 @@
                     <td class="sub-line">{{$planet->data->planet_name != null ? $planet->data->planet_name : 'Unbenannter Planet'}}</td>
                     <td class="sub-line">{{number_format($planet->points, 0, ',', '.')}}</td>
                     <td class="sub-line">
-                        @if($activePlanet != $planet->id)
+                        @if($activePlanet != $planet->id && !$profileData->vacation)
                             <a href="/mission/withdata/{{$planet->galaxy}}/{{$planet->system}}/{{$planet->planet}}/{{$activePlanet}}">[M]</a>
+                        @endif
+                        @if($activePlanet != $planet->id && $profileData->vacation)
+                            <span title="Mission">[M]</span>
+                            <span title="Urlaubsmodus">[U]</span>
                         @endif
                     </td>
                 </tr>

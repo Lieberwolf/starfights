@@ -24,6 +24,8 @@ class Profile extends Model
 
     public static function getUsersProfileById($user_id)
     {
-        return Profile::where('user_id', $user_id)->first();
+        return Profile::where('profiles.user_id', $user_id)
+            ->leftJoin('vacation as v', 'v.user_id', '=', 'profiles.user_id')
+            ->first();
     }
 }

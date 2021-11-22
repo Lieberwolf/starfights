@@ -49,12 +49,16 @@
                                     {{$planet->planet_name != null ? $planet->planet_name : 'Unbenannter Planet'}}
                                     <a href="/profile/{{$planet->user_id}}">({{$planet->username}})</a>
                                     @if($planet->alliance_id != null)
-                                        <a href="/alliance/{{$activePlanet}}/{{$planet->alliance_id}}">[{{$planet->alliance_tag}}]</a></td>
+                                        <a title="Zur Allianz {{$planet->alliance_tag}}" href="/alliance/{{$activePlanet}}/{{$planet->alliance_id}}">[{{$planet->alliance_tag}}]</a></td>
                                     @endif
                                 <td class="sub-line">{{number_format($planet->points, 0, ',', '.')}}</td>
                                 <td class="sub-line">
-                                    @if($activePlanet != $planet->id)
-                                        <a href="/mission/withdata/{{$planet->galaxy}}/{{$planet->system}}/{{$planet->planet}}/{{$activePlanet}}">[M]</a>
+                                    @if($activePlanet != $planet->id && !$planet->vacation)
+                                        <a title="Mission" href="/mission/withdata/{{$planet->galaxy}}/{{$planet->system}}/{{$planet->planet}}/{{$activePlanet}}">[M]</a>
+                                    @endif
+                                    @if($activePlanet != $planet->id && $planet->vacation)
+                                        <span title="Mission">[M]</span>
+                                        <span title="Urlaubsmodus">[U]</span>
                                     @endif
                                 </td>
                             @endif

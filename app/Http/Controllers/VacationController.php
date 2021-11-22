@@ -27,9 +27,13 @@ class VacationController extends Controller
     {
         $user = session()->get('user');
         DB::table('vacation')->where('vacation.user_id', $user->user_id)->update([
+            'vacation' => false,
             'vacation_until' => null,
             'vacation_blocked_until' => date("Y-m-d H:i:s", now()->timestamp + (4*7*24*60*60)),
         ]);
+
+        $profile = Profile::getUsersProfileById($user->user_id);
+        session(['profile' => $profile]);
 
         $start_planet = Profile::getStartPlanetByUserId($user->user_id);
         session(['default_planet' => $start_planet->start_planet]);
@@ -39,10 +43,18 @@ class VacationController extends Controller
     public function enable()
     {
         $user = session()->get('user');
-        DB::table('vacation')->where('vacation.user_id', $user->user_id)->update([
+        if(!DB::table('vacation')->where('vacation.user_id', $user->user_id)->update([
+            'vacation' => true,
             'vacation_until' => date("Y-m-d H:i:s", now()->timestamp + (2*7*24*60*60)),
             'vacation_blocked_until' => null,
-        ]);
+        ])) {
+            DB::table('vacation')->insert([
+                'user_id' => $user->user_id,
+                'vacation' => true,
+                'vacation_until' => date("Y-m-d H:i:s", now()->timestamp + (2*7*24*60*60)),
+                'vacation_blocked_until' => null,
+            ]);
+        };
 
         Auth::guard()->logout();
         return redirect('/login')->with(['enabled' => true]);

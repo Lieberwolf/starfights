@@ -75,11 +75,13 @@ class Planet extends Model
     {
         return DB::table('planets')
             ->leftJoin('users AS u', 'u.id', '=', 'user_id')
-            ->leftJoin('profiles as p', 'p.User_id', '=', 'u.id')
+            ->leftJoin('vacation as v', 'v.user_id', '=', 'u.id')
+            ->leftJoin('profiles as p', 'p.user_id', '=', 'u.id')
             ->leftJoin('alliances as a', 'p.alliance_id', '=', 'a.id')
-            ->select('u.id as user_id', 'u.username as username', 'planets.*', 'a.id as alliance_id', 'a.alliance_tag')
+            ->select('u.id as user_id', 'u.username as username', 'planets.*', 'a.id as alliance_id', 'a.alliance_tag', 'v.vacation')
             ->where('planets.galaxy', '=', $galaxy)
             ->where('planets.system', '=', $system)
+            ->orderBy('planets.planet')
             ->get();
     }
 
@@ -573,9 +575,11 @@ class Planet extends Model
             ->where('system', $system)
             ->where('planet', $planet)
             ->leftJoin('users AS u', 'p.user_id', '=', 'u.id')
+            ->leftJoin('vacation as v', 'v.user_id', '=', 'u.id')
             ->first([
                 'p.*',
-                'u.username'
+                'u.username',
+                'v.vacation'
             ]);
     }
 

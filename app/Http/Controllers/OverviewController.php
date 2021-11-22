@@ -30,7 +30,8 @@ class OverviewController extends Controller
 
     public function index()
     {
-        $user = session()->get('user');$user_id = $user->user_id;
+        $user = session()->get('user');
+        $user_id = $user->user_id;
         $start_planet = Profile::getStartPlanetByUserId($user_id);
         session(['default_planet' => $start_planet->start_planet]);
         return redirect('overview/' . $start_planet->start_planet);
