@@ -229,84 +229,98 @@ class Building extends Model
                 }
             }
 
-
-            foreach(json_decode($building->building_requirements) as $keyB => $req)
-            {
-                $techtree[$building->building_name][$keyB]['reqLevel'] = $req;
+            if($building->building_requirements) {
+                foreach(json_decode($building->building_requirements) as $keyB => $req)
+                {
+                    $techtree[$building->building_name][$keyB]['reqLevel'] = $req;
+                }
+            } else {
+                $techtree[$building->building_name][$keyB]['reqLevel'] = 0;
             }
+
         }
 
         $tempBuildings = new Collection();
 
         foreach($buildings as $key => $building) {
-            foreach (json_decode($building->building_requirements) as $keyB => $req) {
-                if ($req > 0) {
-                    foreach ($buildings as $keyC => $compareItem) {
-                        if ($compareItem->building_name == $keyB) {
-                            if ($compareItem->infrastructure) {
-                                if ($compareItem->infrastructure->level >= $req) {
-                                    if ($buildings[$key]->buildable) {
-                                        $buildings[$key]->buildable = true;
-                                        $tempBuildings[$key] = $buildings[$key];
+            if($building->building_requirements) {
+                foreach (json_decode($building->building_requirements) as $keyB => $req) {
+                    if ($req > 0) {
+                        foreach ($buildings as $keyC => $compareItem) {
+                            if ($compareItem->building_name == $keyB) {
+                                if ($compareItem->infrastructure) {
+                                    if ($compareItem->infrastructure->level >= $req) {
+                                        if ($buildings[$key]->buildable) {
+                                            $buildings[$key]->buildable = true;
+                                            $tempBuildings[$key] = $buildings[$key];
+                                        }
+                                    } else {
+                                        $buildings[$key]->buildable = false;
+                                        unset($tempBuildings[$key]);
+                                        break;
                                     }
                                 } else {
                                     $buildings[$key]->buildable = false;
                                     unset($tempBuildings[$key]);
                                     break;
                                 }
-                            } else {
-                                $buildings[$key]->buildable = false;
-                                unset($tempBuildings[$key]);
-                                break;
                             }
                         }
-                    }
-                } else {
-                    if ($buildings[$key]->buildable) {
-                        $buildings[$key]->buildable = true;
-                        $tempBuildings[$key] = $buildings[$key];
+                    } else {
+                        if ($buildings[$key]->buildable) {
+                            $buildings[$key]->buildable = true;
+                            $tempBuildings[$key] = $buildings[$key];
+                        }
                     }
                 }
+            } else {
+                $buildings[$key]->buildable = true;
+                $tempBuildings[$key] = $buildings[$key];
             }
         }
 
         foreach($tempBuildings as $key => $building)
         {
-            foreach(json_decode($building->research_requirements) as $keyB => $req)
-            {
-                if($req > 0)
+            if($building->research_requirements) {
+                foreach(json_decode($building->research_requirements) as $keyB => $req)
                 {
-                    foreach($researches as $keyC => $compareItem)
+                    if($req > 0)
                     {
-                        if($compareItem->research_name == $keyB)
+                        foreach($researches as $keyC => $compareItem)
                         {
-                            if($compareItem->knowledge)
+                            if($compareItem->research_name == $keyB)
                             {
-                                if($compareItem->knowledge->level >= $req)
+                                if($compareItem->knowledge)
                                 {
-                                    if($building->buildable != false)
+                                    if($compareItem->knowledge->level >= $req)
                                     {
-                                        $building->buildable = true;
+                                        if($building->buildable != false)
+                                        {
+                                            $building->buildable = true;
+                                        }
+                                    } else {
+                                        $building->buildable = false;
+                                        unset($tempBuildings[$key]);
+                                        break;
                                     }
                                 } else {
                                     $building->buildable = false;
                                     unset($tempBuildings[$key]);
                                     break;
                                 }
-                            } else {
-                                $building->buildable = false;
-                                unset($tempBuildings[$key]);
-                                break;
                             }
                         }
-                    }
-                } else {
-                    if($building->buildable != false)
-                    {
-                        $building->buildable = true;
+                    } else {
+                        if($building->buildable != false)
+                        {
+                            $building->buildable = true;
+                        }
                     }
                 }
+            } else {
+                $building->buildable = true;
             }
+
         }
         // return list
         return $tempBuildings;

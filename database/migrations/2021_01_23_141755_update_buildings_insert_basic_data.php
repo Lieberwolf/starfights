@@ -21,7 +21,6 @@ class UpdateBuildingsInsertBasicData extends Migration
             /*
             [
                 'building_name' => '',
-                'description' => '',
                 'fe' => ,
                 'lut' => ,
                 'cry' => ,
@@ -55,8 +54,7 @@ class UpdateBuildingsInsertBasicData extends Migration
             */
             // Kommandozentrale
             [
-                'building_name' => 'Kommandozentrale',
-                'description' => 'Reduziert Bauzeit je weitere Stufe um 10%',
+                'building_name' => 'command_center',
                 'fe' => 500,
                 'lut' => 200,
                 'cry' => 0,
@@ -90,8 +88,7 @@ class UpdateBuildingsInsertBasicData extends Migration
             ],
             // Forschungszentrum
             [
-                'building_name' => 'Forschungszentrum',
-                'description' => 'Ermöglicht das Forschen. Reduziert je weitere Stufe die Forschungszeit um 10%',
+                'building_name' => 'research_center',
                 'fe' => 300,
                 'lut' => 100,
                 'cry' => 0,
@@ -125,8 +122,7 @@ class UpdateBuildingsInsertBasicData extends Migration
             ],
             // Eisenmine
             [
-                'building_name' => 'Eisenmine',
-                'description' => 'Fördert Eisen',
+                'building_name' => 'ironmine',
                 'fe' => 250,
                 'lut' => 20,
                 'cry' => 0,
@@ -160,8 +156,7 @@ class UpdateBuildingsInsertBasicData extends Migration
             ],
             // Lutinumraffinerie
             [
-                'building_name' => 'Lutinumraffinerie',
-                'description' => 'Fördert Lutinum',
+                'building_name' => 'lutinumrefinery',
                 'fe' => 130,
                 'lut' => 20,
                 'cry' => 0,
@@ -195,8 +190,7 @@ class UpdateBuildingsInsertBasicData extends Migration
             ],
             // Bohrturm
             [
-                'building_name' => 'Bohrturm',
-                'description' => 'Fördert Wasser',
+                'building_name' => 'waterpump',
                 'fe' => 100,
                 'lut' => 20,
                 'cry' => 0,
@@ -230,8 +224,7 @@ class UpdateBuildingsInsertBasicData extends Migration
             ],
             // Chemiefabrik
             [
-                'building_name' => 'Chemiefabrik',
-                'description' => 'Erzeugt Wasserstoff aus Wasser',
+                'building_name' => 'chemical_plant',
                 'fe' => 350,
                 'lut' => 20,
                 'cry' => 0,
@@ -265,8 +258,7 @@ class UpdateBuildingsInsertBasicData extends Migration
             ],
             // Erw., Chemiefabrik
             [
-                'building_name' => 'Erweiterte Chemiefabrik',
-                'description' => 'Eine verbesserte Form der Chemiefabrik',
+                'building_name' => 'adv_chemical_plant',
                 'fe' => 20000,
                 'lut' => 15000,
                 'cry' => 0,
@@ -300,8 +292,7 @@ class UpdateBuildingsInsertBasicData extends Migration
             ],
             // Schiffswerft
             [
-                'building_name' => 'Schiffswerft',
-                'description' => 'Ermöglicht den Bau von Raumschiffen. Reduziert je weitere Stufe die Bauzeit um 10%',
+                'building_name' => 'shipyard',
                 'fe' => 2000,
                 'lut' => 4000,
                 'cry' => 0,
@@ -335,8 +326,7 @@ class UpdateBuildingsInsertBasicData extends Migration
             ],
             // Kristallfabrik
             [
-                'building_name' => 'Kristallfabrik',
-                'description' => 'Erzeugt Kristalle',
+                'building_name' => 'crystal_farm',
                 'fe' => 10000,
                 'lut' => 12500,
                 'cry' => 0,
@@ -370,8 +360,7 @@ class UpdateBuildingsInsertBasicData extends Migration
             ],
             // Eisenlager
             [
-                'building_name' => 'Eisenlager',
-                'description' => 'Erhöht die maximale Lagerkapazität für Eisen',
+                'building_name' => 'iron_storage',
                 'fe' => 2000,
                 'lut' => 500,
                 'cry' => 0,
@@ -405,8 +394,7 @@ class UpdateBuildingsInsertBasicData extends Migration
             ],
             // Lutinumlager
             [
-                'building_name' => 'Lutinumlager',
-                'description' => 'Erhöht die maximale Lagerkapazität für Lutinum',
+                'building_name' => 'lutinum_storage',
                 'fe' => 500,
                 'lut' => 2000,
                 'cry' => 0,
@@ -440,8 +428,7 @@ class UpdateBuildingsInsertBasicData extends Migration
             ],
             // Kristallspeicher
             [
-                'building_name' => 'Kristallspeicher',
-                'description' => 'Erhöht die maximale Lagerkapazität für Kristalle',
+                'building_name' => 'crystal_storage',
                 'fe' => 8000,
                 'lut' => 16000,
                 'cry' => 0,
@@ -475,8 +462,7 @@ class UpdateBuildingsInsertBasicData extends Migration
             ],
             // Wassertank
             [
-                'building_name' => 'Wassertank',
-                'description' => 'Erhöht die maximale Lagerkapazität für Wasser',
+                'building_name' => 'water_tank',
                 'fe' => 500,
                 'lut' => 500,
                 'cry' => 0,
@@ -510,8 +496,7 @@ class UpdateBuildingsInsertBasicData extends Migration
             ],
             // Wasserstoffbehälter
             [
-                'building_name' => 'Wasserstoffbehälter',
-                'description' => 'Erhöht die maximale Lagerkapazität für Wasserstoff',
+                'building_name' => 'hydrogen_tank',
                 'fe' => 2000,
                 'lut' => 2000,
                 'cry' => 0,
@@ -545,8 +530,7 @@ class UpdateBuildingsInsertBasicData extends Migration
             ],
             // Lagerhalle
             [
-                'building_name' => 'Lagerhalle',
-                'description' => 'Eine Kombination aus Eisenlager, Lutinumlager und Wassertank mit höherer Kapazität',
+                'building_name' => 'storage',
                 'fe' => 5000,
                 'lut' => 2000,
                 'cry' => 0,
@@ -580,8 +564,7 @@ class UpdateBuildingsInsertBasicData extends Migration
             ],
             // Verteidigungsstation
             [
-                'building_name' => 'Verteidigungsstation',
-                'description' => 'Ermöglicht es Verteidigungsanlagen zu errichten. Reduziert je weitere Stufe die Bauzeit für Verteidigungsanlagen um 10%.',
+                'building_name' => 'defense_station',
                 'fe' => 400,
                 'lut' => 400,
                 'cry' => 0,
@@ -615,8 +598,7 @@ class UpdateBuildingsInsertBasicData extends Migration
             ],
             // Radarturm
             [
-                'building_name' => 'Radarturm',
-                'description' => 'Forschrittliche Technologie zum Überwachen des Weltraums. Stört feindliche Sonden.',
+                'building_name' => 'radar',
                 'fe' => 75000,
                 'lut' => 40000,
                 'cry' => 0,
@@ -650,8 +632,7 @@ class UpdateBuildingsInsertBasicData extends Migration
             ],
             // Plasmakraftwerk
             [
-                'building_name' => 'Plasmakraftwerk',
-                'description' => 'Kraftwerk zum Betrieb des Schildgenerators. Verbraucht Wasserstoff.',
+                'building_name' => 'plasma_plant',
                 'fe' => 50000,
                 'lut' => 65000,
                 'cry' => 0,
@@ -685,8 +666,7 @@ class UpdateBuildingsInsertBasicData extends Migration
             ],
             // Schildgenerator
             [
-                'building_name' => 'Schildgenerator',
-                'description' => 'Globaler Verteidigungschild der den Planeten umhüllt. Wird vom Plasmakraftwerk versorgt.',
+                'building_name' => 'shield_generator',
                 'fe' => 100000,
                 'lut' => 35000,
                 'cry' => 50,
