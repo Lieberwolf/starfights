@@ -114,6 +114,7 @@
         <li><a href="/resources/{{$defaultPlanet}}">Rohstoffe</a></li>
     </ul>
     <ul class="planet-selector">
+        <li class="heading" style="padding: 5px; background-image: none; background-color: #001e3b;">Universum</li>
         <li>
             <form id="planet-select-form">
                 <form class="form-group">
