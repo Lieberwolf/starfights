@@ -14,10 +14,10 @@
                     <i class="bi bi-plus-circle" data-toggle="collapse" data-target="#fleet{{$fleet->id}}" aria-expanded="false" aria-controls="fleet{{$fleet->id}}"></i>
                 </div>
                 <div class="col-5 col-md-1 sub-line">
-                    {{$fleet->readableSource->galaxy}}:{{$fleet->readableSource->system}}:{{$fleet->readableSource->planet}}
+                    {{$fleet->sourceGalaxy}}:{{$fleet->sourceSystem}}:{{$fleet->sourceSystem}}
                 </div>
                 <div class="col-6 col-md-1 sub-line">
-                    {{$fleet->readableTarget->galaxy}}:{{$fleet->readableTarget->system}}:{{$fleet->readableTarget->planet}}
+                    {{$fleet->targetGalaxy}}:{{$fleet->targetSystem}}:{{$fleet->targetPlanet}}
                 </div>
                 <div class="col-6 col-md-2 sub-line">
                     {{$fleet->mission == 1 ? 'Stationierung' : ($fleet->mission == 2 ? 'Transport' : ($fleet->mission == 3 ? 'Spionage' : ($fleet->mission == 4 ? 'Delta Scan' : ($fleet->mission == 5 ? 'Kolonisierung' : ($fleet->mission == 6 ? 'Angriff' : ($fleet->mission == 7 ? 'Invasion' : ''))))))}}
