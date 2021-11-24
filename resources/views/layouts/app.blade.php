@@ -7,7 +7,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Starfights') }}</title>
+    <title>{{ config('app.name') }}</title>
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}?t={{now()->timestamp}}" defer></script>
@@ -25,7 +25,7 @@
     <div id="app" class="pb-5">
         @if(!Auth::user())
         <nav class="navbar navbar-expand-lg navbar-dark title-line">
-            <a class="navbar-brand" href="/">Starfights</a>
+            <a class="navbar-brand" href="/">{{ config('app.name') }}</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -33,10 +33,19 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="/login">Login</a>
+                        <a class="nav-link" href="/login">{{ __('globals.login') }}</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/register">Registrierung</a>
+                        <a class="nav-link" href="/register">{{ __('globals.register') }}</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="langDropdown" role="button" data-toggle="dropdown" aria-expanded="false">
+                            <span>{{ __('globals.language.title') }}</span>
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="langDropdown">
+                            <a class="dropdown-item" href="{{ route('set.language', 'de') }}">{{ __('globals.language.de') }}</a>
+                            <a class="dropdown-item" href="{{ route('set.language', 'en') }}">{{ __('globals.language.en') }}</a>
+                        </div>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="https://discord.gg/qEQw2YQjKh" target="_blank">Discord</a>
@@ -96,7 +105,7 @@
                 </p>
             </div>
             <div class="col-12 text-center p-2">
-                <a href="">Datenschutz</a> | <a href="">Impressum</a> | <a href="">Regeln</a>
+                <a href="">{{ __('globals.privacy_policy') }}</a> | <a href="">{{ __('globals.imprint') }}</a> | <a href="">{{ __('globals.rules') }}</a>
             </div>
         </div>
     </div>

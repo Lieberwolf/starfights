@@ -24,8 +24,10 @@ use App\Http\Controllers\StatisticsController;
 use App\Http\Controllers\TechtreeController;
 use App\Http\Controllers\UniverseController;
 use App\Http\Controllers\VacationController;
+use App\Http\Controllers\LanguageController;
 use Illuminate\Support\Facades\Route;
 use \App\Http\Middleware\CheckVacation as CheckVacation;
+use \App\Http\Middleware\LanguageSwitcher as LanguageSwitcher;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -45,6 +47,10 @@ Auth::routes();
 
 Route::get('/chat/messages', [App\Http\Controllers\ChatController::class, 'index']);
 Route::post('/chat/messages/send', [App\Http\Controllers\ChatController::class, 'send']);
+
+Route::middleware([LanguageSwitcher::class])->group(function() {
+    Route::get('/lang/{key}', [App\Http\Controllers\LanguageController::class, 'set'])->name('set.language');
+});
 
 /**
  * Public
