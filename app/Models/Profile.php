@@ -26,6 +26,6 @@ class Profile extends Model
     {
         return Profile::where('profiles.user_id', $user_id)
             ->leftJoin('vacation as v', 'v.user_id', '=', 'profiles.user_id')
-            ->first();
+            ->first(['profiles.*', 'v.vacation', 'v.vacation_until', 'v.vacation_blocked_until']);
     }
 }

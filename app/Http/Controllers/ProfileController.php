@@ -27,9 +27,7 @@ class ProfileController extends Controller
         // update session with new planet id
         $planet_id = session('default_planet');
 
-        $userInformation = Profile::where('profiles.user_id', $user_id)
-            ->leftJoin('vacation as v', 'v.user_id', '=', 'profiles.user_id')
-            ->first();
+        $userInformation = Profile::getUsersProfileById($user_id);
         $planetsList = Controller::getAllUserPlanetsWithData($user_id);
         $userInformation->planetsList = $planetsList;
         $alliance = Alliances::getAllianceForUser($user_id);
