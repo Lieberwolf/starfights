@@ -48,7 +48,7 @@
                         </div>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="https://discord.gg/qEQw2YQjKh" target="_blank">Discord</a>
+                        <a class="nav-link" href="https://discord.gg/qEQw2YQjKh" target="_blank">{{ __('globals.discord') }}</a>
                     </li>
                 </ul>
             </div>
@@ -101,7 +101,7 @@
         <div class="row">
             <div class="col-12">
                 <p class="text-center" style="color: #ccc;">
-                    This page took {{ (microtime(true) - LARAVEL_START) }} seconds to render
+                    {{ __('globals.renderTime', ['renderTime' => (microtime(true) - LARAVEL_START)]) }}
                 </p>
             </div>
             <div class="col-12 text-center p-2">

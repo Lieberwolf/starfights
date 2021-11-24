@@ -36,7 +36,7 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="mobileMenuModalLabel">Hauptmenü</h5>
+                <h5 class="modal-title" id="mobileMenuModalLabel">{{ __('menu.mainMenu') }}</h5>
                 <button type="button" class="close text-light" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -44,35 +44,35 @@
             <div class="modal-body">
                 <div class="menu">
                     <ul>
-                        <li class="heading">Aktion</li>
-                        <li><a href="/overview/{{$defaultPlanet}}">Übersicht</a></li>
-                        <li><a href="/construction/{{$defaultPlanet}}">Konstruktion</a></li>
-                        <li><a href="/shipyard/{{$defaultPlanet}}">Schiffswerft</a></li>
-                        <li><a href="/defense/{{$defaultPlanet}}">Verteidigung</a></li>
-                        <li><a href="/research/{{$defaultPlanet}}">Forschung</a></li>
-                        <li><a href="/mission/{{$defaultPlanet}}">Mission</a></li>
-                        <li><a href="/fleetlist/{{$defaultPlanet}}">Flottenliste</a></li>
-                        <li><a href="/resources/{{$defaultPlanet}}">Rohstoffe</a></li>
+                        <li class="heading">{{ __('menu.actions') }}</li>
+                        <li><a href="/overview/{{$defaultPlanet}}">{{ __('menu.overview') }}</a></li>
+                        <li><a href="/construction/{{$defaultPlanet}}">{{ __('menu.construction') }}</a></li>
+                        <li><a href="/shipyard/{{$defaultPlanet}}">{{ __('menu.shipyard') }}</a></li>
+                        <li><a href="/defense/{{$defaultPlanet}}">{{ __('menu.defense') }}</a></li>
+                        <li><a href="/research/{{$defaultPlanet}}">{{ __('menu.research') }}</a></li>
+                        <li><a href="/mission/{{$defaultPlanet}}">{{ __('menu.mission') }}</a></li>
+                        <li><a href="/fleetlist/{{$defaultPlanet}}">{{ __('menu.fleetlist') }}</a></li>
+                        <li><a href="/resources/{{$defaultPlanet}}">{{ __('menu.resources') }}</a></li>
                     </ul>
                     <ul>
-                        <li class="heading">Information</li>
-                        <li><a href="/messages/new/{{$activePlanet}}">Nachrichten</a></li>
+                        <li class="heading">{{ __('menu.information') }}</li>
+                        <li><a href="/messages/new/{{$activePlanet}}">{{ __('menu.messages') }}</a></li>
                         @foreach($allUserPlanets as $planet)
                         @if($planet->id == $activePlanet)
-                        <li><a href="/universe/{{$planet->id . '/' . $planet->galaxy . '/' .$planet->system}}">Universum</a></li>
+                        <li><a href="/universe/{{$planet->id . '/' . $planet->galaxy . '/' .$planet->system}}">{{ __('menu.universe') }}</a></li>
                         @endif
                         @endforeach
-                        <li><a href="/search/{{$defaultPlanet}}">Suche</a></li>
-                        <li><a href="/techtree/{{$defaultPlanet}}">Technik</a></li>
-                        <li><a href="/database/{{$defaultPlanet}}">Datenbank</a></li>
-                        <li><a href="/simulation/{{$defaultPlanet}}">Simulation</a></li>
-                        <li><a href="/highscore/{{$defaultPlanet}}">Top 100</a></li>
+                        <li><a href="/search/{{$defaultPlanet}}">{{ __('menu.search') }}</a></li>
+                        <li><a href="/techtree/{{$defaultPlanet}}">{{ __('menu.technology') }}</a></li>
+                        <li><a href="/database/{{$defaultPlanet}}">{{ __('menu.database') }}</a></li>
+                        <li><a href="/simulation/{{$defaultPlanet}}">{{ __('menu.simulation') }}</a></li>
+                        <li><a href="/highscore/{{$defaultPlanet}}">{{ __('menu.highscore') }}</a></li>
                     </ul>
                     <ul>
                         <li class="heading">Account</li>
-                        <li><a href="/settings/{{$defaultPlanet}}">{{__('settings.settings')}}</a></li>
-                        <li><a href="/alliance/{{$defaultPlanet}}">Meine Allianz</a></li>
-                        <li><a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">{{ __('Logout') }} </a>
+                        <li><a href="/settings/{{$defaultPlanet}}">{{__('menu.settings')}}</a></li>
+                        <li><a href="/alliance/{{$defaultPlanet}}">{{ __('menu.myAlliance') }}</a></li>
+                        <li><a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">{{ __('menu.logout') }} </a>
                             <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                                 @csrf
                             </form>
@@ -81,7 +81,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Schließen</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('menu.close') }}</button>
             </div>
         </div>
     </div>
@@ -103,18 +103,18 @@
 </div>
 <div class="menu d-none d-md-block d-lg-block d-xl-block">
     <ul>
-        <li class="heading">Aktion</li>
-        <li><a href="/overview/{{$defaultPlanet}}">Übersicht</a></li>
-        <li><a href="/construction/{{$defaultPlanet}}">Konstruktion</a></li>
-        <li><a href="/shipyard/{{$defaultPlanet}}">Schiffswerft</a></li>
-        <li><a href="/defense/{{$defaultPlanet}}">Verteidigung</a></li>
-        <li><a href="/research/{{$defaultPlanet}}">Forschung</a></li>
-        <li><a href="/mission/{{$defaultPlanet}}">Mission</a></li>
-        <li><a href="/fleetlist/{{$defaultPlanet}}">Flottenliste</a></li>
-        <li><a href="/resources/{{$defaultPlanet}}">Rohstoffe</a></li>
+        <li class="heading">{{ __('menu.action') }}</li>
+        <li><a href="/overview/{{$defaultPlanet}}">{{ __('menu.overview') }}</a></li>
+        <li><a href="/construction/{{$defaultPlanet}}">{{ __('menu.construction') }}</a></li>
+        <li><a href="/shipyard/{{$defaultPlanet}}">{{ __('menu.shipyard') }}</a></li>
+        <li><a href="/defense/{{$defaultPlanet}}">{{ __('menu.defense') }}</a></li>
+        <li><a href="/research/{{$defaultPlanet}}">{{ __('menu.research') }}</a></li>
+        <li><a href="/mission/{{$defaultPlanet}}">{{ __('menu.mission') }}</a></li>
+        <li><a href="/fleetlist/{{$defaultPlanet}}">{{ __('menu.fleetlist') }}</a></li>
+        <li><a href="/resources/{{$defaultPlanet}}">{{ __('menu.resources') }}</a></li>
     </ul>
     <ul class="planet-selector">
-        <li class="heading" style="padding: 5px; background-image: none; background-color: #001e3b;">Universum</li>
+        <li class="heading" style="padding: 5px; background-image: none; background-color: #001e3b;">{{ __('menu.planetSelect') }}</li>
         <li>
             <form id="planet-select-form">
                 <form class="form-group">
@@ -136,24 +136,24 @@
         </li>
     </ul>
     <ul>
-        <li class="heading">Information</li>
-        <li><a href="/messages/new/{{$activePlanet}}">Nachrichten</a></li>
+        <li class="heading">{{ __('menu.information') }}</li>
+        <li><a href="/messages/new/{{$activePlanet}}">{{ __('menu.messages') }}</a></li>
         @foreach($allUserPlanets as $planet)
         @if($planet->id == $activePlanet)
-        <li><a href="/universe/{{$planet->id . '/' . $planet->galaxy . '/' .$planet->system}}">Universum</a></li>
+        <li><a href="/universe/{{$planet->id . '/' . $planet->galaxy . '/' .$planet->system}}">{{ __('menu.universe') }}</a></li>
         @endif
         @endforeach
-        <li><a href="/search/{{$defaultPlanet}}">Suche</a></li>
-        <li><a href="/techtree/{{$defaultPlanet}}">Technik</a></li>
-        <li><a href="/database/{{$defaultPlanet}}">Datenbank</a></li>
-        <li><a href="/simulation/{{$defaultPlanet}}">Simulation</a></li>
-        <li><a href="/highscore/{{$defaultPlanet}}">Top 100</a></li>
+        <li><a href="/search/{{$defaultPlanet}}">{{ __('menu.search') }}</a></li>
+        <li><a href="/techtree/{{$defaultPlanet}}">{{ __('menu.technology') }}</a></li>
+        <li><a href="/database/{{$defaultPlanet}}">{{ __('menu.database') }}</a></li>
+        <li><a href="/simulation/{{$defaultPlanet}}">{{ __('menu.simulation') }}</a></li>
+        <li><a href="/highscore/{{$defaultPlanet}}">{{ __('menu.highscore') }}</a></li>
     </ul>
     <ul>
-        <li class="heading">Account</li>
-        <li><a href="/settings/{{$defaultPlanet}}">Einstellungen</a></li>
-        <li><a href="/alliance/{{$defaultPlanet}}">Meine Allianz</a></li>
-        <li><a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">{{ __('Logout') }} </a>
+        <li class="heading">{{ __('menu.account') }}</li>
+        <li><a href="/settings/{{$defaultPlanet}}">{{ __('menu.settings') }}</a></li>
+        <li><a href="/alliance/{{$defaultPlanet}}">{{ __('menu.myAlliance') }}</a></li>
+        <li><a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">{{ __('menu.logout') }} </a>
             <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                 @csrf
             </form>
