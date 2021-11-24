@@ -16,7 +16,7 @@ class CheckVacation
      */
     public function handle(Request $request, Closure $next)
     {
-        if(!session()->get('profile')->vacation) {
+        if(!session()->get('profile') && !session()->get('profile')->vacation) {
             return $next($request);
         } else {
             return redirect('/vacation/' . strtotime(session()->get('profile')->vacation_until));
