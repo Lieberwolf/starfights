@@ -41,19 +41,19 @@
                         <span>Baukosten:</span>
                         <span>
                             @if($ship->fe > 0)
-                                Eisen: {{number_format($ship->fe,0, ',', '.')}}
+                                {{ __('globals.fe') }}: {{number_format($ship->fe,0, ',', '.')}}
                             @endif
                             @if($ship->lut > 0)
-                                Lutinum: {{number_format($ship->lut,0, ',', '.')}}
+                                {{ __('globals.lut') }}: {{number_format($ship->lut,0, ',', '.')}}
                             @endif
                             @if($ship->cry > 0)
-                                Kristalle: {{number_format($ship->cry,0, ',', '.')}}
+                                {{ __('globals.cry') }}: {{number_format($ship->cry,0, ',', '.')}}
                             @endif
                             @if($ship->h2o > 0)
-                                Wasser: {{number_format($ship->h2o,0, ',', '.')}}
+                                {{ __('globals.h2o') }}: {{number_format($ship->h2o,0, ',', '.')}}
                             @endif
                             @if($ship->h2 > 0)
-                                Wasserstoff: {{number_format($ship->h2,0, ',', '.')}}
+                                {{ __('globals.h2') }}: {{number_format($ship->h2,0, ',', '.')}}
                             @endif
                         </span>
                         <span>Dauer: {{$ship->current_buildtime_readable}}</span>

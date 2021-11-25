@@ -1,14 +1,14 @@
 <div class="container-fluid">
     <div class="row">
-        <div class="col-12 title-line">Mitglieder von "{{$allianceData->alliance_name}}"</div>
+        <div class="col-12 title-line"> {{ __('alliance.membersOf') }} "{{$allianceData->alliance_name}}"</div>
         <table style="width: 100%;margin-top: 1px;">
             <thead>
                 <tr class="title-line">
                     <th></th>
-                    <th>Name</th>
-                    <th>Forschung-</th>
-                    <th>Planeten-</th>
-                    <th>Gesamtpunkte</th>
+                    <th>{{ __('alliance.name') }}</th>
+                    <th>{{ __('alliance.research') }}</th>
+                    <th>{{ __('alliance.planet') }}</th>
+                    <th>{{ __('alliance.total') }}</th>
                 </tr>
             </thead>
             <tbody>

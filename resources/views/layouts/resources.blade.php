@@ -5,11 +5,11 @@
                 <thead>
                 <tr class="title-line">
                     <th></th>
-                    <th>Eisen</th>
-                    <th>Lutinum</th>
-                    <th>Kristalle</th>
-                    <th>Wasser</th>
-                    <th>Wasserstoff</th>
+                    <th>{{ __('globals.fe') }}</th>
+                    <th>{{ __('globals.lut') }}</th>
+                    <th>{{ __('globals.cry') }}</th>
+                    <th>{{ __('globals.h2o') }}</th>
+                    <th>{{ __('globals.h2') }}</th>
                 </tr>
                 </thead>
                 <tbody>

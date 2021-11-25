@@ -40,19 +40,19 @@
                 <span>Forschung auf Stufe {{$research != null ? $research->level + 1 : 1}}:</span>
                 <span>
                     @if($research->fe > 0)
-                        Eisen: {{number_format($research->fe,0, ',', '.')}}
+                        {{ __('globals.fe') }}: {{number_format($research->fe,0, ',', '.')}}
                     @endif
                     @if($research->lut > 0)
-                        Lutinum: {{number_format($research->lut,0, ',', '.')}}
+                        {{ __('globals.lut') }}: {{number_format($research->lut,0, ',', '.')}}
                     @endif
                     @if($research->cry > 0)
-                        Kristalle: {{number_format($research->cry,0, ',', '.')}}
+                        {{ __('globals.cry') }}: {{number_format($research->cry,0, ',', '.')}}
                     @endif
                     @if($research->h2o > 0)
-                        Wasser: {{number_format($research->h2o,0, ',', '.')}}
+                        {{ __('globals.h2o') }}: {{number_format($research->h2o,0, ',', '.')}}
                     @endif
                     @if($research->h2 > 0)
-                        Wasserstoff: {{number_format($research->h2,0, ',', '.')}}
+                        {{ __('globals.h2') }}: {{number_format($research->h2,0, ',', '.')}}
                     @endif
                 </span>
                 <span>Dauer: {{$research->readableBuildtime}}</span>

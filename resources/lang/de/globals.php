@@ -13,10 +13,13 @@ return [
     'imprint' => 'Impressum',
     'rules' => 'Regeln',
     'discord' => 'Discord',
+    'buildings' => 'Gebäude',
     'construction' => 'Konstruktion',
     'construct' => 'Ausbau',
     'construct_at_level' => 'Ausbau auf Stufe',
     'research' => 'Forschung',
+    'ships' => 'Schiffe',
+    'defense' => 'Verteidigung',
     'level' => 'Stufe',
     'duration' => 'Dauer',
     'info' => 'Info',
@@ -24,5 +27,7 @@ return [
     'lut' => 'Lutinum',
     'cry' => 'Kristalle',
     'h2o' => 'Wasser',
-    'h2' =>  'Wasserstoff'
+    'h2' =>  'Wasserstoff',
+    'attackWarning' => 'Du wirst angegriffen',
+    'costs' => 'Kosten',
 ];

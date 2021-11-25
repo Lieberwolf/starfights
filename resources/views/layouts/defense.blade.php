@@ -41,19 +41,19 @@
                         <span>Baukosten:</span>
                         <span>
                             @if($turret->fe > 0)
-                                Eisen: {{number_format($turret->fe,0, ',', '.')}}
+                                {{ __('globals.fe') }}: {{number_format($turret->fe,0, ',', '.')}}
                             @endif
                             @if($turret->lut > 0)
-                                Lutinum: {{number_format($turret->lut,0, ',', '.')}}
+                                {{ __('globals.lut') }}: {{number_format($turret->lut,0, ',', '.')}}
                             @endif
                             @if($turret->cry > 0)
-                                Kristalle: {{number_format($turret->cry,0, ',', '.')}}
+                                {{ __('globals.cry') }}: {{number_format($turret->cry,0, ',', '.')}}
                             @endif
                             @if($turret->h2o > 0)
-                                Wasser: {{number_format($turret->h2o,0, ',', '.')}}
+                                {{ __('globals.h2o') }}: {{number_format($turret->h2o,0, ',', '.')}}
                             @endif
                             @if($turret->h2 > 0)
-                                Wasserstoff: {{number_format($turret->h2,0, ',', '.')}}
+                                {{ __('globals.h2') }}: {{number_format($turret->h2,0, ',', '.')}}
                             @endif
                         </span>
                         <span>Dauer: {{$turret->current_buildtime_readable}}</span>

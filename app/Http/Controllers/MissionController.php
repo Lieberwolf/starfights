@@ -587,7 +587,7 @@ class MissionController extends Controller
                     session(['selectedShips' => null]);
                     session(['cargo' => null]);
                     session(['allowedMissions' => null]);
-                    return redirect('/mission/' . $planet_id)->with('status', 'Nicht genügend Eisen');
+                    return redirect('/mission/' . $planet_id)->with('status', 'Nicht genügend ' . __('globals.fe'));
                 } else {
                     $planet->fe -= $resourceJson["fe"];
                 }
@@ -599,7 +599,7 @@ class MissionController extends Controller
                     session(['selectedShips' => null]);
                     session(['cargo' => null]);
                     session(['allowedMissions' => null]);
-                    return redirect('/mission/' . $planet_id)->with('status', 'Nicht genügend Lutinum');
+                    return redirect('/mission/' . $planet_id)->with('status', 'Nicht genügend' . __('globals.lut'));
                 } else {
                     $planet->lut -= $resourceJson["lut"];
                 }
@@ -611,7 +611,7 @@ class MissionController extends Controller
                     session(['selectedShips' => null]);
                     session(['cargo' => null]);
                     session(['allowedMissions' => null]);
-                    return redirect('/mission/' . $planet_id)->with('status', 'Nicht genügend Kristalle');
+                    return redirect('/mission/' . $planet_id)->with('status', 'Nicht genügend' . __('globals.cry'));
                 } else {
                     $planet->cry -= $resourceJson["cry"];
                 }
@@ -623,7 +623,7 @@ class MissionController extends Controller
                     session(['selectedShips' => null]);
                     session(['cargo' => null]);
                     session(['allowedMissions' => null]);
-                    return redirect('/mission/' . $planet_id)->with('status', 'Nicht genügend Wasser');
+                    return redirect('/mission/' . $planet_id)->with('status', 'Nicht genügend' . __('globals.h2o'));
                 } else {
                     $planet->h2o -= $resourceJson["h2o"];
                 }
@@ -635,7 +635,7 @@ class MissionController extends Controller
                     session(['selectedShips' => null]);
                     session(['cargo' => null]);
                     session(['allowedMissions' => null]);
-                    return redirect('/mission/' . $planet_id)->with('status', 'Nicht genügend Wasserstoff');
+                    return redirect('/mission/' . $planet_id)->with('status', 'Nicht genügend' . __('globals.h2'));
                 } else {
                     $planet->h2 -= $resourceJson["h2"];
                 }

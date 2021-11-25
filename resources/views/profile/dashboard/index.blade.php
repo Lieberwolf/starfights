@@ -31,7 +31,7 @@
                                 <th>Spy</th>
                                 <th>Stealth</th>
                                 <th>Iron</th>
-                                <th>Lutinum</th>
+                                <th>{{ __('globals.lut') }}</th>
                                 <th>Crystal</th>
                                 <th>Water</th>
                                 <th>Hydrogen</th>

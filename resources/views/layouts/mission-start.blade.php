@@ -19,19 +19,19 @@
                                 </div>
                                 <div data-parent="#parent" class="collapse" id="missionCollapse{{$mission}}">
                                     <div class="form-group">
-                                        <input class="form-control" type="number" name="mission[{{$mission}}][fe]" placeholder="Eisen" step="1"/>
+                                        <input class="form-control" type="number" name="mission[{{$mission}}][fe]" placeholder="{{ __('globals.fe') }}" step="1"/>
                                     </div>
                                     <div class="form-group">
-                                        <input class="form-control" type="number" name="mission[{{$mission}}][lut]" placeholder="Lutinum" step="1"/>
+                                        <input class="form-control" type="number" name="mission[{{$mission}}][lut]" placeholder="{{ __('globals.lut') }}" step="1"/>
                                     </div>
                                     <div class="form-group">
-                                        <input class="form-control" type="number" name="mission[{{$mission}}][cry]" placeholder="Kristalle" step="1"/>
+                                        <input class="form-control" type="number" name="mission[{{$mission}}][cry]" placeholder="{{ __('globals.cry') }}" step="1"/>
                                     </div>
                                     <div class="form-group">
-                                        <input class="form-control" type="number" name="mission[{{$mission}}][h2o]" placeholder="Wasser" step="1"/>
+                                        <input class="form-control" type="number" name="mission[{{$mission}}][h2o]" placeholder="{{ __('globals.h2o') }}" step="1"/>
                                     </div>
                                     <div class="form-group">
-                                        <input class="form-control" type="number" name="mission[{{$mission}}][h2]" placeholder="Wasserstoff" step="1"/>
+                                        <input class="form-control" type="number" name="mission[{{$mission}}][h2]" placeholder="{{ __('globals.h2') }}" step="1"/>
                                     </div>
                                 </div>
                             @endif
@@ -42,19 +42,19 @@
                                 </div>
                                 <div data-parent="#parent" class="collapse" id="missionCollapse{{$mission}}">
                                     <div class="form-group">
-                                        <input class="form-control" type="number" name="mission[{{$mission}}][fe]" placeholder="Eisen" step="1"/>
+                                        <input class="form-control" type="number" name="mission[{{$mission}}][fe]" placeholder="{{ __('globals.fe') }}" step="1"/>
                                     </div>
                                     <div class="form-group">
-                                        <input class="form-control" type="number" name="mission[{{$mission}}][lut]" placeholder="Lutinum" step="1"/>
+                                        <input class="form-control" type="number" name="mission[{{$mission}}][lut]" placeholder="{{ __('globals.lut') }}" step="1"/>
                                     </div>
                                     <div class="form-group">
-                                        <input class="form-control" type="number" name="mission[{{$mission}}][cry]" placeholder="Kristalle" step="1"/>
+                                        <input class="form-control" type="number" name="mission[{{$mission}}][cry]" placeholder="{{ __('globals.cry') }}" step="1"/>
                                     </div>
                                     <div class="form-group">
-                                        <input class="form-control" type="number" name="mission[{{$mission}}][h2o]" placeholder="Wasser" step="1"/>
+                                        <input class="form-control" type="number" name="mission[{{$mission}}][h2o]" placeholder="{{ __('globals.h2o') }}" step="1"/>
                                     </div>
                                     <div class="form-group">
-                                        <input class="form-control" type="number" name="mission[{{$mission}}][h2]" placeholder="Wasserstoff" step="1"/>
+                                        <input class="form-control" type="number" name="mission[{{$mission}}][h2]" placeholder="{{ __('globals.h2') }}" step="1"/>
                                     </div>
                                 </div>
                             @endif

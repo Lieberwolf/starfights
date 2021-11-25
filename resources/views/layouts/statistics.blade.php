@@ -48,19 +48,19 @@
                 @foreach(json_decode($stats->resources_types) as $resource)
                     <div class="col-6 sub-line">
                         @if($resource->res_id == 'fe')
-                            Eisen
+                            {{ __('globals.fe') }}
                         @endif
                         @if($resource->res_id == 'lut')
-                            Lutinum
+                        {{ __('globals.lut') }}
                         @endif
                         @if($resource->res_id == 'cry')
-                            Kristalle
+                        {{ __('globals.cry') }}
                         @endif
                         @if($resource->res_id == 'h2o')
-                            Wasser
+                        {{ __('globals.h2o') }}
                         @endif
                         @if($resource->res_id == 'h2')
-                            Wasserstoff
+                        {{ __('globals.h2') }}
                         @endif
                     </div>
                     <div class="col-2 sub-line">{{number_format($resource->caught, 0, ',', '.')}}</div>

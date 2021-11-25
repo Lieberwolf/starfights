@@ -669,11 +669,11 @@ class Controller extends BaseController
                                 $target->h2 += $resources->h2;
                                 $target->save();
 
-                                $resourcesList = $resources->fe > 0 ? 'Eisen: ' . $resources->fe . '<br/>' : '';
-                                $resourcesList .= $resources->lut > 0 ? 'Lutinum: ' . $resources->lut . '<br/>' : '';
-                                $resourcesList .= $resources->cry > 0 ? 'Kristalle: ' . $resources->cry . '<br/>' : '';
-                                $resourcesList .= $resources->h2o > 0 ? 'Wasser: ' . $resources->h2o . '<br/>' : '';
-                                $resourcesList .= $resources->h2 > 0 ? 'Wasserstoff: ' . $resources->h2 . '<br/>' : '';
+                                $resourcesList = $resources->fe > 0 ? __('globals.fe') . ': ' . $resources->fe . '<br/>' : '';
+                                $resourcesList .= $resources->lut > 0 ?  __('globals.lut') . ': ' . $resources->lut . '<br/>' : '';
+                                $resourcesList .= $resources->cry > 0 ?  __('globals.cry') . ': ' . $resources->cry . '<br/>' : '';
+                                $resourcesList .= $resources->h2o > 0 ? __('globals.h2o') . ': ' . $resources->h2o . '<br/>' : '';
+                                $resourcesList .= $resources->h2 > 0 ? __('globals.h2') . ': ' . $resources->h2 . '<br/>' : '';
 
                                 // emit system message to user
                                 $message = [

@@ -75,19 +75,19 @@
                     @foreach($report->resources as $key => $resource)
                         <div class="col-6 col-md-3 offset-md-3 sub-line">
                             @if($key == 'fe')
-                                Eisen
+                            {{ __('globals.fe') }}
                             @endif
                             @if($key == 'lut')
-                                Lutinum
+                            {{ __('globals.lut') }}
                             @endif
                             @if($key == 'cry')
-                                Kristalle
+                            {{ __('globals.cry') }}
                             @endif
                             @if($key == 'h2o')
-                                Wasser
+                            {{ __('globals.h2o') }}
                             @endif
                             @if($key == 'h2')
-                                Wasserstoff
+                            {{ __('globals.h2') }}
                             @endif
                         </div>
                         <div class="col-6 col-md-3 sub-line">
@@ -174,19 +174,19 @@
                 @foreach($report->resources as $key => $resource)
                     <div class="col-6 col-md-3 offset-md-3 sub-line">
                         @if($key == 'fe')
-                            Eisen
+                        {{ __('globals.fe') }}
                         @endif
                         @if($key == 'lut')
-                            Lutinum
+                        {{ __('globals.lut') }}
                         @endif
                         @if($key == 'cry')
-                            Kristalle
+                        {{ __('globals.cry') }}
                         @endif
                         @if($key == 'h2o')
-                            Wasser
+                        {{ __('globals.h2o') }}
                         @endif
                         @if($key == 'h2')
-                            Wasserstoff
+                        {{ __('globals.h2') }}
                         @endif
                     </div>
                     <div class="col-6 col-md-3 sub-line">
@@ -284,19 +284,19 @@
                     @if($resource > 0)
                         <div class="col-6 sub-line">
                             @if($key == 'fe')
-                                Eisen
+                            {{ __('globals.fe') }}
                             @endif
                             @if($key == 'lut')
-                                Lutinum
+                            {{ __('globals.lut') }}
                             @endif
                             @if($key == 'cry')
-                                Kristalle
+                            {{ __('globals.cry') }}
                             @endif
                             @if($key == 'h2o')
-                                Wasser
+                            {{ __('globals.h2o') }}
                             @endif
                             @if($key == 'h2')
-                                Wasserstoff
+                            {{ __('globals.h2') }}
                             @endif
                         </div>
                         <div class="col-6 sub-line">
@@ -399,19 +399,19 @@
                         @if($resource > 0)
                             <div class="col-6 sub-line">
                                 @if($key == 'fe')
-                                    Eisen
+                                {{ __('globals.fe') }}
                                 @endif
                                 @if($key == 'lut')
-                                    Lutinum
+                                {{ __('globals.lut') }}
                                 @endif
                                 @if($key == 'cry')
-                                    Kristalle
+                                {{ __('globals.cry') }}
                                 @endif
                                 @if($key == 'h2o')
-                                    Wasser
+                                {{ __('globals.h2o') }}
                                 @endif
                                 @if($key == 'h2')
-                                    Wasserstoff
+                                {{ __('globals.h2') }}
                                 @endif
                             </div>
                             <div class="col-6 sub-line">
