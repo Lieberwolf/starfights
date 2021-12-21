@@ -244,9 +244,9 @@ class Planet extends Model
                         select *
                         from (
                             select if(
-                                fe + rate_fe * timestampdiff(SECOND, updated_at, now() + INTERVAL 1 HOUR)/3600 > max_fe,
+                                fe + rate_fe * timestampdiff(SECOND, updated_at, now())/3600 > max_fe,
                                 max_fe,
-                                fe + rate_fe * timestampdiff(SECOND, updated_at, now() + INTERVAL 1 HOUR)/3600
+                                fe + rate_fe * timestampdiff(SECOND, updated_at, now())/3600
                             )
                             from planets as p
                             where id = {$planet_id}
@@ -260,9 +260,9 @@ class Planet extends Model
                         select *
                         from (
                             select if(
-                                lut + rate_lut * timestampdiff(SECOND, updated_at, now() + INTERVAL 1 HOUR)/3600 > max_lut,
+                                lut + rate_lut * timestampdiff(SECOND, updated_at, now())/3600 > max_lut,
                                 max_lut,
-                                lut + rate_lut * timestampdiff(SECOND, updated_at, now() + INTERVAL 1 HOUR)/3600
+                                lut + rate_lut * timestampdiff(SECOND, updated_at, now())/3600
                             )
                             from planets as p
                             where id = {$planet_id}
@@ -276,9 +276,9 @@ class Planet extends Model
                         select *
                         from (
                             select if(
-                                cry + rate_cry * timestampdiff(SECOND, updated_at, now() + INTERVAL 1 HOUR)/3600 > max_cry,
+                                cry + rate_cry * timestampdiff(SECOND, updated_at, now())/3600 > max_cry,
                                 max_cry,
-                                cry + rate_cry * timestampdiff(SECOND, updated_at, now() + INTERVAL 1 HOUR)/3600
+                                cry + rate_cry * timestampdiff(SECOND, updated_at, now())/3600
                             )
                             from planets as p
                             where id = {$planet_id}
@@ -292,9 +292,9 @@ class Planet extends Model
                         select *
                         from (
                             select if(
-                                h2o + rate_h2o * timestampdiff(SECOND, updated_at, now() + INTERVAL 1 HOUR)/3600 > max_h2o,
+                                h2o + rate_h2o * timestampdiff(SECOND, updated_at, now())/3600 > max_h2o,
                                 max_h2o,
-                                h2o + rate_h2o * timestampdiff(SECOND, updated_at, now() + INTERVAL 1 HOUR)/3600
+                                h2o + rate_h2o * timestampdiff(SECOND, updated_at, now())/3600
                             )
                             from planets as p
                             where id = {$planet_id}
@@ -308,9 +308,9 @@ class Planet extends Model
                         select *
                         from (
                             select if(
-                                h2 + rate_h2 * timestampdiff(SECOND, updated_at, now() + INTERVAL 1 HOUR)/3600 > max_h2,
+                                h2 + rate_h2 * timestampdiff(SECOND, updated_at, now())/3600 > max_h2,
                                 max_h2,
-                                h2 + rate_h2 * timestampdiff(SECOND, updated_at, now() + INTERVAL 1 HOUR)/3600
+                                h2 + rate_h2 * timestampdiff(SECOND, updated_at, now())/3600
                             )
                             from planets as p
                             where id = {$planet_id}

@@ -29,28 +29,12 @@ class HighscoreController extends Controller
         // update session with new planet id
         session(['default_planet' => $planet_id]);
 
-        $user = session()->get('user');$user_id = $user->user_id;
         $planetaryResources = Planet::getResourcesForPlanet($planet_id);
         $allUserPlanets = session()->get('planets');
         Controller::checkAllProcesses($allUserPlanets);
-        $users = User::getAllUserProfiles();
+        $highscoreList = (array) User::getHighscoreList();
 
-        $list = [];
-        foreach($users as $key => $user) {
-            $planets = Planet::getAllUserPlanets($user->user_id);
-            $allPlanetPoints = Planet::getAllPlanetaryPointsByIds($planets);
-            $allResearchPoints = Research::getAllUserResearchPointsByUserId($user->user_id);
-
-            $list[$key] = $user;
-            $list[$key]->planetPoints = $allPlanetPoints;
-            $list[$key]->researchPoints = $allResearchPoints;
-            $list[$key]->totalPoints = $allPlanetPoints + $allResearchPoints;
-        }
-
-        usort($list, function($a, $b) {
-            if($a->totalPoints == $b->totalPoints){ return 0 ; }
-            return ($a->totalPoints < $b->totalPoints) ? 1 : -1;
-        });
+//        dd($highscoreList);
 
 
         if(count($planetaryResources)>0)
@@ -61,7 +45,7 @@ class HighscoreController extends Controller
                 'planetaryStorage' => $planetaryResources,
                 'allUserPlanets' => $allUserPlanets,
                 'activePlanet' => $planet_id,
-                'users' => $list,
+                'highscoreList' => $highscoreList,
             ]);
         } else {
             return view('error.index');
