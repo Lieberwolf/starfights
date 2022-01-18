@@ -34,9 +34,6 @@ class HighscoreController extends Controller
         Controller::checkAllProcesses($allUserPlanets);
         $highscoreList = (array) User::getHighscoreList();
 
-//        dd($highscoreList);
-
-
         if(count($planetaryResources)>0)
         {
             return view('highscore.show', [
