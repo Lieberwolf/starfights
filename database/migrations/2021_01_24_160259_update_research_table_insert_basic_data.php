@@ -21,7 +21,6 @@ class UpdateResearchTableInsertBasicData extends Migration
                 /*
 				[
 					'research_name' => '',
-					'description' => '',
 					'fe' => ,
 					'lut' => ,
 					'cry' => ,
@@ -44,8 +43,7 @@ class UpdateResearchTableInsertBasicData extends Migration
 				*/
                 // Spionagetechnologie
                 [
-                    'research_name' => 'Spionagetechnologie',
-                    'description' => 'Spionagetechnologie',
+                    'research_name' => 'espionage',
                     'fe' => 1000,
                     'lut' => 500,
                     'increase_spy' => 10,
@@ -57,8 +55,7 @@ class UpdateResearchTableInsertBasicData extends Migration
             DB::table('research')->insert([
                 // Turbinenantrieb
                 [
-                    'research_name' => 'Turbinenantrieb',
-                    'description' => 'Turbinenantrieb',
+                    'research_name' => 'turbine_engine',
                     'fe' => 4000,
                     'lut' => 2000,
                     'h2' => 500,
@@ -71,8 +68,7 @@ class UpdateResearchTableInsertBasicData extends Migration
             DB::table('research')->insert([
                 // Ionenantrieb
                 [
-                    'research_name' => 'Ionenantrieb',
-                    'description' => 'Ionenantrieb',
+                    'research_name' => 'ion_engine',
                     'fe' => 7500,
                     'lut' => 7500,
                     'cry' => 0,
@@ -87,8 +83,7 @@ class UpdateResearchTableInsertBasicData extends Migration
             DB::table('research')->insert([
                 // Warpantrieb
                 [
-                    'research_name' => 'Warpantrieb',
-                    'description' => 'Warpantrieb',
+                    'research_name' => 'warp_drive',
                     'fe' => 25000,
                     'lut' => 37500,
                     'cry' => 0,
@@ -103,8 +98,7 @@ class UpdateResearchTableInsertBasicData extends Migration
             DB::table('research')->insert([
                 // Transwarpantrieb
                 [
-                    'research_name' => 'Transwarpantrieb',
-                    'description' => 'Transwarpantrieb',
+                    'research_name' => 'transwarp_drive',
                     'fe' => 100000,
                     'lut' => 75000,
                     'cry' => 500,
@@ -119,8 +113,7 @@ class UpdateResearchTableInsertBasicData extends Migration
             DB::table('research')->insert([
                 // Raketenantrieb
                 [
-                    'research_name' => 'Raketenantrieb',
-                    'description' => 'Raketenantrieb',
+                    'research_name' => 'rocket_drive',
                     'fe' => 12500,
                     'lut' => 5000,
                     'cry' => 0,
@@ -135,8 +128,7 @@ class UpdateResearchTableInsertBasicData extends Migration
             DB::table('research')->insert([
                 // Waffensysteme
                 [
-                    'research_name' => 'Waffensysteme',
-                    'description' => 'Waffensysteme',
+                    'research_name' => 'weaponsystems',
                     'fe' => 2500,
                     'lut' => 1000,
                     'cry' => 0,
@@ -151,8 +143,7 @@ class UpdateResearchTableInsertBasicData extends Migration
             DB::table('research')->insert([
                 // Panzerung
                 [
-                    'research_name' => 'Panzerung',
-                    'description' => 'Panzerung',
+                    'research_name' => 'armor',
                     'fe' => 12500,
                     'lut' => 2500,
                     'cry' => 0,
@@ -167,8 +158,7 @@ class UpdateResearchTableInsertBasicData extends Migration
             DB::table('research')->insert([
                 // Schildsysteme
                 [
-                    'research_name' => 'Schildsysteme',
-                    'description' => 'Schildsysteme',
+                    'research_name' => 'shields',
                     'fe' => 3500,
                     'lut' => 22500,
                     'cry' => 10,
@@ -183,8 +173,7 @@ class UpdateResearchTableInsertBasicData extends Migration
             DB::table('research')->insert([
                 // Radartechnologie
                 [
-                    'research_name' => 'Radartechnologie',
-                    'description' => 'Radartechnologie',
+                    'research_name' => 'radar',
                     'fe' => 17500,
                     'lut' => 12000,
                     'cry' => 0,
@@ -199,8 +188,7 @@ class UpdateResearchTableInsertBasicData extends Migration
             DB::table('research')->insert([
                 // Erw. Ladekapazität
                 [
-                    'research_name' => 'Erw. Ladekapazität',
-                    'description' => 'Erw. Ladekapazität',
+                    'research_name' => 'adv_cargo',
                     'fe' => 500,
                     'lut' => 500,
                     'cry' => 0,
@@ -215,8 +203,7 @@ class UpdateResearchTableInsertBasicData extends Migration
             DB::table('research')->insert([
                 // Ionisation
                 [
-                    'research_name' => 'Ionisation',
-                    'description' => 'Ionisation',
+                    'research_name' => 'ionisation',
                     'fe' => 7500,
                     'lut' => 5000,
                     'cry' => 0,
@@ -231,8 +218,7 @@ class UpdateResearchTableInsertBasicData extends Migration
             DB::table('research')->insert([
                 // Energiebündelung
                 [
-                    'research_name' => 'Energiebündelung',
-                    'description' => 'Energiebündelung',
+                    'research_name' => 'energy_concentration',
                     'fe' => 5000,
                     'lut' => 7500,
                     'cry' => 0,
@@ -247,8 +233,7 @@ class UpdateResearchTableInsertBasicData extends Migration
             DB::table('research')->insert([
                 // Schiffsrumpf
                 [
-                    'research_name' => 'Schiffsrumpf',
-                    'description' => 'Schiffsrumpf',
+                    'research_name' => 'ship_hull',
                     'fe' => 1250,
                     'lut' => 750,
                     'cry' => 0,
@@ -263,8 +248,7 @@ class UpdateResearchTableInsertBasicData extends Migration
             DB::table('research')->insert([
                 // Reichsadministration
                 [
-                    'research_name' => 'Reichsadministration',
-                    'description' => 'Reichsadministration',
+                    'research_name' => 'empire_administration',
                     'fe' => 25000,
                     'lut' => 12500,
                     'cry' => 0,
@@ -279,8 +263,7 @@ class UpdateResearchTableInsertBasicData extends Migration
             DB::table('research')->insert([
                 // Kristallzucht
                 [
-                    'research_name' => 'Kristallzucht',
-                    'description' => 'Kristallzucht',
+                    'research_name' => 'crystal_farming',
                     'fe' => 5000,
                     'lut' => 37500,
                     'cry' => 0,
@@ -289,6 +272,20 @@ class UpdateResearchTableInsertBasicData extends Migration
                     'static_bonus' => 0,
                     'points' => 12,
                     'initial_researchtime' => 43200,
+                ]
+            ]);
+            DB::table('research')->insert([
+                // Antriebstechnologien
+                [
+                    'research_name' => 'engines',
+                    'fe' => 500,
+                    'lut' => 375,
+                    'cry' => 0,
+                    'h2o' => 250,
+                    'h2' => 50,
+                    'static_bonus' => 0,
+                    'points' => 7,
+                    'initial_researchtime' => 1200,
                 ]
             ]);
         });

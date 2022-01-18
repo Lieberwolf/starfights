@@ -15,7 +15,7 @@
         </div>
         @if($currentResearch)
         <div class="col-10 current-process process-entry">
-            <span>{{__('research.currently')}} {{$currentResearch->research_name}} Stufe {{$currentResearch != null ? $currentResearch->level + 1 : 1}}</span>
+            <span>{{__('research.currently')}} {{__('research.names.' . $currentResearch->research_name)}} {{__('globals.level')}} {{$currentResearch != null ? $currentResearch->level + 1 : 1}}</span>
             <br/>
             <span>{{__('research.finishedAt')}} </span>
             <span class="js-add-countdown"
@@ -33,11 +33,11 @@
             @foreach($availableResearches as $key => $research)
             @if($research->buildable)
             <div class="col-10 process-entry">
-                <span>{{$research->research_name}} {{$research->level != null ? '(Stufe ' . $research->level . ')' : ''}} <a data-toggle="collapse" href="#collapse{{$research->id}}" aria-expanded="false" aria-controls="collapse{{$research->id}}">[Info]</a></span>
-                <div class="collapse" id="collapse{{$research->id}}">
-                    <span>{{$research->description}}</span>
+                <span>{{$research->research_name}} {{$research->level != null ? '(' . __('globals.level') . ' ' . $research->level . ')' : ''}} <a data-toggle="collapse" href="#collapse{{$research->research_id}}" aria-expanded="false" aria-controls="collapse{{$research->research_id}}">[{{__('globals.info')}}]</a></span>
+                <div class="collapse" id="collapse{{$research->research_id}}">
+                    <span>{{__('research.descriptions.short.' . $research->research_name)}}</span>
                 </div>
-                <span>Forschung auf Stufe {{$research != null ? $research->level + 1 : 1}}:</span>
+                <span>{{__('research.research_at_level')}} {{$research != null ? $research->level + 1 : 1}}:</span>
                 <span>
                     @if($research->fe > 0)
                         {{ __('globals.fe') }}: {{number_format($research->fe,0, ',', '.')}}
@@ -55,20 +55,20 @@
                         {{ __('globals.h2') }}: {{number_format($research->h2,0, ',', '.')}}
                     @endif
                 </span>
-                <span>Dauer: {{$research->readableBuildtime}}</span>
+                <span>{{__('globals.duration')}}: {{$research->readableBuildtime}}</span>
             </div>
             <div class="col-2 process-action">
                 @if(!$currentResearch && $planetaryResources['fe'] >= $research->fe && $planetaryResources['lut'] >=
                 $research->lut && $planetaryResources['cry'] >= $research->cry && $planetaryResources['h2o'] >= $research->h2o
                 && $planetaryResources['h2'] >= $research->h2)
                 @if($research->inProgress)
-                <span class="process-denied">Wird bereits geforscht</span>
+                <span class="process-denied">{{__('globals.already_in_research')}}</span>
                 @else
-                <a class="process-start" href="/research/{{$activePlanet}}/{{$research->research_id}}">Forschung<br/>Stufe
+                <a class="process-start" href="/research/{{$activePlanet}}/{{$research->research_id}}">{{__('globals.research')}}<br/>{{__('globals.level')}}
                     {{$research != null ? $research->level + 1 : 1}}</a>
                 @endif
                 @else
-                <span class="process-denied">Forschung starten</span>
+                <span class="process-denied">{{__('research.start_research')}}</span>
                 @endif
             </div>
             @endif

@@ -16,7 +16,7 @@ return [
         'chemical_plant' => 'Chemiefabrik',
         'adv_chemical_plant' => 'Erweiterte Chemiefabrik',
         'shipyard' => 'Schiffswerft',
-        'crystal_farm' => 'Krstallfabrik',
+        'crystal_farm' => 'Kristallfabrik',
         'iron_storage' => 'Eisenlager',
         'lutinum_storage' => 'Lutinumlager',
         'crystal_storage' => 'Kristallspeicher',

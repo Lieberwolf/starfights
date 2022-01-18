@@ -15,7 +15,6 @@ class UpdateResearchTable extends Migration
     {
         Schema::table('research', function (Blueprint $table) {
             $table->string('research_name')->default('No name');
-            $table->text('description')->default('Beschreibung folgt');
             $table->integer('fe')->default(0);
             $table->integer('lut')->default(0);
             $table->integer('cry')->default(0);
