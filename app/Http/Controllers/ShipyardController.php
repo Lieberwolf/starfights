@@ -18,7 +18,7 @@ class ShipyardController extends Controller
 
     public function index()
     {
-        $user = session()->get('user');$user_id = $user->user_id;
+        $user_id = Auth::id();
         $start_planet = Profile::getStartPlanetByUserId($user_id);
         session(['default_planet' => $start_planet->start_planet]);
         return redirect('shipyard/' . $start_planet->start_planet);
@@ -28,9 +28,9 @@ class ShipyardController extends Controller
     {
         // update session with new planet id
         session(['default_planet' => $planet_id]);
-        $user = session()->get('user');$user_id = $user->user_id;
+        $user_id = Auth::id();
         $planetaryResources = Planet::getResourcesForPlanet($planet_id);
-        $allUserPlanets = session()->get('planets');
+        $allUserPlanets = Planet::getAllUserPlanets($user_id);
         Controller::checkAllProcesses($allUserPlanets);
         $nextShipIn = Controller::checkShipProcesses($allUserPlanets);
         $shipList = Ship::getAllAvailableShips($user_id, $planet_id);
@@ -130,7 +130,7 @@ class ShipyardController extends Controller
     {
         $data = request()->all();
         $shipsToBuild = $data["ship"];
-        $user = session()->get('user');$user_id = $user->user_id;
+        $user_id = Auth::id();
         $availableResources = Planet::getResourcesForPlanet($planet_id);
         $availableShips = Ship::getAllAvailableShips($user_id, $planet_id);
         $shipyard = Building::getOneByNameWithData($planet_id, "Schiffswerft");
@@ -218,8 +218,8 @@ class ShipyardController extends Controller
 
     public function edit($planet_id)
     {
-        $user = session()->get('user');$user_id = $user->user_id;
-        $allUserPlanets = session()->get('planets');
+        $user_id = Auth::id();
+        $allUserPlanets = Planet::getAllUserPlanets($user_id);
 
         Controller::checkBuildingProcesses($allUserPlanets);
         Controller::checkResearchProcesses($allUserPlanets);

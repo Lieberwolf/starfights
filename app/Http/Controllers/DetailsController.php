@@ -16,7 +16,7 @@ class DetailsController extends Controller
 
     public function index()
     {
-        $user = session()->get('user');$user_id = $user->user_id;
+        $user_id = Auth::id();
         $start_planet = Profile::getStartPlanetByUserId($user_id);
         session(['default_planet' => $start_planet->start_planet]);
         return redirect('details/' . $start_planet->start_planet);
@@ -26,9 +26,9 @@ class DetailsController extends Controller
     {
         // update session with new planet id
         session(['default_planet' => $planet_id]);
-        $user = session()->get('user');$user_id = $user->user_id;
+        $user_id = Auth::id();
         $planetaryResources = Planet::getResourcesForPlanet($planet_id);
-        $allUserPlanets = session()->get('planets');
+        $allUserPlanets = Planet::getAllUserPlanets($user_id);
         Controller::checkAllProcesses($allUserPlanets);
         $planetInfo = Planet::getOneById($planet_id);
         $start_planet = Profile::getStartPlanetByUserId($user_id);
@@ -99,8 +99,8 @@ class DetailsController extends Controller
 
     public function delete($planet_id)
     {
-        $user = session()->get('user');$user_id = $user->user_id;
-        $allUserPlanets = session()->get('planets');
+        $user_id = Auth::id();
+        $allUserPlanets = Planet::getAllUserPlanets($user_id);
         $allowed = false;
         foreach ($allUserPlanets as $planet)
         {
@@ -122,8 +122,8 @@ class DetailsController extends Controller
 
     public function deleteImage($planet_id)
     {
-        $user = session()->get('user');$user_id = $user->user_id;
-        $allUserPlanets = session()->get('planets');
+        $user_id = Auth::id();
+        $allUserPlanets = Planet::getAllUserPlanets($user_id);
         $allowed = false;
         foreach ($allUserPlanets as $planet)
         {

@@ -21,7 +21,7 @@ class TechtreeController extends Controller
 
     public function index()
     {
-        $user = session()->get('user');$user_id = $user->user_id;
+        $user_id = Auth::id();
         $start_planet = Profile::getStartPlanetByUserId($user_id);
         session(['default_planet' => $start_planet->start_planet]);
         return redirect('techtree/' . $start_planet->start_planet);
@@ -31,9 +31,9 @@ class TechtreeController extends Controller
     {
         // update session with new planet id
         session(['default_planet' => $planet_id]);
-        $user = session()->get('user');$user_id = $user->user_id;
+        $user_id = Auth::id();
         $planetaryResources = Planet::getResourcesForPlanet($planet_id);
-        $allUserPlanets = session()->get('planets');
+        $allUserPlanets = Planet::getAllUserPlanets($user_id);
         Controller::checkAllProcesses($allUserPlanets);
 
         if(count($planetaryResources)>0)
@@ -53,9 +53,9 @@ class TechtreeController extends Controller
     public function buildings($planet_id) {
         // update session with new planet id
         session(['default_planet' => $planet_id]);
-        $user = session()->get('user');$user_id = $user->user_id;
+        $user_id = Auth::id();
         $planetaryResources = Planet::getResourcesForPlanet($planet_id);
-        $allUserPlanets = session()->get('planets');
+        $allUserPlanets = Planet::getAllUserPlanets($user_id);
         Controller::checkAllProcesses($allUserPlanets);
         $allBuildings = Building::all();
         $allResearches = Research::all();
@@ -109,9 +109,9 @@ class TechtreeController extends Controller
     public function research($planet_id) {
         // update session with new planet id
         session(['default_planet' => $planet_id]);
-        $user = session()->get('user');$user_id = $user->user_id;
+        $user_id = Auth::id();
         $planetaryResources = Planet::getResourcesForPlanet($planet_id);
-        $allUserPlanets = session()->get('planets');
+        $allUserPlanets = Planet::getAllUserPlanets($user_id);
         Controller::checkAllProcesses($allUserPlanets);
         $allBuildings = Building::all();
         $allResearches = Research::all();
@@ -165,9 +165,9 @@ class TechtreeController extends Controller
     public function ships($planet_id) {
         // update session with new planet id
         session(['default_planet' => $planet_id]);
-        $user = session()->get('user');$user_id = $user->user_id;
+        $user_id = Auth::id();
         $planetaryResources = Planet::getResourcesForPlanet($planet_id);
-        $allUserPlanets = session()->get('planets');
+        $allUserPlanets = Planet::getAllUserPlanets($user_id);
         Controller::checkAllProcesses($allUserPlanets);
         $allShips = Ship::all();
         $allBuildings = Building::all();
@@ -222,8 +222,8 @@ class TechtreeController extends Controller
     public function turrets($planet_id) {
         // update session with new planet id
         session(['default_planet' => $planet_id]);
-        $user = session()->get('user');$user_id = $user->user_id;
-        $allUserPlanets = session()->get('planets');
+        $user_id = Auth::id();
+        $allUserPlanets = Planet::getAllUserPlanets($user_id);
         Controller::checkAllProcesses($allUserPlanets);
         $planetaryResources = Planet::getResourcesForPlanet($planet_id);
         $allTurrets = Turret::all();

@@ -26,9 +26,9 @@ class MessagesController extends Controller
     {
         // update session with new planet id
         session(['default_planet' => $planet_id]);
-        $user = session()->get('user');$user_id = $user->user_id;
+        $user_id = Auth::id();
         $planetaryResources = Planet::getResourcesForPlanet($planet_id);
-        $allUserPlanets = session()->get('planets');
+        $allUserPlanets = Planet::getAllUserPlanets($user_id);
         Controller::checkAllProcesses($allUserPlanets);
         $messages = Messages::getAllUnreadMessages($user_id);
 
@@ -52,9 +52,9 @@ class MessagesController extends Controller
         // update session with new planet id
         session(['default_planet' => $planet_id]);
 
-        $user = session()->get('user');$user_id = $user->user_id;
+        $user_id = Auth::id();
 
-        $allUserPlanets = session()->get('planets');
+        $allUserPlanets = Planet::getAllUserPlanets($user_id);
 
         Controller::checkBuildingProcesses($allUserPlanets);
 
@@ -82,9 +82,9 @@ class MessagesController extends Controller
         // update session with new planet id
         session(['default_planet' => $planet_id]);
 
-        $user = session()->get('user');$user_id = $user->user_id;
+        $user_id = Auth::id();
 
-        $allUserPlanets = session()->get('planets');
+        $allUserPlanets = Planet::getAllUserPlanets($user_id);
 
         Controller::checkBuildingProcesses($allUserPlanets);
 
@@ -109,7 +109,7 @@ class MessagesController extends Controller
 
     public function editInbox()
     {
-        $user = session()->get('user');$user_id = $user->user_id;
+        $user_id = Auth::id();
         $messages = Messages::getAllReadMessages($user_id);
         $request = request()->all();
 
@@ -137,7 +137,7 @@ class MessagesController extends Controller
 
     public function editOutbox()
     {
-        $user = session()->get('user');$user_id = $user->user_id;
+        $user_id = Auth::id();
         $messages = Messages::getAllSendMessages($user_id);
         $request = request()->all();
 
@@ -166,9 +166,9 @@ class MessagesController extends Controller
         // update session with new planet id
         $planet_id = session('default_planet');
 
-        $user = session()->get('user');$user_id = $user->user_id;
+        $user_id = Auth::id();
 
-        $allUserPlanets = session()->get('planets');
+        $allUserPlanets = Planet::getAllUserPlanets($user_id);
 
         Controller::checkBuildingProcesses($allUserPlanets);
 
@@ -212,9 +212,9 @@ class MessagesController extends Controller
             // update session with new planet id
             $planet_id = session('default_planet');
 
-            $user = session()->get('user');$user_id = $user->user_id;
+            $user_id = Auth::id();
 
-            $allUserPlanets = session()->get('planets');
+            $allUserPlanets = Planet::getAllUserPlanets($user_id);
 
             Controller::checkBuildingProcesses($allUserPlanets);
 
