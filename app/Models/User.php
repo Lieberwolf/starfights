@@ -6,6 +6,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
 
 class User extends Authenticatable
 {
@@ -74,5 +75,28 @@ class User extends Authenticatable
 
     public static function getAllUserPoints($user) {
 
+    }
+
+    public static function getHighscoreList(){
+        $result = DB::select(
+            DB::raw(
+            "(select
+                pr.user_id,
+	            pr.nickname,
+	            sum(b.points * i.level) as Planetenpunkte,
+	            (Select sum(k.level*r.points) from knowledge as k left join research as r on r.id = k.research_id where k.user_id = pr.user_id) as Forschungspunkte
+            from profiles as pr
+            left join
+	            planets as p on p.user_id = pr.user_id
+            inner join
+                infrastructures as i on p.id = i.planet_id
+            left join
+                buildings as b on b.id = i.building_id
+            Group by pr.user_id, pr.nickname
+            order by Planetenpunkte desc, Forschungspunkte desc
+            Limit 100)
+            ")
+        );
+        return $result;
     }
 }

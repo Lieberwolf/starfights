@@ -18,12 +18,12 @@ class ReportController extends Controller
 
     public function show($report_uuid)
     {
-        $user = session()->get('user');$user_id = $user->user_id;
+        $user_id = Auth::id();
 
         if($user_id != null) {
         $planet_id = session('default_planet');
         $planetaryResources = Planet::getResourcesForPlanet($planet_id);
-        $allUserPlanets = session()->get('planets');
+        $allUserPlanets = Planet::getAllUserPlanets($user_id);
         Controller::checkAllProcesses($allUserPlanets);
 
         $report = Report::where('link', $report_uuid)->first();

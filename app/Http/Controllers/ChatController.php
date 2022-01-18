@@ -43,7 +43,7 @@ class ChatController extends Controller
             'message' => 'required|string'
         ]);
 
-        $user = session()->get('user');$user_id = $user->user_id;
+        $user_id = Auth::id();
 
         DB::table('chat')->insert([
             'user_id' => $user_id,

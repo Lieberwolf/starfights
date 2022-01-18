@@ -30,8 +30,8 @@ class OverviewController extends Controller
 
     public function index()
     {
-        $user = session()->get('user');
-        $user_id = $user->user_id;
+        //$user = session()->get('user');
+        $user_id = Auth::id();
         $start_planet = Profile::getStartPlanetByUserId($user_id);
         session(['default_planet' => $start_planet->start_planet]);
         return redirect('overview/' . $start_planet->start_planet);
@@ -46,9 +46,8 @@ class OverviewController extends Controller
     {
         // update session with new planet id
         session(['default_planet' => $planet_id]);
-        $user = session()->get('user');
-        $user_id = $user->user_id;
-        $allUserPlanets = session()->get('planets');
+        $user_id = Auth::id();
+        $allUserPlanets = Planet::getAllUserPlanets($user_id);
 
         $planetaryResources = Planet::getResourcesForPlanet($planet_id);
         $planetInformation = Planet::getOneById($planet_id);

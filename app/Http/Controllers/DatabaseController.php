@@ -21,7 +21,7 @@ class DatabaseController extends Controller
 
     public function index()
     {
-        $user = session()->get('user');$user_id = $user->user_id;
+        $user_id = Auth::id();
         $start_planet = Profile::getStartPlanetByUserId($user_id);
         session(['default_planet' => $start_planet->start_planet]);
         return redirect('database/' . $start_planet->start_planet);
@@ -31,9 +31,9 @@ class DatabaseController extends Controller
     {
         // update session with new planet id
         session(['default_planet' => $planet_id]);
-        $user = session()->get('user');$user_id = $user->user_id;
+        $user_id = Auth::id();
         $planetaryResources = Planet::getResourcesForPlanet($planet_id);
-        $allUserPlanets = session()->get('planets');
+        $allUserPlanets = Planet::getAllUserPlanets($user_id);
         Controller::checkAllProcesses($allUserPlanets);
 
         if(count($planetaryResources)>0)
@@ -53,9 +53,9 @@ class DatabaseController extends Controller
     public function buildings($planet_id)
     {
         session(['default_planet' => $planet_id]);
-        $user = session()->get('user');$user_id = $user->user_id;
+        $user_id = Auth::id();
         $planetaryResources = Planet::getResourcesForPlanet($planet_id);
-        $allUserPlanets = session()->get('planets');
+        $allUserPlanets = Planet::getAllUserPlanets($user_id);
         Controller::checkAllProcesses($allUserPlanets);
         $allBuildings = Building::all();
         if(count($planetaryResources)>0)
@@ -80,9 +80,9 @@ class DatabaseController extends Controller
     public function research($planet_id)
     {
         session(['default_planet' => $planet_id]);
-        $user = session()->get('user');$user_id = $user->user_id;
+        $user_id = Auth::id();
         $planetaryResources = Planet::getResourcesForPlanet($planet_id);
-        $allUserPlanets = session()->get('planets');
+        $allUserPlanets = Planet::getAllUserPlanets($user_id);
         Controller::checkAllProcesses($allUserPlanets);
         $allResearch = Research::all();
 
@@ -108,9 +108,9 @@ class DatabaseController extends Controller
     public function ships($planet_id)
     {
         session(['default_planet' => $planet_id]);
-        $user = session()->get('user');$user_id = $user->user_id;
+        $user_id = Auth::id();
         $planetaryResources = Planet::getResourcesForPlanet($planet_id);
-        $allUserPlanets = session()->get('planets');
+        $allUserPlanets = Planet::getAllUserPlanets($user_id);
         Controller::checkAllProcesses($allUserPlanets);
         $allShips = Ship::all();
 
@@ -136,9 +136,9 @@ class DatabaseController extends Controller
     public function turrets($planet_id)
     {
         session(['default_planet' => $planet_id]);
-        $user = session()->get('user');$user_id = $user->user_id;
+        $user_id = Auth::id();
         $planetaryResources = Planet::getResourcesForPlanet($planet_id);
-        $allUserPlanets = session()->get('planets');
+        $allUserPlanets = Planet::getAllUserPlanets($user_id);
         Controller::checkAllProcesses($allUserPlanets);
         $allTurrets = Turret::all();
 

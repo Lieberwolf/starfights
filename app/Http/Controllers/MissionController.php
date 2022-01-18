@@ -19,7 +19,7 @@ class MissionController extends Controller
 
     public function index()
     {
-        $user = session()->get('user');$user_id = $user->user_id;
+        $user_id = Auth::id();
         $start_planet = Profile::getStartPlanetByUserId($user_id);
         session(['default_planet' => $start_planet->start_planet]);
         session(['target' => null]);
@@ -30,8 +30,8 @@ class MissionController extends Controller
     {
         // update session with new planet id
         session(['default_planet' => $planet_id]);
-        $user = session()->get('user');$user_id = $user->user_id;
-        $allUserPlanets = session()->get('planets');
+        $user_id = Auth::id();
+        $allUserPlanets = Planet::getAllUserPlanets($user_id);
         Controller::checkAllProcesses($allUserPlanets);
         $planetaryResources = Planet::getResourcesForPlanet($planet_id);
         $shipsAtPlanet = Fleet::getShipsAtPlanet($planet_id);
@@ -68,8 +68,8 @@ class MissionController extends Controller
 
     public function start($planet_id)
     {
-        $user = session()->get('user');$user_id = $user->user_id;
-        $allUserPlanets = session()->get('planets');
+        $user_id = Auth::id();
+        $allUserPlanets = Planet::getAllUserPlanets($user_id);
         $planetaryResources = Planet::getResourcesForPlanet($planet_id);
         Controller::checkAllProcesses($allUserPlanets);
         $data = request()->validate([
@@ -402,8 +402,7 @@ class MissionController extends Controller
 
     public function liftoff($planet_id)
     {
-        $user = session()->get('user');
-        $user_id = $user->user_id;
+        $user_id = Auth::id();
         Planet::getResourcesForPlanet($planet_id);
         $data = request()->validate([
             'mission' => 'required'
