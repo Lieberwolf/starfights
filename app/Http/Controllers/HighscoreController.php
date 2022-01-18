@@ -33,25 +33,7 @@ class HighscoreController extends Controller
         $planetaryResources = Planet::getResourcesForPlanet($planet_id);
         $allUserPlanets = Planet::getAllUserPlanets($user_id);
         Controller::checkAllProcesses($allUserPlanets);
-        $users = User::getAllUserProfiles();
-
-        $list = [];
-        foreach($users as $key => $user) {
-            $planets = Planet::getAllUserPlanets($user->user_id);
-            $allPlanetPoints = Planet::getAllPlanetaryPointsByIds($planets);
-            $allResearchPoints = Research::getAllUserResearchPointsByUserId($user->user_id);
-
-            $list[$key] = $user;
-            $list[$key]->planetPoints = $allPlanetPoints;
-            $list[$key]->researchPoints = $allResearchPoints;
-            $list[$key]->totalPoints = $allPlanetPoints + $allResearchPoints;
-        }
-
-        usort($list, function($a, $b) {
-            if($a->totalPoints == $b->totalPoints){ return 0 ; }
-            return ($a->totalPoints < $b->totalPoints) ? 1 : -1;
-        });
-
+        $highscoreList = (array) User::getHighscoreList();
 
         if(count($planetaryResources)>0)
         {
@@ -61,7 +43,7 @@ class HighscoreController extends Controller
                 'planetaryStorage' => $planetaryResources,
                 'allUserPlanets' => $allUserPlanets,
                 'activePlanet' => $planet_id,
-                'users' => $list,
+                'highscoreList' => $highscoreList,
             ]);
         } else {
             return view('error.index');

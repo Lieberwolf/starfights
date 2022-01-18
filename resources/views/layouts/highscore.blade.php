@@ -12,13 +12,13 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($users as $key => $user)
+                    @foreach($highscoreList as $key => $entry)
                         <tr>
                             <td class="title-line">{{($key+1)}}.</td>
-                            <td class="sub-line"><a href="/profile/{{$user->user_id}}">{{$user->nickname}}</a></td>
-                            <td class="sub-line">{{number_format($user->planetPoints, 0, ',', '.')}}</td>
-                            <td class="sub-line">{{number_format($user->researchPoints, 0, ',', '.')}}</td>
-                            <td class="sub-line">{{number_format($user->totalPoints, 0, ',', '.')}}</td>
+                            <td class="sub-line"><a href="/profile/{{$entry->user_id}}">{{$entry->nickname}}</a></td>
+                            <td class="sub-line">{{number_format($entry->Planetenpunkte, 0, ',', '.')}}</td>
+                            <td class="sub-line">{{number_format($entry->Forschungspunkte, 0, ',', '.')}}</td>
+                            <td class="sub-line">{{number_format(($entry->Planetenpunkte + $entry->Forschungspunkte), 0, ',', '.')}}</td>
                         </tr>
                     @endforeach
                 </tbody>
