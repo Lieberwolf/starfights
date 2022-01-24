@@ -7,20 +7,23 @@
         </div>
         <div class="col-12 sub-line">
             <div class="row">
-                <div class="col-6 col-md-2 offset-md-1">
+                <div class="col-4 col-md-2">
+                    <a href="/resources_overview/{{$activePlanet}}">Ressourcenübersicht</a>
+                </div>
+                <div class="col-4 col-md-2">
+                    <a href="/production_overview/{{$activePlanet}}">Produktionsübersicht</a>
+                </div>
+                <div class="col-4 col-md-2">
                     <a href="/planetary/{{$activePlanet}}">Planetenübersicht</a>
                 </div>
-                <div class="col-6 col-md-2">
+                <div class="col-4 col-md-2">
                     <a href="/ships/{{$activePlanet}}">Schiffsübersicht</a>
                 </div>
-                <div class="col-12 col-md-2">
+                <div class="col-4 col-md-2">
                     <a href="/notice/{{$activePlanet}}">Notizblock</a>
                 </div>
-                <div class="col-6 col-md-2">
+                <div class="col-4 col-md-2">
                     <a href="/statistics/{{$activePlanet}}/user/{{$planetInformation->user_id}}">Kampfstatistik</a>
-                </div>
-                <div class="col-6 col-md-2">
-                    <a href="">Handel</a>
                 </div>
             </div>
         </div>

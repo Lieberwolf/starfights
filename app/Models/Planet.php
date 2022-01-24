@@ -232,6 +232,16 @@ class Planet extends Model
         }
     }
 
+    public static function getUpdatedResourcesForAllPlanets($planetIds)
+    {
+        $planetaryResources = [];
+        foreach($planetIds as $planet_id) {
+            $planetaryResources[] = self::getResourcesForPlanet($planet_id->id);
+        }
+
+        return $planetaryResources;
+    }
+
     public static function getResourcesForPlanet($planet_id)
     {
 

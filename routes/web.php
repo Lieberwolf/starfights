@@ -55,6 +55,14 @@ Route::middleware([CheckVacation::class])->group(function() {
     Route::get('/overview', [App\Http\Controllers\OverviewController::class, 'index']);
     Route::get('/overview/{planet_id}', [App\Http\Controllers\OverviewController::class, 'show']);
 
+    // Production Overview
+    Route::get('/production_overview', [App\Http\Controllers\ProductionOverviewController::class, 'index']);
+    Route::get('/production_overview/{planet_id}', [App\Http\Controllers\ProductionOverviewController::class, 'show']);
+
+    // Resource Overview
+    Route::get('/resources_overview', [App\Http\Controllers\ResourcesOverviewController::class, 'index']);
+    Route::get('/resources_overview/{planet_id}', [App\Http\Controllers\ResourcesOverviewController::class, 'show']);
+
     // Planetary Overview
     Route::get('/planetary', [App\Http\Controllers\PlanetaryOverviewController::class, 'index']);
     Route::get('/planetary/{planet_id}', [App\Http\Controllers\PlanetaryOverviewController::class, 'show']);
